@@ -33,6 +33,10 @@
         .form-status { display: none; text-align: center; padding: 16px; border-radius: 10px; margin-top: 12px; font-weight: 600; }
         .form-status.success { display: block; background: #14532d; color: #bbf7d0; }
         .form-status.error { display: block; background: #7f1d1d; color: #fecaca; }
+        input:invalid, textarea:invalid { box-shadow: none; }
+        input.invalid, textarea.invalid { border: 2px solid #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; }
+        .char-count { text-align: right; font-size: 0.85em; color: #64748b; margin-top: -6px; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
         @media (max-width: 640px) {
             nav { padding: 14px 20px; flex-direction: column; gap: 10px; }
             .nav-links a { margin: 0 10px; }
@@ -110,13 +114,14 @@
 
     <div class="section" id="submit">
         <h2>Submit a Model</h2>
-        <form action="https://formspree.io/f/mkodrdjo" method="POST">
+        <form id="submitForm" action="https://formspree.io/f/mkodrdjo" method="POST">
             <input type="text" name="model_name" placeholder="Model Name" required>
             <input type="url" name="model_link" placeholder="Direct Link" required>
             <input type="text" name="category" placeholder="Category">
-            <textarea name="description" rows="5" placeholder="Why is this model great?" required></textarea>
+            <textarea id="description" name="description" rows="5" placeholder="Describe the model and why it's great (e.g. 'Highly detailed goblin with great supports and multiple poses')" required maxlength="300"></textarea>
+            <div class="char-count" id="charCount">300 characters remaining</div>
             <input type="hidden" name="_subject" value="New Model Submission to ModelVault">
-            <button type="submit">Submit to ModelVault</button>
+            <button type="submit" id="submitBtn">Submit to ModelVault</button>
             <div class="form-status" id="formStatus"></div>
         </form>
     </div>
@@ -178,12 +183,39 @@
 
         renderCategories();
 
+        // Character counter for description field
+        const description = document.getElementById('description');
+        const charCount = document.getElementById('charCount');
+        description.addEventListener('input', () => {
+            charCount.textContent = `${300 - description.value.length} characters remaining`;
+        });
+
         // Submit form via AJAX so visitors stay on the page and see a status message
-        const form = document.querySelector('form');
+        const form = document.getElementById('submitForm');
         const status = document.getElementById('formStatus');
+        const submitBtn = document.getElementById('submitBtn');
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             status.className = 'form-status';
+
+            // Client-side validation: highlight any invalid required fields
+            let valid = true;
+            form.querySelectorAll('[required]').forEach(field => {
+                if (!field.checkValidity()) {
+                    field.classList.add('invalid');
+                    valid = false;
+                } else {
+                    field.classList.remove('invalid');
+                }
+            });
+            if (!valid) {
+                status.textContent = 'Please fix the highlighted fields.';
+                status.className = 'form-status error';
+                return;
+            }
+
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
             try {
                 const res = await fetch(form.action, {
                     method: 'POST',
@@ -192,12 +224,16 @@
                 });
                 if (res.ok) {
                     form.reset();
+                    charCount.textContent = '300 characters remaining';
                     status.textContent = 'Thanks! Your model was submitted for review. 🎉';
                     status.className = 'form-status success';
                 } else { throw new Error(); }
             } catch {
                 status.textContent = 'Something went wrong — please try again in a minute.';
                 status.className = 'form-status error';
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit to ModelVault';
             }
         });
     </script>
