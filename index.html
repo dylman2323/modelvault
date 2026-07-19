@@ -7,37 +7,39 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
-        
+
         body { margin: 0; font-family: 'Inter', sans-serif; background: #0a0f1c; color: #e0f2fe; }
-        nav { background: rgba(15, 23, 42, 0.95); padding: 18px 40px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
-        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.9em; font-weight: 600; }
-        .nav-links a { color: #e0f2fe; margin-left: 30px; text-decoration: none; font-weight: 500; }
-        header { background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), url('https://picsum.photos/id/1015/2000/1200') center/cover no-repeat; padding: 140px 20px 100px; text-align: center; position: relative; }
-        header::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(circle at center, transparent 40%, rgba(15,23,42,0.9) 90%); }
-        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 3.8em; margin: 0; text-shadow: 0 4px 20px rgba(0,0,0,0.6); }
-        .tagline { font-size: 1.45em; margin: 16px 0 40px; opacity: 0.95; }
-        .search { width: 680px; max-width: 90%; padding: 20px 28px; font-size: 1.25em; border: none; border-radius: 9999px; background: rgba(255,255,255,0.95); color: #1e2937; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
+        nav { background: rgba(15, 23, 42, 0.98); padding: 16px 40px; position: sticky; top: 0; z-index: 100; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-size: 1.9em; font-weight: 600; color: #bae6fd; }
+        .nav-links a { color: #e0f2fe; margin-left: 28px; text-decoration: none; font-weight: 500; }
+        header { background: linear-gradient(rgba(15, 23, 42, 0.75), rgba(15, 23, 42, 0.85)), url('https://picsum.photos/id/1015/2000/800') center/cover no-repeat; padding: 160px 20px 120px; text-align: center; position: relative; }
+        header::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, transparent 30%, rgba(15,23,42,0.92) 85%); }
+        h1 { font-family: 'Space Grotesk', sans-serif; font-size: 4em; margin: 0; text-shadow: 0 6px 25px rgba(0,0,0,0.7); }
+        .tagline { font-size: 1.5em; margin: 20px 0 50px; opacity: 0.95; }
+        .search { width: 720px; max-width: 92%; padding: 22px 30px; font-size: 1.3em; border: none; border-radius: 9999px; background: rgba(255,255,255,0.95); color: #1e2937; box-shadow: 0 12px 35px rgba(0,0,0,0.5); }
+        .search-hint { margin-top: 16px; font-size: 0.95em; opacity: 0.7; }
         .section { max-width: 1280px; margin: 80px auto; padding: 0 40px; }
-        h2 { font-size: 2.1em; color: #bae6fd; margin-bottom: 35px; }
-        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 32px; }
-        .card { background: #172554; border-radius: 20px; padding: 32px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; text-decoration: none; color: inherit; display: block; }
-        .card:hover { transform: translateY(-15px) scale(1.02); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.35); }
-        .card h3 { font-size: 1.75em; margin: 0 0 16px 0; color: #bae6fd; }
-        .card p { color: #94a3b8; line-height: 1.6; }
-        form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 40px auto; }
-        input, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1e2937; border: none; border-radius: 8px; color: white; }
-        button { background: #3b82f6; color: white; padding: 14px 32px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
-        footer { background: #020617; padding: 60px 40px 30px; text-align: center; font-size: 0.95em; color: #64748b; }
-        .form-status { display: none; text-align: center; padding: 16px; border-radius: 8px; margin-top: 10px; font-weight: 600; }
+        h2 { font-size: 2.2em; color: #bae6fd; margin-bottom: 40px; text-align: center; }
+        .category-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 28px; }
+        .card { background: #172554; border-radius: 20px; padding: 32px; box-shadow: 0 15px 35px rgba(0,0,0,0.5); transition: all 0.3s; cursor: pointer; text-decoration: none; color: inherit; display: block; }
+        .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4); }
+        .card h3 { font-size: 1.7em; margin: 0 0 14px 0; color: #bae6fd; }
+        .card p { color: #94a3b8; line-height: 1.55; }
+        .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
+        form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 60px auto; }
+        input, textarea { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
+        button { background: #3b82f6; color: white; padding: 16px; border: none; border-radius: 10px; font-size: 1.1em; cursor: pointer; width: 100%; font-weight: 600; }
+        footer { background: #020617; padding: 70px 40px 40px; text-align: center; font-size: 0.95em; color: #64748b; }
+        .form-status { display: none; text-align: center; padding: 16px; border-radius: 10px; margin-top: 12px; font-weight: 600; }
         .form-status.success { display: block; background: #14532d; color: #bbf7d0; }
         .form-status.error { display: block; background: #7f1d1d; color: #fecaca; }
         @media (max-width: 640px) {
             nav { padding: 14px 20px; flex-direction: column; gap: 10px; }
             .nav-links a { margin: 0 10px; }
-            header { padding: 90px 16px 70px; }
-            h1 { font-size: 2.4em; }
-            .tagline { font-size: 1.1em; }
-            .search { font-size: 1em; padding: 16px 22px; }
+            header { padding: 100px 16px 80px; }
+            h1 { font-size: 2.6em; }
+            .tagline { font-size: 1.15em; }
+            .search { font-size: 1.05em; padding: 16px 24px; }
             .section { margin: 50px auto; padding: 0 20px; }
             .category-grid { grid-template-columns: 1fr; }
             form { padding: 24px; }
@@ -50,44 +52,22 @@
         <div class="nav-links">
             <a href="#">Home</a>
             <a href="#">Categories</a>
-            <a href="#submit">Submit a Model</a>
+            <a href="#submit">Submit Model</a>
             <a href="#">About</a>
         </div>
     </nav>
 
     <header>
         <h1>ModelVault</h1>
-        <p class="tagline">Curated collection of the best free 3D printable models</p>
-        <input type="text" class="search" id="search" placeholder="What are you looking to print today? (Enter to search Printables)">
+        <p class="tagline">The best free 3D printable models — curated for makers</p>
+        <input type="text" class="search" id="searchInput" placeholder="Search models (goblin, organizer, cosplay...)">
+        <p class="search-hint">Filters categories as you type • press Enter to search all of Printables</p>
     </header>
 
     <div class="section">
-        <h2>Explore Categories</h2>
-        <div class="category-grid">
-            <a href="https://www.printables.com/search/models?q=goblin%20dnd" class="card" target="_blank">
-                <h3>🏹 Tabletop Minis</h3>
-                <p>D&D, Warhammer, RPG minis and terrain</p>
-            </a>
-            <a href="https://www.printables.com/search/models?q=organizer" class="card" target="_blank">
-                <h3>🔧 Functional Prints</h3>
-                <p>Organizers, tools, desk gadgets</p>
-            </a>
-            <a href="https://www.printables.com/search/models?q=cosplay" class="card" target="_blank">
-                <h3>🎭 Cosplay Props</h3>
-                <p>Armor, weapons, helmets, accessories</p>
-            </a>
-            <a href="https://www.printables.com/search/models?q=fidget" class="card" target="_blank">
-                <h3>🧸 Toys & Fidgets</h3>
-                <p>Puzzles, board game upgrades, toys</p>
-            </a>
-            <a href="https://www.printables.com/search/models?q=vase" class="card" target="_blank">
-                <h3>🏠 Home & Decor</h3>
-                <p>Vases, lamps, wall art, planters</p>
-            </a>
-            <a href="https://www.printables.com/search/models?q=mechanical" class="card" target="_blank">
-                <h3>⚙️ Mechanical & Tech</h3>
-                <p>Gears, brackets, drone parts</p>
-            </a>
+        <h2>Popular Categories</h2>
+        <div class="category-grid" id="categoryGrid">
+            <!-- Populated by JS -->
         </div>
     </div>
 
@@ -95,34 +75,70 @@
         <h2>Submit a Model</h2>
         <form action="https://formspree.io/f/mkodrdjo" method="POST">
             <input type="text" name="model_name" placeholder="Model Name" required>
-            <input type="url" name="model_link" placeholder="Direct Link to Model (Printables, Thingiverse, etc.)" required>
-            <input type="text" name="category" placeholder="Category (e.g. Tabletop Minis)">
-            <textarea name="description" rows="5" placeholder="Short description or why it's great" required></textarea>
+            <input type="url" name="model_link" placeholder="Direct Link" required>
+            <input type="text" name="category" placeholder="Category">
+            <textarea name="description" rows="5" placeholder="Why is this model great?" required></textarea>
             <input type="hidden" name="_subject" value="New Model Submission to ModelVault">
-            <button type="submit">Submit Model</button>
-            <div class="form-status" id="form-status"></div>
+            <button type="submit">Submit to ModelVault</button>
+            <div class="form-status" id="formStatus"></div>
         </form>
     </div>
 
+    <footer>
+        <p>&copy; 2026 ModelVault • Curated free 3D models</p>
+        <p>Respect all model licenses • Made with ❤️ for makers</p>
+    </footer>
+
     <script>
-        // Search: typing filters category cards; Enter searches Printables
-        const search = document.getElementById('search');
-        const cards = document.querySelectorAll('.category-grid .card');
-        search.addEventListener('input', () => {
-            const q = search.value.trim().toLowerCase();
-            cards.forEach(c => { c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+        const categories = [
+            {title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG", link: "https://www.printables.com/search/models?q=dnd+mini"},
+            {title: "🔧 Functional Prints", desc: "Organizers & Tools", link: "https://www.printables.com/search/models?q=organizer"},
+            {title: "🎭 Cosplay Props", desc: "Armor & Weapons", link: "https://www.printables.com/search/models?q=cosplay"},
+            {title: "🧸 Toys & Fidgets", desc: "Puzzles & Games", link: "https://www.printables.com/search/models?q=fidget"},
+            {title: "🏠 Home & Decor", desc: "Vases & Wall Art", link: "https://www.printables.com/search/models?q=decor"},
+            {title: "⚙️ Mechanical", desc: "Gears & Brackets", link: "https://www.printables.com/search/models?q=mechanical"}
+        ];
+
+        function renderCategories(filtered = categories) {
+            const grid = document.getElementById('categoryGrid');
+            grid.innerHTML = '';
+            if (filtered.length === 0) {
+                grid.innerHTML = '<p class="no-results">No matching categories — press Enter to search all of Printables.</p>';
+                return;
+            }
+            filtered.forEach(cat => {
+                const card = document.createElement('a');
+                card.href = cat.link;
+                card.target = "_blank";
+                card.rel = "noopener";
+                card.className = "card";
+                card.innerHTML = `<h3>${cat.title}</h3><p>${cat.desc}</p>`;
+                grid.appendChild(card);
+            });
+        }
+
+        const searchInput = document.getElementById('searchInput');
+        searchInput.addEventListener('keyup', (e) => {
+            const term = e.target.value.toLowerCase();
+            const filtered = categories.filter(c =>
+                c.title.toLowerCase().includes(term) || c.desc.toLowerCase().includes(term)
+            );
+            renderCategories(filtered);
         });
-        search.addEventListener('keydown', e => {
-            const q = search.value.trim();
+        // Enter searches the whole Printables catalog for the typed term
+        searchInput.addEventListener('keydown', (e) => {
+            const q = e.target.value.trim();
             if (e.key === 'Enter' && q) {
-                window.open('https://www.printables.com/search/models?q=' + encodeURIComponent(q), '_blank');
+                window.open('https://www.printables.com/search/models?q=' + encodeURIComponent(q), '_blank', 'noopener');
             }
         });
 
-        // Submit form via AJAX so visitors stay on the page
+        renderCategories();
+
+        // Submit form via AJAX so visitors stay on the page and see a status message
         const form = document.querySelector('form');
-        const status = document.getElementById('form-status');
-        form.addEventListener('submit', async e => {
+        const status = document.getElementById('formStatus');
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
             status.className = 'form-status';
             try {
@@ -142,10 +158,5 @@
             }
         });
     </script>
-
-    <footer>
-        <p>&copy; 2026 ModelVault • Curated free 3D models from across the web</p>
-        <p>All models are from public sources. Always respect original licenses.</p>
-    </footer>
 </body>
 </html>
