@@ -192,7 +192,7 @@
         <div class="auth-card">
             <button type="button" class="auth-close" onclick="closeAuthModal()" aria-label="Close">×</button>
             <h3 id="authTitle">Sign in to vote</h3>
-            <p class="auth-sub">Free account · takes about 20 seconds · one vote per model. Passwords are handled by Google Firebase (we never store them).</p>
+            <p class="auth-sub">Free account · about 20 seconds · one vote per model. Passwords are handled securely by Firebase (we never store them).</p>
             <div class="auth-tabs">
                 <button type="button" id="tabSignin" class="active" onclick="setAuthMode('signin')">Sign in</button>
                 <button type="button" id="tabSignup" onclick="setAuthMode('signup')">Create free account</button>
@@ -203,16 +203,16 @@
                 <button type="submit" id="authSubmitBtn">Sign in</button>
             </form>
             <p class="auth-error" id="authError"></p>
-            <p class="auth-secure">Secure email/password auth via Firebase Auth (free). Your vote is locked once cast.</p>
+            <p class="auth-secure">Free email sign-in via Firebase. Your vote is locked once you cast it.</p>
         </div>
     </div>
     <div class="toast" id="toast" role="status"></div>
 
     <header>
         <h1>ModelVault</h1>
-        <p class="tagline">The best free 3D printable models — curated for makers</p>
+        <p class="tagline">Free 3D printable models, curated for makers</p>
         <input type="text" class="search" id="searchInput" placeholder="Search models (goblin, organizer, cosplay...)">
-        <p class="search-hint">Filters categories as you type • press Enter to search Printables (or browse sources in each listing)</p>
+        <p class="search-hint">Type to filter categories • press Enter to search Printables</p>
     </header>
 
     <div class="section" id="categoryPage" style="display:none;">
@@ -230,7 +230,7 @@
 
     <div class="section home-section">
         <h2>Featured Models</h2>
-        <p class="section-sub">Editor picks plus an optional paid <strong>Sponsored</strong> slot (always labeled).</p>
+        <p class="section-sub">Hand-picked free models. A paid Sponsored slot may appear here and is always labeled.</p>
         <div class="category-grid featured-grid">
 
             <!-- Sponsored slot (paid) — edit link/image/title in monetization config below or replace this block -->
@@ -272,7 +272,7 @@
 
     <div class="section home-section" id="popular">
         <h2>Most Popular Free Models</h2>
-        <p class="section-sub">Widely downloaded free hits from Printables and Thingiverse — community favorites with strong ratings and real listing links.</p>
+        <p class="section-sub">Well-known free models with strong community ratings on Printables and Thingiverse.</p>
         <div class="category-grid featured-grid popular-grid">
 
             <a id="sponsoredPopularCard" href="#boost" class="card featured-card popular-card sponsored-card" rel="sponsored noopener">
@@ -489,13 +489,13 @@
 
 
     <div class="section home-section" id="paid-models">
-        <h2>Paid Models from Creators</h2>
-        <p class="section-sub">Premium designs sold by ModelVault Creator subscribers. Buy unlocks the file from the creator (Stripe / Gumroad / host link). Free models stay free above.</p>
+        <h2>Paid Models</h2>
+        <p class="section-sub">Models sold by creators who list on ModelVault. When you buy, you check out with the creator and get the files from them. Free models are still free in the sections above.</p>
         <div class="hosting-note">
-            <strong style="color:#bae6fd;">How hosting works:</strong>
-            Creators join the monthly Creator Sub, then list paid models here with a cover image, price, description, and a secure checkout or download link they control (Stripe Payment Link, Gumroad, etc.).
-            ModelVault hosts the storefront listing; file delivery stays with the creator&rsquo;s checkout so licenses and refunds stay clear.
-            After you subscribe, submit a listing with the form under <a href="#creators" style="color:#93c5fd;">Creators</a>.
+            <strong style="color:#bae6fd;">How it works:</strong>
+            Creators pay a monthly Creator subscription, then submit a listing (cover image, price, description, and their checkout link — Stripe, Gumroad, and similar).
+            ModelVault shows the listing; the creator handles payment and file delivery.
+            Subscribe, then use the form under <a href="#creators" style="color:#93c5fd;">Creators</a> to submit a model.
         </div>
         <div class="gear-grid" id="paidModelsGrid">
             <!-- Populated by JS from paidModels catalog -->
@@ -504,16 +504,16 @@
 
     <div class="section home-section" id="creators">
         <h2>Creator Subscription</h2>
-        <p class="section-sub">Sell paid models on ModelVault. Keep ownership of your files — we give you a storefront slot and traffic.</p>
+        <p class="section-sub">Sell your models on ModelVault. You keep the files and run checkout; we list your work for makers to find.</p>
         <div class="boost-grid">
             <div class="boost-card">
                 <h3>Creator Sub</h3>
-                <p>List paid models on ModelVault with a paid badge, cover art, price, and checkout link.</p>
+                <p>List paid models with a cover image, price, description, and your checkout link.</p>
                 <ul class="creator-perks">
-                    <li>Unlimited paid model listings while subscribed</li>
-                    <li>Shown in the Paid Models gallery</li>
-                    <li>Optional Boost add-ons for Featured / Popular</li>
-                    <li>You set the price and keep file delivery</li>
+                    <li>List as many paid models as you want while subscribed</li>
+                    <li>Appear in the Paid Models section</li>
+                    <li>Optional Boost for Featured or Popular placement</li>
+                    <li>You set the price and deliver the files</li>
                 </ul>
                 <div class="boost-price">$12 <span>/ month</span></div>
                 <a class="boost-btn" id="creatorSubBtn" href="#creatorListForm">Subscribe as Creator</a>
@@ -523,23 +523,23 @@
                 <ul class="creator-perks">
                     <li>Title, cover image URL, short description</li>
                     <li>Your price (USD)</li>
-                    <li>Buy / download URL (Stripe, Gumroad, Payhip, etc.)</li>
-                    <li>Active Creator Sub (or we email you the Stripe link)</li>
+                    <li>Checkout link (Stripe, Gumroad, Payhip, etc.)</li>
+                    <li>Creator subscription status (subscribed, or need a payment link)</li>
                 </ul>
-                <p style="color:#94a3b8;font-size:0.9em;margin:0;">We review listings so the storefront stays trustworthy.</p>
+                <p style="color:#94a3b8;font-size:0.9em;margin:0;">We review every listing before it goes live.</p>
             </div>
             <div class="boost-card">
                 <h3>Buyer experience</h3>
                 <ul class="creator-perks">
-                    <li>Browse Paid Models next to free catalogs</li>
-                    <li>Clear Paid badge and price</li>
-                    <li>One-click checkout on your link</li>
-                    <li>Never mixed into free organic rankings</li>
+                    <li>Browse paid models alongside free ones</li>
+                    <li>Clear Paid label and price</li>
+                    <li>Checkout on the creator’s link</li>
+                    <li>Never mixed into free model rankings</li>
                 </ul>
             </div>
         </div>
         <h2 style="font-size:1.5em;margin-top:10px;">List a paid model</h2>
-        <p class="section-sub" style="margin-top:0;">Creators: send listing details after subscribing. We publish approved models to the Paid Models grid.</p>
+        <p class="section-sub" style="margin-top:0;">After you subscribe, send your listing details. We review and publish approved models here.</p>
         <form id="creatorListForm" action="https://formspree.io/f/mkodrdjo" method="POST">
             <input type="hidden" name="_subject" value="ModelVault Paid Model Listing (Creator Sub)">
             <input type="text" name="creator_name" placeholder="Creator / brand name" required>
@@ -549,7 +549,7 @@
             <input type="url" name="buy_url" placeholder="Checkout / file delivery URL (Stripe, Gumroad, etc.)" required>
             <input type="text" name="price_usd" placeholder="Price USD (e.g. 8)" required>
             <input type="text" name="category" placeholder="Category (tabletop, cosplay, organizers...)">
-            <textarea name="description" rows="5" placeholder="Description buyers will see (from your listing text)" required maxlength="800"></textarea>
+            <textarea name="description" rows="5" placeholder="Short description for buyers" required maxlength="800"></textarea>
             <input type="text" name="subscription_status" placeholder="Creator Sub status (subscribed / need link)">
             <button type="submit" id="creatorListBtn">Submit paid listing</button>
             <div class="form-status" id="creatorListStatus"></div>
@@ -557,36 +557,36 @@
     </div>
 
     <div class="section home-section" id="gear">
-        <h2>Maker Gear (Affiliate)</h2>
-        <p class="section-sub">Tools and materials makers actually buy. Links may earn ModelVault a small commission at no extra cost to you.</p>
+        <h2>Maker Gear</h2>
+        <p class="section-sub">Filament, tools, and printers. Some links are affiliate links — we may earn a small commission at no extra cost to you.</p>
         <div class="gear-grid" id="gearGrid">
             <!-- Populated by JS from monetization.gear -->
         </div>
-        <p class="affiliate-note" id="affiliateNote">As an Amazon Associate (and similar programs), ModelVault may earn from qualifying purchases. Replace placeholder links with your affiliate URLs in the site config.</p>
+        <p class="affiliate-note" id="affiliateNote">As an Amazon Associate, ModelVault earns from qualifying purchases.</p>
     </div>
 
     <div class="section home-section" id="boost">
-        <h2>Boost &amp; Sponsored Placement</h2>
-        <p class="section-sub">Put your free model in front of makers. Clear labels — we never fake organic popularity.</p>
+        <h2>Boost &amp; Sponsored Spots</h2>
+        <p class="section-sub">Promote a free model to more makers. Sponsored spots are always labeled — we don’t fake popularity.</p>
         <div class="money-banner" id="boostBanner">
-            Stripe Payment Links + Formspree power this section. Add your Payment Link URLs in the monetization config to enable checkout.
+            Add your Stripe Payment Links in the site config to enable one-click checkout. Until then, use the form below.
         </div>
         <div class="boost-grid">
             <div class="boost-card">
                 <h3>Featured Slot</h3>
-                <p>One week on the Featured Models row with a Sponsored badge. Best for launches and big free drops.</p>
+                <p>One week in Featured Models with a Sponsored label. Good for launches and new free releases.</p>
                 <div class="boost-price">$29 <span>/ week</span></div>
                 <a class="boost-btn" id="boostFeaturedBtn" href="#boost" target="_blank" rel="noopener">Buy Featured Slot</a>
             </div>
             <div class="boost-card">
                 <h3>Popular Row Slot</h3>
-                <p>One week under Most Popular Free Models (Sponsored badge). High visibility without faking download ranks.</p>
+                <p>One week under Most Popular Free Models with a Sponsored label. Extra visibility without fake rankings.</p>
                 <div class="boost-price">$39 <span>/ week</span></div>
                 <a class="boost-btn" id="boostPopularBtn" href="#boost" target="_blank" rel="noopener">Buy Popular Slot</a>
             </div>
             <div class="boost-card">
                 <h3>Model Boost Request</h3>
-                <p>Already paid or want a custom package? Send your model link and we will queue it for a paid spotlight.</p>
+                <p>Already paid, or want something custom? Send your model link and we’ll schedule a paid spotlight.</p>
                 <div class="boost-price">Custom <span>via form</span></div>
                 <a class="boost-btn secondary" href="#boostForm">Request a Boost</a>
             </div>
@@ -606,7 +606,7 @@
     <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
-            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below — or use Boost for a paid Sponsored spotlight. Creators can subscribe to host paid models in the Paid Models gallery. Gear links may use affiliate programs.</p>
+            <p style="margin: 0;">ModelVault is a curated directory of free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Browse by category or check Featured and Popular picks — every free model links to the original creator’s page. Sign in free to vote once per model. Submit free models below, use Boost for a sponsored free-model spotlight, or join as a Creator to list paid models. Some gear links are affiliate links.</p>
         </div>
     </div>
 
@@ -626,7 +626,7 @@
 
     <footer>
         <p>&copy; 2026 ModelVault • Curated free 3D models</p>
-        <p>Respect all model licenses • Made with love for makers</p>
+        <p>Respect all model licenses · Made for makers</p>
     </footer>
 
     <!-- Firebase Auth + Firestore (free Spark plan). Config is public by design; security is in rules. -->
@@ -1026,7 +1026,7 @@
             try {
                 if (authMode === "signup") {
                     await mvAuth.createUserWithEmailAndPassword(email, password);
-                    showToast("Account created — you're signed in");
+                    showToast("Account created — you’re signed in");
                 } else {
                     await mvAuth.signInWithEmailAndPassword(email, password);
                     showToast("Signed in");
@@ -1064,18 +1064,18 @@
         async function castVote(modelId, type) {
             if (type !== "up" && type !== "down") return;
             if (!firebaseConfigured || !mvDb || !mvAuth) {
-                showToast("Voting backend not connected yet (free Firebase setup needed).");
+                showToast("Voting isn’t connected yet. The site owner needs to finish Firebase setup.");
                 openAuthModal("signin");
                 return;
             }
             if (!mvUser) {
                 pendingVote = { modelId, type };
                 openAuthModal("signin");
-                showToast("Sign in free to vote — one vote per model");
+                showToast("Sign in free to vote (one vote per model)");
                 return;
             }
             if (myVotes[modelId]) {
-                showToast("You already voted on this model (one vote only)");
+                showToast("You already voted on this model.");
                 return;
             }
             const uid = mvUser.uid;
@@ -1108,12 +1108,12 @@
             } catch (e) {
                 if (String(e.message || e).includes("already-voted")) {
                     myVotes[modelId] = myVotes[modelId] || type;
-                    showToast("You already voted on this model (one vote only)");
+                    showToast("You already voted on this model.");
                     if (currentSlug) renderCategoryPage(currentSlug);
                     return;
                 }
                 console.error(e);
-                showToast("Vote failed — check connection or Firebase rules");
+                showToast("Vote failed. Check your connection and try again.");
             }
         }
 
@@ -1170,7 +1170,7 @@
                                 <span class="expand-chip">MV ${mvRating} (${v.up} up / ${v.down} down)</span>
                                 ${v.mine ? '<span class="expand-chip">Your vote: ' + (v.mine === 'up' ? 'up' : 'down') + ' (locked)</span>' : '<span class="expand-chip">Sign in free to vote · one vote per model</span>'}
                             </div>
-                            <p class="expand-desc ${m.description ? '' : 'empty'}">${m.description ? escapeHtml(m.description) : 'No description was available from the source listing. Open the full page for more details.'}</p>
+                            <p class="expand-desc ${m.description ? '' : 'empty'}">${m.description ? escapeHtml(m.description) : 'No description was found on the source page. Open the full listing for more details.'}</p>
                             <a class="expand-view-link" href="${m.link}" target="_blank" rel="noopener">View full listing on ${source} ↗</a>
                         </div>
                     </div>
@@ -1229,70 +1229,70 @@
                 enabled: true,
                 href: "#boost",
                 title: "Your model here",
-                blurb: "Creators and brands can buy a Featured slot. Tap Boost to get listed.",
+                blurb: "Promote your model in Featured. Open Boost to get started.",
                 image: "https://picsum.photos/id/180/1200/800"
             },
             sponsoredPopular: {
                 enabled: true,
                 href: "#boost",
-                title: "Sponsored popular pick",
-                blurb: "Paid placement under Most Popular — clearly labeled.",
+                title: "Your sponsored model",
+                blurb: "Paid placement under Most Popular. Always labeled Sponsored.",
                 image: "https://picsum.photos/id/201/1200/800"
             },
             // Gear products — amazon:true appends your Associates tag to amazon.com URLs
             gear: [
                 {
                     title: "Shop Amazon (Affiliate)",
-                    blurb: "Browse Amazon through ModelVault's affiliate link — filament, tools, printers, and more. Costs you nothing extra.",
+                    blurb: "Shop Amazon via our affiliate link for filament, tools, printers, and more. Same prices for you.",
                     price: "Open Amazon",
                     url: "https://amzn.to/4vIi97k",
                     amazon: false
                 },
                 {
                     title: "PLA+ Filament (1kg)",
-                    blurb: "Reliable everyday filament for organizers, minis, and functional prints.",
+                    blurb: "Everyday PLA+ for organizers, minis, and useful prints.",
                     price: "Shop filament",
                     url: "https://amzn.to/4yrqcbn",
                     amazon: false
                 },
                 {
                     title: "High Quality PLA",
-                    blurb: "Premium PLA for clean surface finish on minis, props, and display prints.",
+                    blurb: "Higher-quality PLA for cleaner minis, props, and display pieces.",
                     price: "Shop High Quality PLA",
                     url: "https://amzn.to/4hmAjbb",
                     amazon: false
                 },
                 {
                     title: "PETG Filament",
-                    blurb: "Tougher parts, phone stands, and outdoor-ready prints.",
+                    blurb: "Stronger prints for phone stands and tougher parts.",
                     price: "Shop PETG",
                     url: "https://www.amazon.com/s?k=petg+filament+1kg",
                     amazon: true
                 },
                 {
                     title: "Digital Calipers",
-                    blurb: "Measure real parts so Gridfinity and functional fits land first try.",
+                    blurb: "Measure parts so organizers and mounts fit the first time.",
                     price: "Shop tools",
                     url: "https://www.amazon.com/s?k=digital+caliper",
                     amazon: true
                 },
                 {
                     title: "Deburring Tool + Flush Cutters",
-                    blurb: "Clean supports and edges on cosplay props and articulated toys.",
+                    blurb: "Clean up supports and edges on props and articulated toys.",
                     price: "Shop cleanup",
                     url: "https://www.amazon.com/s?k=3d+print+deburring+tool+flush+cutters",
                     amazon: true
                 },
                 {
                     title: "Build Plate / PEI Sheet",
-                    blurb: "Better first layers for fidgets, vases, and large bases.",
+                    blurb: "Improve first-layer stick for fidgets, vases, and large prints.",
                     price: "Shop plates",
                     url: "https://www.amazon.com/s?k=pei+build+plate+3d+printer",
                     amazon: true
                 },
                 {
                     title: "High Quality Starter 3D Printer",
-                    blurb: "Solid starter machine to print the free models on this site.",
+                    blurb: "A solid starter machine for printing free models from this site.",
                     price: "Shop starter printer",
                     url: "https://amzn.to/4b3uyv9",
                     amazon: false
@@ -1331,7 +1331,7 @@
             }).join('');
             const note = document.getElementById('affiliateNote');
             if (note) {
-                note.innerHTML = 'As an Amazon Associate, ModelVault earns from qualifying purchases. Primary affiliate link: <a href="' +
+                note.innerHTML = 'As an Amazon Associate, ModelVault earns from qualifying purchases. Main shop link: <a href="' +
                     (monetization.amazonStoreLink || '#') + '" target="_blank" rel="noopener sponsored nofollow" style="color:#93c5fd;">amzn.to storefront</a>.';
             }
         }
@@ -1375,7 +1375,7 @@
                     featured.textContent = 'Buy Featured Slot — Stripe';
                 } else {
                     featured.href = '#boostForm';
-                    featured.textContent = 'Request Featured (set Stripe link in config)';
+                    featured.textContent = 'Request Featured (add Stripe link in config)';
                 }
             }
             if (popular) {
@@ -1386,14 +1386,14 @@
                     popular.textContent = 'Buy Popular Slot — Stripe';
                 } else {
                     popular.href = '#boostForm';
-                    popular.textContent = 'Request Popular (set Stripe link in config)';
+                    popular.textContent = 'Request Popular (add Stripe link in config)';
                 }
             }
             if (banner) {
                 if (fLink || pLink) {
-                    banner.textContent = 'Checkout opens Stripe Payment Links. After payment, email your model URL so we can schedule the Sponsored card.';
+                    banner.textContent = 'Checkout opens Stripe. After you pay, send us your model URL so we can schedule the Sponsored card.';
                 } else {
-                    banner.textContent = 'To enable one-click checkout: create Stripe Payment Links for $29 Featured and $39 Popular, then paste them into monetization.stripeFeaturedPaymentLink / stripePopularPaymentLink in index.html. Until then, use the form below.';
+                    banner.textContent = 'Add Stripe Payment Links for Featured ($29) and Popular ($39) in the site config for one-click checkout. Until then, use the form below.';
                 }
             }
         }
@@ -1416,13 +1416,13 @@
                     if (res.ok) {
                         form.reset();
                         if (status) {
-                            status.textContent = 'Request received — we will follow up by email.';
+                            status.textContent = 'Request received — we’ll email you soon.';
                             status.className = 'form-status success';
                         }
                     } else { throw new Error(); }
                 } catch (err) {
                     if (status) {
-                        status.textContent = 'Could not send — try again in a minute.';
+                        status.textContent = 'Could not send. Please try again in a minute.';
                         status.className = 'form-status error';
                     }
                 } finally {
@@ -1437,8 +1437,8 @@
             if (!grid) return;
             if (!paidModels || paidModels.length === 0) {
                 grid.innerHTML = `<div class="paid-empty">
-                    <p style="margin:0 0 12px 0;"><strong style="color:#bae6fd;">No paid models listed yet.</strong></p>
-                    <p style="margin:0;">Creators: start a Creator Sub, then submit a listing.
+                    <p style="margin:0 0 12px 0;"><strong style="color:#bae6fd;">No paid models yet.</strong></p>
+                    <p style="margin:0;">Creators can subscribe, then submit a listing.
                     <a href="#creators" style="color:#93c5fd;">Become a creator →</a></p>
                 </div>`;
                 return;
@@ -1456,10 +1456,10 @@
                         <h3>${escapeHtml(m.title || 'Untitled')}</h3>
                         <div class="paid-creator">by ${escapeHtml(m.creator || 'Creator')}</div>
                         <div class="paid-price">${escapeHtml(price)} <span>one-time</span></div>
-                        <p>${escapeHtml(m.description || 'Premium model from a ModelVault creator.')}</p>
+                        <p>${escapeHtml(m.description || 'Paid model from a ModelVault creator.')}</p>
                         <a class="paid-buy ${external ? 'external' : ''}" href="${escapeHtml(buy)}"
                            ${external ? 'target="_blank" rel="noopener"' : ''}>
-                           Buy &amp; download
+                           Buy &amp; get files
                         </a>
                     </div>
                 </div>`;
@@ -1477,7 +1477,7 @@
                 btn.textContent = 'Subscribe as Creator — Stripe';
             } else {
                 btn.href = '#creatorListForm';
-                btn.textContent = 'Subscribe (set Stripe Creator Sub link in config)';
+                btn.textContent = 'Subscribe (add your Stripe link in site config)';
             }
             const priceEl = document.querySelector('#creators .boost-price');
             if (priceEl && monetization.creatorSubPriceLabel) {
@@ -1503,13 +1503,13 @@
                     if (res.ok) {
                         form.reset();
                         if (status) {
-                            status.textContent = 'Listing request received. After Creator Sub is confirmed we will publish it to Paid Models.';
+                            status.textContent = 'Got it. Once your Creator subscription is confirmed, we’ll review and publish your listing.';
                             status.className = 'form-status success';
                         }
                     } else { throw new Error(); }
                 } catch (err) {
                     if (status) {
-                        status.textContent = 'Could not send — try again in a minute.';
+                        status.textContent = 'Could not send. Please try again in a minute.';
                         status.className = 'form-status error';
                     }
                 } finally {
@@ -1638,11 +1638,11 @@
                 if (res.ok) {
                     form.reset();
                     charCount.textContent = '300 characters remaining';
-                    status.textContent = 'Thanks! Your model was submitted for review.';
+                    status.textContent = 'Thanks — your model was submitted for review.';
                     status.className = 'form-status success';
                 } else { throw new Error(); }
             } catch {
-                status.textContent = 'Something went wrong — please try again in a minute.';
+                status.textContent = 'Something went wrong. Please try again in a minute.';
                 status.className = 'form-status error';
             } finally {
                 submitBtn.disabled = false;
