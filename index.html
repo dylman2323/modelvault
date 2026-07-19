@@ -376,15 +376,14 @@
         // create a Firestore database, publish firestore.rules from this repo, then paste config below.
         // Authorized domains must include dylman2323.github.io and localhost.
         const firebaseConfig = {
-            apiKey: "AIzaSyDummyReplaceMe_ModelVaultConfig",
-            authDomain: "modelvault-app.firebaseapp.com",
-            projectId: "modelvault-app",
-            storageBucket: "modelvault-app.appspot.com",
-            messagingSenderId: "000000000000",
-            appId: "1:000000000000:web:0000000000000000000000"
+            apiKey: "AIzaSyCkKqCxkBmF74QlS02g1I4mrRQgGTW2dcY",
+            authDomain: "modelvault-f7092.firebaseapp.com",
+            projectId: "modelvault-f7092",
+            storageBucket: "modelvault-f7092.firebasestorage.app",
+            messagingSenderId: "1065949164035",
+            appId: "1:1065949164035:web:24ea30692ce30dbbaa5436"
         };
-        // Set true only after real Firebase config is pasted above
-        const firebaseConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("DummyReplaceMe");
+        const firebaseConfigured = !!(firebaseConfig.apiKey && firebaseConfig.projectId);
 
         let mvAuth = null;
         let mvDb = null;
