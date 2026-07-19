@@ -1162,7 +1162,7 @@
             amazonTag: "modelvault00-20",
             // Your sitewide Amazon affiliate short link
             amazonStoreLink: "https://amzn.to/4vIi97k",
-            stripeCreatorSubPaymentLink: "", // monthly Creator Sub e.g. https://buy.stripe.com/zzzz
+            stripeCreatorSubPaymentLink: "https://square.link/u/soifdoLq", // Creator Sub checkout (Square)
             creatorSubPriceLabel: "$12 / month",
             // Gear products — amazon:true appends your Associates tag to amazon.com URLs
             // image URLs pulled from the linked Amazon product / search results
@@ -1318,10 +1318,10 @@
                 btn.href = link;
                 btn.target = '_blank';
                 btn.rel = 'noopener';
-                btn.textContent = 'Subscribe as Creator — Stripe';
+                btn.textContent = 'Subscribe as Creator — Checkout';
             } else {
                 btn.href = '#creatorListForm';
-                btn.textContent = 'Subscribe (add your Stripe link in site config)';
+                btn.textContent = 'Subscribe (add payment link in site config)';
             }
             const priceEl = document.querySelector('#creators .boost-price');
             if (priceEl && monetization.creatorSubPriceLabel) {
