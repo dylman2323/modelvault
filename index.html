@@ -99,6 +99,11 @@
         .money-banner { background: linear-gradient(135deg, #1e3a5f, #172554); border: 1px solid rgba(234,179,8,0.25); border-radius: 14px; padding: 16px 20px; margin: 0 auto 28px; max-width: 900px; text-align: center; color: #fde68a; font-size: 0.95em; }
 
         .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
+        .category-page-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px 24px; margin-bottom: 8px; }
+        .category-page-head h2 { margin: 0; }
+        .sort-label { display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 0.95em; font-weight: 600; }
+        .sort-label select { width: auto; min-width: 260px; margin: 0; padding: 10px 12px; background: #172554; border: 1px solid #334155; border-radius: 10px; color: #e0f2fe; font-size: 0.92em; }
+        .sort-note { color: #64748b; font-size: 0.88em; margin: 0 0 18px 0; line-height: 1.4; }
         form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 60px auto; }
         input, textarea, select { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
         select { cursor: pointer; appearance: auto; }
@@ -238,7 +243,23 @@
 
     <div class="section" id="categoryPage" style="display:none;">
         <a class="back-link" id="backLink">← Back to ModelVault</a>
-        <h2 id="categoryPageTitle">Category</h2>
+        <div class="category-page-head">
+            <h2 id="categoryPageTitle">Category</h2>
+            <label class="sort-label">Sort by
+                <select id="categorySortSelect" aria-label="Sort models">
+                    <option value="popularity" selected>Popularity (source downloads / ratings)</option>
+                    <option value="rating">Highest rated</option>
+                    <option value="newest">Newest (date released)</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="filesize-desc">Largest file size</option>
+                    <option value="filesize-asc">Smallest file size</option>
+                    <option value="name-asc">Name A–Z</option>
+                    <option value="name-desc">Name Z–A</option>
+                    <option value="mv-votes">ModelVault votes</option>
+                </select>
+            </label>
+        </div>
+        <p class="sort-note" id="categorySortNote">Sorted by popularity using download and rating data from the original listing sites.</p>
         <div class="bar-list" id="categoryPageList"></div>
     </div>
 
@@ -865,13 +886,15 @@
         let mvAuth = null;
         let mvDb = null;
         let mvUser = null;
-        // Global tallies: { [modelId]: { up, down } }
+        // Global tallies shared by every visitor via Firestore: { [modelId]: { up, down } }
         let voteStats = {};
         // Current user's votes: { [modelId]: 'up' | 'down' }
         let myVotes = {};
         let authMode = "signin";
         let pendingVote = null; // { modelId, type } after sign-in
         let votesReady = false;
+        let unsubVoteStats = null;
+        let unsubMyVotes = null;
 
         function showToast(msg, ms = 3200) {
             const el = document.getElementById("toast");
@@ -887,22 +910,28 @@
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 mvAuth = firebase.auth();
                 mvDb = firebase.firestore();
+                // Keep clients in sync — enable offline cache so tallies feel instant
+                try {
+                    mvDb.enablePersistence({ synchronizeTabs: true }).catch(function () { /* multi-tab ok */ });
+                } catch (e) { /* older browsers */ }
                 mvAuth.onAuthStateChanged(async (user) => {
                     mvUser = user;
                     renderAuthNav();
                     if (user) {
-                        await loadMyVotes();
+                        subscribeMyVotes(user.uid);
                         if (pendingVote) {
                             const p = pendingVote;
                             pendingVote = null;
                             await castVote(p.modelId, p.type);
                         }
                     } else {
+                        if (unsubMyVotes) { unsubMyVotes(); unsubMyVotes = null; }
                         myVotes = {};
+                        if (currentSlug) renderCategoryPage(currentSlug);
                     }
-                    if (currentSlug) renderCategoryPage(currentSlug);
                 });
-                loadVoteStats();
+                // Live global tallies — every open browser updates when anyone votes
+                subscribeVoteStats();
                 return true;
             } catch (e) {
                 console.error("Firebase init failed", e);
@@ -910,7 +939,28 @@
             }
         }
 
-        async function loadVoteStats() {
+        function subscribeVoteStats() {
+            if (!mvDb) return;
+            if (unsubVoteStats) { unsubVoteStats(); unsubVoteStats = null; }
+            unsubVoteStats = mvDb.collection("modelStats").onSnapshot(
+                (snap) => {
+                    const next = {};
+                    snap.forEach((doc) => {
+                        const d = doc.data() || {};
+                        next[doc.id] = { up: d.up || 0, down: d.down || 0 };
+                    });
+                    voteStats = next;
+                    votesReady = true;
+                    refreshVisibleVotes();
+                },
+                (err) => {
+                    console.warn("Live vote stats failed — falling back to one-shot load", err);
+                    loadVoteStatsOnce();
+                }
+            );
+        }
+
+        async function loadVoteStatsOnce() {
             if (!mvDb) return;
             try {
                 const snap = await mvDb.collection("modelStats").get();
@@ -921,13 +971,33 @@
                 });
                 voteStats = next;
                 votesReady = true;
-                if (currentSlug) renderCategoryPage(currentSlug);
+                refreshVisibleVotes();
             } catch (e) {
                 console.warn("Could not load vote stats", e);
             }
         }
 
-        async function loadMyVotes() {
+        function subscribeMyVotes(uid) {
+            if (!mvDb || !uid) return;
+            if (unsubMyVotes) { unsubMyVotes(); unsubMyVotes = null; }
+            unsubMyVotes = mvDb.collection("userVotes").where("uid", "==", uid).onSnapshot(
+                (snap) => {
+                    const next = {};
+                    snap.forEach((doc) => {
+                        const d = doc.data();
+                        if (d && d.modelId && d.type) next[d.modelId] = d.type;
+                    });
+                    myVotes = next;
+                    refreshVisibleVotes();
+                },
+                (err) => {
+                    console.warn("Could not subscribe to your votes", err);
+                    loadMyVotesOnce();
+                }
+            );
+        }
+
+        async function loadMyVotesOnce() {
             if (!mvDb || !mvUser) { myVotes = {}; return; }
             try {
                 const snap = await mvDb.collection("userVotes").where("uid", "==", mvUser.uid).get();
@@ -937,6 +1007,7 @@
                     if (d && d.modelId && d.type) next[d.modelId] = d.type;
                 });
                 myVotes = next;
+                refreshVisibleVotes();
             } catch (e) {
                 console.warn("Could not load your votes", e);
                 myVotes = {};
@@ -946,6 +1017,13 @@
         function getModelVotes(modelId) {
             const s = voteStats[modelId] || { up: 0, down: 0 };
             return { up: s.up || 0, down: s.down || 0, mine: myVotes[modelId] || null };
+        }
+
+        /** Push latest global tallies into the open category list (real-time for all visitors). */
+        function refreshVisibleVotes() {
+            if (!currentSlug) return;
+            // Re-sort if ordered by ModelVault votes; otherwise just repaint bars
+            renderCategoryPage(currentSlug);
         }
 
         function renderAuthNav() {
@@ -1071,19 +1149,20 @@
                     });
                     tx.set(statsRef, { up, down }, { merge: true });
                 });
+                // Optimistic local update; onSnapshot will confirm for every open browser
                 myVotes[modelId] = type;
                 const cur = voteStats[modelId] || { up: 0, down: 0 };
                 voteStats[modelId] = {
                     up: cur.up + (type === "up" ? 1 : 0),
                     down: cur.down + (type === "down" ? 1 : 0)
                 };
-                if (currentSlug) renderCategoryPage(currentSlug);
-                showToast(type === "up" ? "Thanks for the upvote" : "Thanks for the downvote");
+                refreshVisibleVotes();
+                showToast(type === "up" ? "Vote saved for everyone" : "Vote saved for everyone");
             } catch (e) {
                 if (String(e.message || e).includes("already-voted")) {
                     myVotes[modelId] = myVotes[modelId] || type;
                     showToast("You already voted on this model.");
-                    if (currentSlug) renderCategoryPage(currentSlug);
+                    refreshVisibleVotes();
                     return;
                 }
                 console.error(e);
@@ -1092,13 +1171,115 @@
         }
 
         let currentSlug = null;
+        let categorySortMode = 'popularity';
+
+        function modelPopularityScore(m) {
+            // Prefer real source download counts; fall back to rating volume / likes
+            const downloads = Number(m.downloads) || 0;
+            const likes = Number(m.likes) || 0;
+            const ratingCount = (m.rating && m.rating.count) ? Number(m.rating.count) : 0;
+            const ratingValue = (m.rating && m.rating.value) ? Number(m.rating.value) : 0;
+            return downloads * 10 + likes * 3 + ratingCount * 20 + ratingValue * 5;
+        }
+
+        function modelPublishedTs(m) {
+            if (m.published) {
+                const t = Date.parse(m.published);
+                if (!isNaN(t)) return t;
+            }
+            // Fallback chronological proxy from source listing IDs (Printables / Thingiverse)
+            const pl = (m.link || '').match(/printables\.com\/model\/(\d+)/i);
+            if (pl) return Number(pl[1]);
+            const tv = (m.link || '').match(/thingiverse\.com\/thing:(\d+)/i);
+            if (tv) return Number(tv[1]);
+            return 0;
+        }
+
+        function modelFileSize(m) {
+            const n = Number(m.fileSize);
+            return isNaN(n) ? -1 : n;
+        }
+
+        function formatFileSize(bytes) {
+            const n = Number(bytes);
+            if (!n || n < 0) return null;
+            if (n >= 1048576) return (n / 1048576).toFixed(1) + ' MB';
+            if (n >= 1024) return Math.round(n / 1024) + ' KB';
+            return n + ' B';
+        }
+
+        function sortCategoryModels(models, mode) {
+            const list = models.slice();
+            const missingLast = (has, score) => (has ? 0 : 1);
+            list.sort((a, b) => {
+                if (mode === 'popularity') {
+                    return modelPopularityScore(b) - modelPopularityScore(a) || String(a.title).localeCompare(String(b.title));
+                }
+                if (mode === 'rating') {
+                    const ar = a.rating ? a.rating.value : -1;
+                    const br = b.rating ? b.rating.value : -1;
+                    const ac = a.rating ? a.rating.count : 0;
+                    const bc = b.rating ? b.rating.count : 0;
+                    return missingLast(b.rating, 0) - missingLast(a.rating, 0) || br - ar || bc - ac;
+                }
+                if (mode === 'newest') {
+                    return modelPublishedTs(b) - modelPublishedTs(a);
+                }
+                if (mode === 'oldest') {
+                    const at = modelPublishedTs(a), bt = modelPublishedTs(b);
+                    // push unknowns last
+                    if (!at && !bt) return 0;
+                    if (!at) return 1;
+                    if (!bt) return -1;
+                    return at - bt;
+                }
+                if (mode === 'filesize-desc' || mode === 'filesize-asc') {
+                    const as = modelFileSize(a), bs = modelFileSize(b);
+                    const aMissing = as < 0, bMissing = bs < 0;
+                    if (aMissing && bMissing) return 0;
+                    if (aMissing) return 1;
+                    if (bMissing) return -1;
+                    return mode === 'filesize-desc' ? (bs - as) : (as - bs);
+                }
+                if (mode === 'name-asc') return String(a.title).localeCompare(String(b.title));
+                if (mode === 'name-desc') return String(b.title).localeCompare(String(a.title));
+                if (mode === 'mv-votes') {
+                    const av = getModelVotes(a.id), bv = getModelVotes(b.id);
+                    const an = (av.up - av.down), bn = (bv.up - bv.down);
+                    return bn - an || (bv.up + bv.down) - (av.up + av.down);
+                }
+                return modelPopularityScore(b) - modelPopularityScore(a);
+            });
+            return list;
+        }
+
+        function updateSortNote(mode) {
+            const el = document.getElementById('categorySortNote');
+            if (!el) return;
+            const notes = {
+                popularity: 'Sorted by popularity using download counts, likes, and ratings from the original listing sites.',
+                rating: 'Sorted by average community rating from the source site (models without ratings last).',
+                newest: 'Sorted by release / publish date from the source site when available.',
+                oldest: 'Sorted by oldest release date from the source site when available.',
+                'filesize-desc': 'Sorted by total model file size from the source listing (largest first).',
+                'filesize-asc': 'Sorted by total model file size from the source listing (smallest first).',
+                'name-asc': 'Sorted alphabetically by model name.',
+                'name-desc': 'Sorted reverse-alphabetically by model name.',
+                'mv-votes': 'Sorted by ModelVault visitor votes (signed-in votes on this site).'
+            };
+            el.textContent = notes[mode] || notes.popularity;
+        }
 
         function renderCategoryPage(slug) {
             currentSlug = slug;
             const cat = categories.find(c => c.slug === slug);
             const list = document.getElementById('categoryPageList');
             document.getElementById('categoryPageTitle').textContent = cat ? cat.title : 'Category';
-            const models = modelDirectory.filter(m => m.cats.includes(slug));
+            const sortSelect = document.getElementById('categorySortSelect');
+            if (sortSelect && sortSelect.value) categorySortMode = sortSelect.value;
+            updateSortNote(categorySortMode);
+            let models = modelDirectory.filter(m => m.cats.includes(slug));
+            models = sortCategoryModels(models, categorySortMode);
             if (models.length === 0) {
                 list.innerHTML = '<p class="no-results">No models added to this category yet — check back soon.</p>';
                 return;
@@ -1119,19 +1300,26 @@
                 const voteHint = locked
                     ? 'You already voted on this model'
                     : (mvUser ? 'Cast your one vote' : 'Sign in free to vote');
+                const popBits = [];
+                if (m.downloads) popBits.push(Number(m.downloads).toLocaleString() + ' downloads');
+                if (m.likes) popBits.push(Number(m.likes).toLocaleString() + ' likes');
+                if (m.published) popBits.push('Released ' + m.published);
+                const fs = formatFileSize(m.fileSize);
+                if (fs) popBits.push(fs + ' files');
+                const metaLine = popBits.length ? popBits.join(' · ') : ratingHtml;
                 return `
                 <div class="model-bar${isExpanded ? ' expanded' : ''}" data-id="${m.id}">
                     <div class="model-bar-top" onclick="toggleExpand('${m.id}')">
                         <img src="${m.thumb}" alt="${m.title}" loading="lazy">
                         <div class="model-bar-info">
                             <div class="model-bar-title">${m.title}</div>
-                            <div class="model-bar-rating">${ratingHtml}</div>
+                            <div class="model-bar-rating">${metaLine}</div>
                         </div>
                         <div class="model-bar-actions">
                             <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();"><span class="label">Download</span></button>
                             <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${m.id}','up'); event.stopPropagation();">Up <span class="vote-count">${v.up}</span></button>
                             <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${m.id}','down'); event.stopPropagation();">Down <span class="vote-count">${v.down}</span></button>
-                            <span class="bar-control mv-rating" title="ModelVault score from signed-in visitor votes">MV ${mvRating}</span>
+                            <span class="bar-control mv-rating" title="Live ModelVault score — global votes from all signed-in visitors">MV ${mvRating}</span>
                         </div>
                     </div>
                     <div class="model-bar-expand">
@@ -1141,6 +1329,10 @@
                             <span class="expand-source">Source: ${source}</span>
                             <div class="expand-details">
                                 <span class="expand-chip">${ratingHtml}</span>
+                                ${m.downloads ? '<span class="expand-chip">' + Number(m.downloads).toLocaleString() + ' downloads</span>' : ''}
+                                ${m.likes ? '<span class="expand-chip">' + Number(m.likes).toLocaleString() + ' likes</span>' : ''}
+                                ${m.published ? '<span class="expand-chip">Released ' + m.published + '</span>' : ''}
+                                ${fs ? '<span class="expand-chip">' + fs + ' total files</span>' : ''}
                                 <span class="expand-chip">MV ${mvRating} (${v.up} up / ${v.down} down)</span>
                                 ${v.mine ? '<span class="expand-chip">Your vote: ' + (v.mine === 'up' ? 'up' : 'down') + ' (locked)</span>' : '<span class="expand-chip">Sign in free to vote · one vote per model</span>'}
                             </div>
@@ -1383,6 +1575,13 @@
         }
         document.getElementById('backLink').addEventListener('click', () => { location.hash = ''; });
         window.addEventListener('hashchange', routeFromHash);
+        const categorySortSelect = document.getElementById('categorySortSelect');
+        if (categorySortSelect) {
+            categorySortSelect.addEventListener('change', () => {
+                categorySortMode = categorySortSelect.value || 'popularity';
+                if (currentSlug) renderCategoryPage(currentSlug);
+            });
+        }
 
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('keyup', (e) => {
