@@ -60,6 +60,24 @@
         .boost-btn.secondary { background: #3b82f6; color: #fff; margin-top: 10px; }
         .boost-btn.secondary:hover { background: #2563eb; }
         .boost-btn.disabled { opacity: 0.55; pointer-events: none; }
+        .square-checkout-wrap { margin-top: 4px; }
+        .square-pay-btn {
+            display: block;
+            font-size: 1.05em;
+            line-height: 48px;
+            height: 48px;
+            color: #fff !important;
+            background-color: #006aff;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 700;
+            box-shadow: 0 0 0 1px rgba(0,0,0,.1) inset;
+            border-radius: 10px;
+            width: 100%;
+            box-sizing: border-box;
+            font-family: SQ Market, Helvetica, Arial, sans-serif;
+        }
+        .square-pay-btn:hover { background-color: #0052cc; color: #fff !important; }
         .paid-badge { display: inline-block; background: rgba(16,185,129,0.22); color: #6ee7b7; font-size: 0.72em; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; padding: 3px 10px; border-radius: 9999px; }
         .paid-price { font-size: 1.35em; font-weight: 700; color: #e0f2fe; margin: 4px 0 8px; }
         .paid-price span { font-size: 0.55em; font-weight: 500; color: #94a3b8; }
@@ -496,14 +514,21 @@
                     <li>You set the price and deliver the files</li>
                 </ul>
                 <div class="boost-price">$12 <span>/ month</span></div>
-                <a class="boost-btn" id="creatorSubBtn" href="#creatorListForm">Subscribe as Creator</a>
+                <div class="square-checkout-wrap">
+                    <a id="embedded-checkout-modal-checkout-button"
+                       class="square-pay-btn"
+                       target="_blank"
+                       rel="noopener"
+                       data-url="https://square.link/u/soifdoLq?src=embd"
+                       href="https://square.link/u/soifdoLq?src=embed">Subscribe as Creator</a>
+                </div>
             </div>
             <div class="boost-card">
                 <h3>What you provide</h3>
                 <ul class="creator-perks">
                     <li>Title, cover image URL, short description</li>
                     <li>Your price (USD)</li>
-                    <li>Checkout link (Stripe, Gumroad, Payhip, etc.)</li>
+                    <li>Checkout link (Square, Stripe, Gumroad, Payhip, etc.)</li>
                     <li>Creator subscription status (subscribed, or need a payment link)</li>
                 </ul>
                 <p style="color:#94a3b8;font-size:0.9em;margin:0;">We review every listing before it goes live.</p>
@@ -1162,7 +1187,7 @@
             amazonTag: "modelvault00-20",
             // Your sitewide Amazon affiliate short link
             amazonStoreLink: "https://amzn.to/4vIi97k",
-            stripeCreatorSubPaymentLink: "https://square.link/u/soifdoLq", // Creator Sub checkout (Square)
+            stripeCreatorSubPaymentLink: "https://square.link/u/soifdoLq?src=embed", // Creator Sub (Square Payment Link)
             creatorSubPriceLabel: "$12 / month",
             // Gear products — amazon:true appends your Associates tag to amazon.com URLs
             // image URLs pulled from the linked Amazon product / search results
@@ -1311,22 +1336,36 @@
         }
 
         function wireCreatorSub() {
-            const btn = document.getElementById('creatorSubBtn');
+            // Square Payment Link embed: open checkout in a centered popup window
+            const btn = document.getElementById('embedded-checkout-modal-checkout-button');
             if (!btn) return;
-            const link = monetization.stripeCreatorSubPaymentLink;
+            const link = monetization.stripeCreatorSubPaymentLink || btn.getAttribute('href');
             if (link) {
-                btn.href = link;
-                btn.target = '_blank';
-                btn.rel = 'noopener';
-                btn.textContent = 'Subscribe as Creator — Checkout';
-            } else {
-                btn.href = '#creatorListForm';
-                btn.textContent = 'Subscribe (add payment link in site config)';
+                btn.href = link.indexOf('src=') >= 0 ? link : (link + (link.indexOf('?') >= 0 ? '&' : '?') + 'src=embed');
+                const embd = btn.href.replace('src=embed', 'src=embd');
+                btn.setAttribute('data-url', embd);
             }
-            const priceEl = document.querySelector('#creators .boost-price');
-            if (priceEl && monetization.creatorSubPriceLabel) {
-                // keep static HTML price unless we want dynamic — optional
-            }
+            btn.addEventListener('click', function showCheckoutWindow(e) {
+                e.preventDefault();
+                const url = btn.getAttribute('data-url') || btn.href;
+                const title = 'Creator Subscription — Square Checkout';
+                const topWindow = window.top ? window.top : window;
+                const dualScreenLeft = topWindow.screenLeft !== undefined ? topWindow.screenLeft : topWindow.screenX;
+                const dualScreenTop = topWindow.screenTop !== undefined ? topWindow.screenTop : topWindow.screenY;
+                const width = topWindow.innerWidth || document.documentElement.clientWidth || screen.width;
+                const height = topWindow.innerHeight || document.documentElement.clientHeight || screen.height;
+                const h = height * 0.75;
+                const w = 500;
+                const systemZoom = width / topWindow.screen.availWidth;
+                const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+                const top = (height - h) / 2 / systemZoom + dualScreenTop;
+                const newWindow = window.open(
+                    url,
+                    title,
+                    'scrollbars=yes, width=' + (w / systemZoom) + ', height=' + (h / systemZoom) + ', top=' + top + ', left=' + left
+                );
+                if (newWindow && window.focus) newWindow.focus();
+            });
         }
 
         function wireCreatorListForm() {
