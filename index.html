@@ -100,7 +100,12 @@
 
         .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
         form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 60px auto; }
-        input, textarea { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
+        input, textarea, select { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
+        select { cursor: pointer; appearance: auto; }
+        select option { background: #1e2937; color: #e0f2fe; }
+        .submit-type-hint { color: #94a3b8; font-size: 0.9em; margin: -4px 0 8px; line-height: 1.45; }
+        .paid-only-fields { display: none; }
+        .paid-only-fields.show { display: block; }
         button { background: #3b82f6; color: white; padding: 16px; border: none; border-radius: 10px; font-size: 1.1em; cursor: pointer; width: 100%; font-weight: 600; }
         footer { background: #020617; padding: 70px 40px 40px; text-align: center; font-size: 0.95em; color: #64748b; }
         .form-status { display: none; text-align: center; padding: 16px; border-radius: 10px; margin-top: 12px; font-weight: 600; }
@@ -492,9 +497,9 @@
         <p class="section-sub">Models sold by creators who list on ModelVault. When you buy, you check out with the creator and get the files from them. Free models are still free in the sections above.</p>
         <div class="hosting-note">
             <strong style="color:#bae6fd;">How it works:</strong>
-            Creators pay a monthly Creator subscription, then submit a listing (cover image, price, description, and their checkout link — Stripe, Gumroad, and similar).
+            Creators pay a monthly Creator subscription, then submit a listing (cover image, price, description, and their checkout link).
             ModelVault shows the listing; the creator handles payment and file delivery.
-            Subscribe, then use the form under <a href="#creators" style="color:#93c5fd;">Creators</a> to submit a model.
+            <a href="#creators" style="color:#93c5fd;">Subscribe</a>, then use <a href="#submit" style="color:#93c5fd;">Submit a Model</a> and choose Paid listing.
         </div>
         <div class="gear-grid" id="paidModelsGrid">
             <!-- Populated by JS from paidModels catalog -->
@@ -543,22 +548,7 @@
                 </ul>
             </div>
         </div>
-        <h2 style="font-size:1.5em;margin-top:10px;">List a paid model</h2>
-        <p class="section-sub" style="margin-top:0;">After you subscribe, send your listing details. We review and publish approved models here.</p>
-        <form id="creatorListForm" action="https://formspree.io/f/mkodrdjo" method="POST">
-            <input type="hidden" name="_subject" value="ModelVault Paid Model Listing (Creator Sub)">
-            <input type="text" name="creator_name" placeholder="Creator / brand name" required>
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="text" name="model_title" placeholder="Model title" required>
-            <input type="url" name="cover_image_url" placeholder="Cover image URL (https://...)" required>
-            <input type="url" name="buy_url" placeholder="Checkout / file delivery URL (Stripe, Gumroad, etc.)" required>
-            <input type="text" name="price_usd" placeholder="Price USD (e.g. 8)" required>
-            <input type="text" name="category" placeholder="Category (tabletop, cosplay, organizers...)">
-            <textarea name="description" rows="5" placeholder="Short description for buyers" required maxlength="800"></textarea>
-            <input type="text" name="subscription_status" placeholder="Creator Sub status (subscribed / need link)">
-            <button type="submit" id="creatorListBtn">Submit paid listing</button>
-            <div class="form-status" id="creatorListStatus"></div>
-        </form>
+        <p class="section-sub" style="margin-top:8px;">After you subscribe, list your models with <a href="#submit" style="color:#93c5fd;">Submit a Model</a> (choose Paid listing).</p>
     </div>
 
     <div class="section home-section" id="gear">
@@ -573,19 +563,36 @@
     <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
-            <p style="margin: 0;">ModelVault is a curated directory of free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Browse by category or check Featured and Popular picks — every free model links to the original creator’s page. Sign in free to vote once per model. Submit free models below, or join as a Creator to list paid models. Some gear links are affiliate links.</p>
+            <p style="margin: 0;">ModelVault is a curated directory of free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Browse by category or check Featured and Popular picks — every free model links to the original creator’s page. Sign in free to vote once per model. Use Submit a Model for free or paid listings, or join as a Creator to sell paid models. Some gear links are affiliate links.</p>
         </div>
     </div>
 
     <div class="section home-section" id="submit">
         <h2>Submit a Model</h2>
+        <p class="section-sub">One form for free directory listings and paid Creator listings. Paid models need an active Creator subscription.</p>
         <form id="submitForm" action="https://formspree.io/f/mkodrdjo" method="POST">
-            <input type="text" name="model_name" placeholder="Model Name" required>
-            <input type="url" name="model_link" placeholder="Direct Link" required>
-            <input type="text" name="category" placeholder="Category">
-            <textarea id="description" name="description" rows="5" placeholder="Describe the model and why it's great (e.g. 'Highly detailed goblin with great supports and multiple poses')" required maxlength="300"></textarea>
-            <div class="char-count" id="charCount">300 characters remaining</div>
-            <input type="hidden" name="_subject" value="New Model Submission to ModelVault">
+            <select id="listingType" name="listing_type" required aria-label="Listing type">
+                <option value="free">Free model (directory listing)</option>
+                <option value="paid">Paid model (Creator listing)</option>
+            </select>
+            <p class="submit-type-hint" id="submitTypeHint">Link to an existing free model on Printables, Thingiverse, MakerWorld, etc.</p>
+
+            <input type="text" name="model_name" id="modelName" placeholder="Model name" required>
+            <input type="email" name="email" id="submitEmail" placeholder="Your email" required>
+            <input type="url" name="model_link" id="modelLink" placeholder="Model page URL (https://...)" required>
+            <input type="text" name="category" placeholder="Category (optional)">
+            <textarea id="description" name="description" rows="5" placeholder="Short description" required maxlength="800"></textarea>
+            <div class="char-count" id="charCount">800 characters remaining</div>
+
+            <div class="paid-only-fields" id="paidOnlyFields">
+                <input type="text" name="creator_name" id="creatorName" placeholder="Creator / brand name">
+                <input type="url" name="cover_image_url" id="coverImageUrl" placeholder="Cover image URL (https://...)">
+                <input type="url" name="buy_url" id="buyUrl" placeholder="Checkout / file delivery URL (Square, Gumroad, etc.)">
+                <input type="text" name="price_usd" id="priceUsd" placeholder="Price USD (e.g. 8)">
+                <input type="text" name="subscription_status" id="subscriptionStatus" placeholder="Creator Sub status (subscribed / need link)">
+            </div>
+
+            <input type="hidden" name="_subject" id="submitSubject" value="ModelVault free model submission">
             <button type="submit" id="submitBtn">Submit to ModelVault</button>
             <div class="form-status" id="formStatus"></div>
         </form>
@@ -1265,8 +1272,8 @@
             if (!paidModels || paidModels.length === 0) {
                 grid.innerHTML = `<div class="paid-empty">
                     <p style="margin:0 0 12px 0;"><strong style="color:#bae6fd;">No paid models yet.</strong></p>
-                    <p style="margin:0;">Creators can subscribe, then submit a listing.
-                    <a href="#creators" style="color:#93c5fd;">Become a creator →</a></p>
+                    <p style="margin:0;"><a href="#creators" style="color:#93c5fd;">Subscribe as Creator</a>, then
+                    <a href="#submit" style="color:#93c5fd;">submit a paid listing →</a></p>
                 </div>`;
                 return;
             }
@@ -1326,44 +1333,10 @@
             });
         }
 
-        function wireCreatorListForm() {
-            const form = document.getElementById('creatorListForm');
-            if (!form) return;
-            const status = document.getElementById('creatorListStatus');
-            const btn = document.getElementById('creatorListBtn');
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
-                if (status) { status.className = 'form-status'; status.textContent = ''; }
-                if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
-                try {
-                    const res = await fetch(form.action, {
-                        method: 'POST',
-                        body: new FormData(form),
-                        headers: { 'Accept': 'application/json' }
-                    });
-                    if (res.ok) {
-                        form.reset();
-                        if (status) {
-                            status.textContent = 'Got it. Once your Creator subscription is confirmed, we’ll review and publish your listing.';
-                            status.className = 'form-status success';
-                        }
-                    } else { throw new Error(); }
-                } catch (err) {
-                    if (status) {
-                        status.textContent = 'Could not send. Please try again in a minute.';
-                        status.className = 'form-status error';
-                    }
-                } finally {
-                    if (btn) { btn.disabled = false; btn.textContent = 'Submit paid listing'; }
-                }
-            });
-        }
-
         function initMonetization() {
             renderGear();
             renderPaidModels();
             wireCreatorSub();
-            wireCreatorListForm();
         }
 
         function escapeHtml(str) {
@@ -1433,20 +1406,56 @@
         renderCategories();
         routeFromHash();
 
-        // Character counter for description field
+        // Character counter + free/paid listing toggle for the single submit form
         const description = document.getElementById('description');
         const charCount = document.getElementById('charCount');
-        description.addEventListener('input', () => {
-            charCount.textContent = `${300 - description.value.length} characters remaining`;
-        });
+        const listingType = document.getElementById('listingType');
+        const paidOnlyFields = document.getElementById('paidOnlyFields');
+        const submitTypeHint = document.getElementById('submitTypeHint');
+        const submitSubject = document.getElementById('submitSubject');
+        const maxDesc = 800;
+        const paidFieldIds = ['creatorName', 'coverImageUrl', 'buyUrl', 'priceUsd'];
+
+        function updateListingTypeUI() {
+            const paid = listingType && listingType.value === 'paid';
+            if (paidOnlyFields) paidOnlyFields.classList.toggle('show', paid);
+            if (submitTypeHint) {
+                submitTypeHint.textContent = paid
+                    ? 'For paid Creator listings. Include your checkout link and cover image. Active Creator Sub required.'
+                    : 'Link to an existing free model on Printables, Thingiverse, MakerWorld, etc.';
+            }
+            if (submitSubject) {
+                submitSubject.value = paid
+                    ? 'ModelVault paid model listing (Creator Sub)'
+                    : 'ModelVault free model submission';
+            }
+            paidFieldIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                if (paid) el.setAttribute('required', 'required');
+                else {
+                    el.removeAttribute('required');
+                    el.classList.remove('invalid');
+                }
+            });
+        }
+        if (listingType) {
+            listingType.addEventListener('change', updateListingTypeUI);
+            updateListingTypeUI();
+        }
+        if (description && charCount) {
+            description.addEventListener('input', () => {
+                charCount.textContent = `${maxDesc - description.value.length} characters remaining`;
+            });
+        }
 
         // Submit form via AJAX so visitors stay on the page and see a status message
         const form = document.getElementById('submitForm');
         const status = document.getElementById('formStatus');
         const submitBtn = document.getElementById('submitBtn');
-        form.addEventListener('submit', async (e) => {
+        if (form) form.addEventListener('submit', async (e) => {
             e.preventDefault();
-            status.className = 'form-status';
+            if (status) status.className = 'form-status';
 
             // Client-side validation: highlight any invalid required fields
             let valid = true;
@@ -1459,13 +1468,17 @@
                 }
             });
             if (!valid) {
-                status.textContent = 'Please fix the highlighted fields.';
-                status.className = 'form-status error';
+                if (status) {
+                    status.textContent = 'Please fix the highlighted fields.';
+                    status.className = 'form-status error';
+                }
                 return;
             }
 
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Submitting...';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+            }
             try {
                 const res = await fetch(form.action, {
                     method: 'POST',
@@ -1473,17 +1486,27 @@
                     headers: { 'Accept': 'application/json' }
                 });
                 if (res.ok) {
+                    const wasPaid = listingType && listingType.value === 'paid';
                     form.reset();
-                    charCount.textContent = '300 characters remaining';
-                    status.textContent = 'Thanks — your model was submitted for review.';
-                    status.className = 'form-status success';
+                    updateListingTypeUI();
+                    if (charCount) charCount.textContent = maxDesc + ' characters remaining';
+                    if (status) {
+                        status.textContent = wasPaid
+                            ? 'Got it. Once your Creator subscription is confirmed, we’ll review and publish your listing.'
+                            : 'Thanks — your model was submitted for review.';
+                        status.className = 'form-status success';
+                    }
                 } else { throw new Error(); }
             } catch {
-                status.textContent = 'Something went wrong. Please try again in a minute.';
-                status.className = 'form-status error';
+                if (status) {
+                    status.textContent = 'Something went wrong. Please try again in a minute.';
+                    status.className = 'form-status error';
+                }
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'Submit to ModelVault';
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Submit to ModelVault';
+                }
             }
         });
     </script>
