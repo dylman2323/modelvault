@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModelVault • Free 3D Models</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
         
@@ -27,6 +28,20 @@
         input, textarea { width: 100%; padding: 14px; margin: 10px 0; background: #1e2937; border: none; border-radius: 8px; color: white; }
         button { background: #3b82f6; color: white; padding: 14px 32px; border: none; border-radius: 8px; font-size: 1.1em; cursor: pointer; width: 100%; }
         footer { background: #020617; padding: 60px 40px 30px; text-align: center; font-size: 0.95em; color: #64748b; }
+        .form-status { display: none; text-align: center; padding: 16px; border-radius: 8px; margin-top: 10px; font-weight: 600; }
+        .form-status.success { display: block; background: #14532d; color: #bbf7d0; }
+        .form-status.error { display: block; background: #7f1d1d; color: #fecaca; }
+        @media (max-width: 640px) {
+            nav { padding: 14px 20px; flex-direction: column; gap: 10px; }
+            .nav-links a { margin: 0 10px; }
+            header { padding: 90px 16px 70px; }
+            h1 { font-size: 2.4em; }
+            .tagline { font-size: 1.1em; }
+            .search { font-size: 1em; padding: 16px 22px; }
+            .section { margin: 50px auto; padding: 0 20px; }
+            .category-grid { grid-template-columns: 1fr; }
+            form { padding: 24px; }
+        }
     </style>
 </head>
 <body>
@@ -43,7 +58,7 @@
     <header>
         <h1>ModelVault</h1>
         <p class="tagline">Curated collection of the best free 3D printable models</p>
-        <input type="text" class="search" placeholder="What are you looking to print today?">
+        <input type="text" class="search" id="search" placeholder="What are you looking to print today? (Enter to search Printables)">
     </header>
 
     <div class="section">
@@ -85,8 +100,48 @@
             <textarea name="description" rows="5" placeholder="Short description or why it's great" required></textarea>
             <input type="hidden" name="_subject" value="New Model Submission to ModelVault">
             <button type="submit">Submit Model</button>
+            <div class="form-status" id="form-status"></div>
         </form>
     </div>
+
+    <script>
+        // Search: typing filters category cards; Enter searches Printables
+        const search = document.getElementById('search');
+        const cards = document.querySelectorAll('.category-grid .card');
+        search.addEventListener('input', () => {
+            const q = search.value.trim().toLowerCase();
+            cards.forEach(c => { c.style.display = c.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+        });
+        search.addEventListener('keydown', e => {
+            const q = search.value.trim();
+            if (e.key === 'Enter' && q) {
+                window.open('https://www.printables.com/search/models?q=' + encodeURIComponent(q), '_blank');
+            }
+        });
+
+        // Submit form via AJAX so visitors stay on the page
+        const form = document.querySelector('form');
+        const status = document.getElementById('form-status');
+        form.addEventListener('submit', async e => {
+            e.preventDefault();
+            status.className = 'form-status';
+            try {
+                const res = await fetch(form.action, {
+                    method: 'POST',
+                    body: new FormData(form),
+                    headers: { 'Accept': 'application/json' }
+                });
+                if (res.ok) {
+                    form.reset();
+                    status.textContent = 'Thanks! Your model was submitted for review. 🎉';
+                    status.className = 'form-status success';
+                } else { throw new Error(); }
+            } catch {
+                status.textContent = 'Something went wrong — please try again in a minute.';
+                status.className = 'form-status error';
+            }
+        });
+    </script>
 
     <footer>
         <p>&copy; 2026 ModelVault • Curated free 3D models from across the web</p>
