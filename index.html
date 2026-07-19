@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModelVault • Free 3D Models</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><text y=%22.9em%22 font-size=%2290%22></text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><text y=%22.9em%22 font-size=%2290%22></text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
 
@@ -38,6 +38,31 @@
         .section-sub { text-align: center; color: #94a3b8; margin: -24px auto 36px; max-width: 720px; line-height: 1.5; }
         .popular-badge { display: inline-block; background: rgba(59,130,246,0.25); color: #93c5fd; font-size: 0.75em; font-weight: 600; padding: 3px 10px; border-radius: 9999px; margin-bottom: 8px; }
         .popular-grid .featured-card { min-height: 300px; }
+        .sponsor-badge { display: inline-block; background: rgba(234,179,8,0.22); color: #fde68a; font-size: 0.72em; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; padding: 3px 10px; border-radius: 9999px; margin-bottom: 8px; }
+        .sponsored-card { outline: 1px solid rgba(234,179,8,0.35); }
+        .sponsored-card:hover { box-shadow: 0 25px 50px rgba(234, 179, 8, 0.2); }
+        .gear-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 22px; }
+        .gear-card { background: #172554; border-radius: 16px; padding: 22px; text-decoration: none; color: inherit; box-shadow: 0 12px 28px rgba(0,0,0,0.4); transition: transform 0.2s, box-shadow 0.2s; display: flex; flex-direction: column; gap: 10px; }
+        .gear-card:hover { transform: translateY(-6px); box-shadow: 0 18px 40px rgba(59,130,246,0.3); }
+        .gear-card h3 { margin: 0; font-size: 1.15em; color: #bae6fd; }
+        .gear-card p { margin: 0; color: #94a3b8; font-size: 0.92em; line-height: 1.5; flex: 1; }
+        .gear-meta { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 6px; }
+        .gear-price { color: #93c5fd; font-weight: 700; font-size: 0.95em; }
+        .gear-cta { background: #3b82f6; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 0.85em; font-weight: 600; }
+        .affiliate-note { text-align: center; color: #64748b; font-size: 0.85em; margin: 18px auto 0; max-width: 720px; line-height: 1.45; }
+        .boost-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 22px; max-width: 1000px; margin: 0 auto 28px; }
+        .boost-card { background: #172554; border-radius: 16px; padding: 26px; box-shadow: 0 12px 28px rgba(0,0,0,0.4); }
+        .boost-card h3 { margin: 0 0 10px 0; color: #bae6fd; font-size: 1.25em; }
+        .boost-card p { margin: 0 0 16px 0; color: #94a3b8; line-height: 1.5; font-size: 0.95em; }
+        .boost-price { font-size: 1.6em; font-weight: 700; color: #e0f2fe; margin-bottom: 14px; }
+        .boost-price span { font-size: 0.5em; font-weight: 500; color: #94a3b8; }
+        .boost-btn { display: inline-block; background: #eab308; color: #1e2937; padding: 12px 18px; border-radius: 10px; font-weight: 700; text-decoration: none; text-align: center; width: 100%; box-sizing: border-box; }
+        .boost-btn:hover { background: #facc15; }
+        .boost-btn.secondary { background: #3b82f6; color: #fff; margin-top: 10px; }
+        .boost-btn.secondary:hover { background: #2563eb; }
+        .boost-btn.disabled { opacity: 0.55; pointer-events: none; }
+        .money-banner { background: linear-gradient(135deg, #1e3a5f, #172554); border: 1px solid rgba(234,179,8,0.25); border-radius: 14px; padding: 16px 20px; margin: 0 auto 28px; max-width: 900px; text-align: center; color: #fde68a; font-size: 0.95em; }
+
         .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
         form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 60px auto; }
         input, textarea { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
@@ -132,6 +157,9 @@
         <div class="logo">ModelVault</div>
         <div class="nav-links">
             <a href="#">Home</a>
+            <a href="#popular">Popular</a>
+            <a href="#gear">Gear</a>
+            <a href="#boost">Boost</a>
             <a href="#submit">Submit Model</a>
             <a href="#about">About</a>
             <div class="nav-auth" id="authNav">
@@ -182,7 +210,18 @@
 
     <div class="section home-section">
         <h2>Featured Models</h2>
+        <p class="section-sub">Editor picks plus an optional paid <strong>Sponsored</strong> slot (always labeled).</p>
         <div class="category-grid featured-grid">
+
+            <!-- Sponsored slot (paid) — edit link/image/title in monetization config below or replace this block -->
+            <a id="sponsoredFeaturedCard" href="#boost" class="card featured-card sponsored-card" rel="sponsored noopener">
+                <img src="https://picsum.photos/id/180/1200/800" alt="Sponsored placement" loading="lazy">
+                <div class="featured-info">
+                    <span class="sponsor-badge">Sponsored</span>
+                    <h3 id="sponsoredFeaturedTitle">Your model here</h3>
+                    <p id="sponsoredFeaturedBlurb">Creators and brands can buy a Featured slot. Tap Boost to get listed.</p>
+                </div>
+            </a>
             <a href="https://www.printables.com/model/1279641-giant-mimic-dnd-mini-mimic-dd-model-dungeons-and-d" class="card featured-card" target="_blank" rel="noopener">
                 <img src="https://media.printables.com/media/prints/ffe98ad5-0a83-4bf2-8dad-81f630ae0adf/images/9626199_6bdb8f6f-74b9-4928-a5ce-216b1cfc1a89_adb29ff6-27d9-47f3-8523-0a864f2c3332/thumbs/cover/1200x630/gif/2024-07-11_5ae4c50324b4f1.gif" alt="Giant Mimic Mini" loading="lazy">
                 <div class="featured-info"><h3>Giant Mimic Mini</h3><p>Detailed D&D mimic monster miniature</p></div>
@@ -215,6 +254,15 @@
         <h2>Most Popular Free Models</h2>
         <p class="section-sub">Widely downloaded free hits from Printables and Thingiverse — community favorites with strong ratings and real listing links.</p>
         <div class="category-grid featured-grid popular-grid">
+
+            <a id="sponsoredPopularCard" href="#boost" class="card featured-card popular-card sponsored-card" rel="sponsored noopener">
+                <img src="https://picsum.photos/id/201/1200/800" alt="Sponsored popular slot" loading="lazy">
+                <div class="featured-info">
+                    <span class="sponsor-badge">Sponsored</span>
+                    <h3 id="sponsoredPopularTitle">Sponsored popular pick</h3>
+                    <p id="sponsoredPopularBlurb">Paid placement under Most Popular — clearly labeled, never mixed into organic rankings.</p>
+                </div>
+            </a>
             <a href="https://www.thingiverse.com/thing:763622" class="card featured-card popular-card" target="_blank" rel="noopener">
                 <img src="https://cdn.thingiverse.com/assets/ee/dc/9a/fb/74/1_3D-printed_3DBenchy_by_Creative-Tools.com.JPG" alt="#3DBenchy - The jolly 3D printing torture-test" loading="lazy">
                 <div class="featured-info">
@@ -418,10 +466,58 @@
         </div>
     </div>
 
+
+    <div class="section home-section" id="gear">
+        <h2>Maker Gear (Affiliate)</h2>
+        <p class="section-sub">Tools and materials makers actually buy. Links may earn ModelVault a small commission at no extra cost to you.</p>
+        <div class="gear-grid" id="gearGrid">
+            <!-- Populated by JS from monetization.gear -->
+        </div>
+        <p class="affiliate-note" id="affiliateNote">As an Amazon Associate (and similar programs), ModelVault may earn from qualifying purchases. Replace placeholder links with your affiliate URLs in the site config.</p>
+    </div>
+
+    <div class="section home-section" id="boost">
+        <h2>Boost &amp; Sponsored Placement</h2>
+        <p class="section-sub">Put your free model in front of makers. Clear labels — we never fake organic popularity.</p>
+        <div class="money-banner" id="boostBanner">
+            Stripe Payment Links + Formspree power this section. Add your Payment Link URLs in the monetization config to enable checkout.
+        </div>
+        <div class="boost-grid">
+            <div class="boost-card">
+                <h3>Featured Slot</h3>
+                <p>One week on the Featured Models row with a Sponsored badge. Best for launches and big free drops.</p>
+                <div class="boost-price">$29 <span>/ week</span></div>
+                <a class="boost-btn" id="boostFeaturedBtn" href="#boost" target="_blank" rel="noopener">Buy Featured Slot</a>
+            </div>
+            <div class="boost-card">
+                <h3>Popular Row Slot</h3>
+                <p>One week under Most Popular Free Models (Sponsored badge). High visibility without faking download ranks.</p>
+                <div class="boost-price">$39 <span>/ week</span></div>
+                <a class="boost-btn" id="boostPopularBtn" href="#boost" target="_blank" rel="noopener">Buy Popular Slot</a>
+            </div>
+            <div class="boost-card">
+                <h3>Model Boost Request</h3>
+                <p>Already paid or want a custom package? Send your model link and we will queue it for a paid spotlight.</p>
+                <div class="boost-price">Custom <span>via form</span></div>
+                <a class="boost-btn secondary" href="#boostForm">Request a Boost</a>
+            </div>
+        </div>
+        <form id="boostForm" action="https://formspree.io/f/mkodrdjo" method="POST">
+            <input type="hidden" name="_subject" value="ModelVault Boost / Sponsored Request">
+            <input type="text" name="creator_name" placeholder="Your name or brand" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="url" name="model_link" placeholder="Model listing URL (Printables, Thingiverse, etc.)" required>
+            <input type="text" name="package" placeholder="Package (Featured / Popular / Custom)">
+            <textarea name="notes" rows="4" placeholder="Notes: dates, budget, campaign goals" maxlength="500"></textarea>
+            <button type="submit" id="boostSubmitBtn">Send boost request</button>
+            <div class="form-status" id="boostFormStatus"></div>
+        </form>
+    </div>
+
     <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
-            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below and we'll add it to the vault.</p>
+            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below — or use Boost for a paid Sponsored spotlight. Gear links may use affiliate programs.</p>
         </div>
     </div>
 
@@ -1005,6 +1101,207 @@
             list.dataset.expandedId = wasExpanded ? '' : modelId;
             list.querySelectorAll('.model-bar.expanded').forEach(b => b.classList.remove('expanded'));
             if (!wasExpanded) bar.classList.add('expanded');
+        }
+
+        
+        // === Monetization config — fill these in to go live ===
+        // Amazon Associates: create a tag, then wrap product URLs with tag=YOURTAG-20
+        // Stripe: Dashboard → Payment Links → create products, paste URLs below
+        const monetization = {
+            amazonTag: "modelvault-20", // TODO: replace with your Amazon Associates tag
+            stripeFeaturedPaymentLink: "", // e.g. https://buy.stripe.com/xxxx
+            stripePopularPaymentLink: "",  // e.g. https://buy.stripe.com/yyyy
+            // Optional: live sponsored creatives (leave empty to keep default "Your model here" cards)
+            sponsoredFeatured: {
+                enabled: true,
+                href: "#boost",
+                title: "Your model here",
+                blurb: "Creators and brands can buy a Featured slot. Tap Boost to get listed.",
+                image: "https://picsum.photos/id/180/1200/800"
+            },
+            sponsoredPopular: {
+                enabled: true,
+                href: "#boost",
+                title: "Sponsored popular pick",
+                blurb: "Paid placement under Most Popular — clearly labeled.",
+                image: "https://picsum.photos/id/201/1200/800"
+            },
+            // Gear products — use real product URLs; amazonTag is appended when domain is amazon.
+            gear: [
+                {
+                    title: "PLA+ Filament (1kg)",
+                    blurb: "Reliable everyday filament for organizers, minis, and functional prints.",
+                    price: "Shop filament",
+                    url: "https://www.amazon.com/s?k=pla+plus+filament+1kg",
+                    amazon: true
+                },
+                {
+                    title: "PETG Filament",
+                    blurb: "Tougher parts, phone stands, and outdoor-ready prints.",
+                    price: "Shop PETG",
+                    url: "https://www.amazon.com/s?k=petg+filament+1kg",
+                    amazon: true
+                },
+                {
+                    title: "Digital Calipers",
+                    blurb: "Measure real parts so Gridfinity and functional fits land first try.",
+                    price: "Shop tools",
+                    url: "https://www.amazon.com/s?k=digital+caliper",
+                    amazon: true
+                },
+                {
+                    title: "Deburring Tool + Flush Cutters",
+                    blurb: "Clean supports and edges on cosplay props and articulated toys.",
+                    price: "Shop cleanup",
+                    url: "https://www.amazon.com/s?k=3d+print+deburring+tool+flush+cutters",
+                    amazon: true
+                },
+                {
+                    title: "Build Plate / PEI Sheet",
+                    blurb: "Better first layers for fidgets, vases, and large bases.",
+                    price: "Shop plates",
+                    url: "https://www.amazon.com/s?k=pei+build+plate+3d+printer",
+                    amazon: true
+                },
+                {
+                    title: "Beginner FDM Printer",
+                    blurb: "Entry-level machine to print the free models on this site.",
+                    price: "Shop printers",
+                    url: "https://www.amazon.com/s?k=bambu+lab+a1+mini+3d+printer",
+                    amazon: true
+                }
+            ]
+        };
+
+        function withAffiliate(url, isAmazon) {
+            if (!isAmazon || !monetization.amazonTag) return url;
+            try {
+                const u = new URL(url);
+                if (!u.hostname.includes('amazon.')) return url;
+                u.searchParams.set('tag', monetization.amazonTag);
+                return u.toString();
+            } catch (e) {
+                return url;
+            }
+        }
+
+        function renderGear() {
+            const grid = document.getElementById('gearGrid');
+            if (!grid || !monetization.gear) return;
+            grid.innerHTML = monetization.gear.map(g => {
+                const href = withAffiliate(g.url, g.amazon);
+                return `<a class="gear-card" href="${href}" target="_blank" rel="noopener sponsored nofollow">
+                    <h3>${escapeHtml(g.title)}</h3>
+                    <p>${escapeHtml(g.blurb)}</p>
+                    <div class="gear-meta">
+                        <span class="gear-price">${escapeHtml(g.price || 'Shop')}</span>
+                        <span class="gear-cta">View →</span>
+                    </div>
+                </a>`;
+            }).join('');
+        }
+
+        function applySponsoredSlot(prefix, conf) {
+            const card = document.getElementById(prefix + 'Card');
+            if (!card || !conf) return;
+            if (conf.enabled === false) {
+                card.style.display = 'none';
+                return;
+            }
+            card.style.display = '';
+            card.href = conf.href || '#boost';
+            if (conf.href && conf.href.indexOf('http') === 0) {
+                card.target = '_blank';
+                card.rel = 'sponsored noopener';
+            } else {
+                card.removeAttribute('target');
+                card.rel = 'sponsored';
+            }
+            const img = card.querySelector('img');
+            if (img && conf.image) { img.src = conf.image; img.alt = conf.title || 'Sponsored'; }
+            const title = document.getElementById(prefix + 'Title');
+            const blurb = document.getElementById(prefix + 'Blurb');
+            if (title && conf.title) title.textContent = conf.title;
+            if (blurb && conf.blurb) blurb.textContent = conf.blurb;
+        }
+
+        function wireBoostButtons() {
+            const featured = document.getElementById('boostFeaturedBtn');
+            const popular = document.getElementById('boostPopularBtn');
+            const banner = document.getElementById('boostBanner');
+            const fLink = monetization.stripeFeaturedPaymentLink;
+            const pLink = monetization.stripePopularPaymentLink;
+            if (featured) {
+                if (fLink) {
+                    featured.href = fLink;
+                    featured.target = '_blank';
+                    featured.rel = 'noopener';
+                    featured.classList.remove('disabled');
+                    featured.textContent = 'Buy Featured Slot — Stripe';
+                } else {
+                    featured.href = '#boostForm';
+                    featured.textContent = 'Request Featured (set Stripe link in config)';
+                }
+            }
+            if (popular) {
+                if (pLink) {
+                    popular.href = pLink;
+                    popular.target = '_blank';
+                    popular.rel = 'noopener';
+                    popular.textContent = 'Buy Popular Slot — Stripe';
+                } else {
+                    popular.href = '#boostForm';
+                    popular.textContent = 'Request Popular (set Stripe link in config)';
+                }
+            }
+            if (banner) {
+                if (fLink || pLink) {
+                    banner.textContent = 'Checkout opens Stripe Payment Links. After payment, email your model URL so we can schedule the Sponsored card.';
+                } else {
+                    banner.textContent = 'To enable one-click checkout: create Stripe Payment Links for $29 Featured and $39 Popular, then paste them into monetization.stripeFeaturedPaymentLink / stripePopularPaymentLink in index.html. Until then, use the form below.';
+                }
+            }
+        }
+
+        function wireBoostForm() {
+            const form = document.getElementById('boostForm');
+            if (!form) return;
+            const status = document.getElementById('boostFormStatus');
+            const btn = document.getElementById('boostSubmitBtn');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (status) { status.className = 'form-status'; status.textContent = ''; }
+                if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+                try {
+                    const res = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (res.ok) {
+                        form.reset();
+                        if (status) {
+                            status.textContent = 'Request received — we will follow up by email.';
+                            status.className = 'form-status success';
+                        }
+                    } else { throw new Error(); }
+                } catch (err) {
+                    if (status) {
+                        status.textContent = 'Could not send — try again in a minute.';
+                        status.className = 'form-status error';
+                    }
+                } finally {
+                    if (btn) { btn.disabled = false; btn.textContent = 'Send boost request'; }
+                }
+            });
+        }
+
+        function initMonetization() {
+            renderGear();
+            applySponsoredSlot('sponsoredFeatured', monetization.sponsoredFeatured);
+            applySponsoredSlot('sponsoredPopular', monetization.sponsoredPopular);
+            wireBoostButtons();
+            wireBoostForm();
         }
 
         function escapeHtml(str) {
