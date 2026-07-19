@@ -1189,8 +1189,7 @@
             amazonStoreLink: "https://amzn.to/4vIi97k",
             stripeCreatorSubPaymentLink: "https://square.link/u/soifdoLq?src=embed", // Creator Sub (Square Payment Link)
             creatorSubPriceLabel: "$12 / month",
-            // Gear products — amazon:true appends your Associates tag to amazon.com URLs
-            // image URLs pulled from the linked Amazon product / search results
+            // Gear products — only your affiliate short links
             gear: [
                 {
                     title: "PLA+ Filament (1kg)",
@@ -1207,38 +1206,6 @@
                     url: "https://amzn.to/4hmAjbb",
                     image: "https://m.media-amazon.com/images/I/61QA-iT9MQL._AC_SL500_.jpg",
                     amazon: false
-                },
-                {
-                    title: "PETG Filament",
-                    blurb: "Stronger prints for phone stands and tougher parts.",
-                    price: "Shop PETG",
-                    url: "https://www.amazon.com/s?k=petg+filament+1kg",
-                    image: "https://m.media-amazon.com/images/I/81PbckqckEL._AC_SL500_.jpg",
-                    amazon: true
-                },
-                {
-                    title: "Digital Calipers",
-                    blurb: "Measure parts so organizers and mounts fit the first time.",
-                    price: "Shop tools",
-                    url: "https://www.amazon.com/s?k=digital+caliper",
-                    image: "https://m.media-amazon.com/images/I/61zdzua%2BT6L._AC_SL500_.jpg",
-                    amazon: true
-                },
-                {
-                    title: "Deburring Tool + Flush Cutters",
-                    blurb: "Clean up supports and edges on props and articulated toys.",
-                    price: "Shop cleanup",
-                    url: "https://www.amazon.com/s?k=3d+print+deburring+tool+flush+cutters",
-                    image: "https://m.media-amazon.com/images/I/71E0g3slHdL._AC_SL500_.jpg",
-                    amazon: true
-                },
-                {
-                    title: "Build Plate / PEI Sheet",
-                    blurb: "Improve first-layer stick for fidgets, vases, and large prints.",
-                    price: "Shop plates",
-                    url: "https://www.amazon.com/s?k=pei+build+plate+3d+printer",
-                    image: "https://m.media-amazon.com/images/I/5107yAj90YL._AC_SL500_.jpg",
-                    amazon: true
                 },
                 {
                     title: "High Quality Starter 3D Printer",
@@ -1288,8 +1255,7 @@
             }).join('');
             const note = document.getElementById('affiliateNote');
             if (note) {
-                note.innerHTML = 'As an Amazon Associate, ModelVault earns from qualifying purchases. Main shop link: <a href="' +
-                    (monetization.amazonStoreLink || '#') + '" target="_blank" rel="noopener sponsored nofollow" style="color:#93c5fd;">amzn.to storefront</a>.';
+                note.textContent = 'As an Amazon Associate, ModelVault earns from qualifying purchases.';
             }
         }
 
