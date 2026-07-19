@@ -25,6 +25,11 @@
         .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4); }
         .card h3 { font-size: 1.7em; margin: 0 0 14px 0; color: #bae6fd; }
         .card p { color: #94a3b8; line-height: 1.55; }
+        .card.category-photo { padding: 0; position: relative; overflow: hidden; }
+        .card.category-photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+        .category-overlay { position: relative; z-index: 1; padding: 32px; height: 100%; box-sizing: border-box; background: linear-gradient(rgba(10,15,28,0.55), rgba(10,15,28,0.78)); }
+        .category-overlay h3 { margin: 0 0 16px 0; }
+        .category-overlay p { margin: 0; }
         .featured-card { padding: 0; overflow: hidden; position: relative; min-height: 320px; display: flex; align-items: flex-end; }
         .featured-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
         .featured-info { position: relative; z-index: 1; width: 100%; padding: 24px; background: linear-gradient(to top, rgba(10,15,28,0.95) 30%, rgba(10,15,28,0.4) 75%, transparent); }
@@ -138,18 +143,18 @@
 
     <script>
         const categories = [
-            {title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini"},
-            {title: "🐉 Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon"},
-            {title: "🔧 Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer"},
-            {title: "🎭 Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay"},
-            {title: "🧸 Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget"},
-            {title: "🏠 Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase"},
-            {title: "⚙️ Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical"},
-            {title: "🚀 Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi"},
-            {title: "🏰 Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain"},
-            {title: "🎲 Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower"},
-            {title: "🦖 Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal"},
-            {title: "📱 Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand"}
+            {title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
+            {title: "🐉 Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon", thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg"},
+            {title: "🔧 Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer", thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg"},
+            {title: "🎭 Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay", thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp"},
+            {title: "🧸 Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget", thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp"},
+            {title: "🏠 Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase", thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg"},
+            {title: "⚙️ Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical", thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg"},
+            {title: "🚀 Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi", thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg"},
+            {title: "🏰 Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain", thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg"},
+            {title: "🎲 Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower", thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg"},
+            {title: "🦖 Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal", thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp"},
+            {title: "📱 Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand", thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg"}
         ];
 
         function renderCategories(filtered = categories) {
@@ -164,8 +169,8 @@
                 card.href = cat.link;
                 card.target = "_blank";
                 card.rel = "noopener";
-                card.className = "card";
-                card.innerHTML = `<h3>${cat.title}</h3><p>${cat.desc}</p>`;
+                card.className = "card category-photo";
+                card.innerHTML = `<img src="${cat.thumb}" alt="${cat.title}" loading="lazy"><div class="category-overlay"><h3>${cat.title}</h3><p>${cat.desc}</p></div>`;
                 grid.appendChild(card);
             });
         }
