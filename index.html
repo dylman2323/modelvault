@@ -1108,10 +1108,13 @@
         // Amazon Associates: create a tag, then wrap product URLs with tag=YOURTAG-20
         // Stripe: Dashboard → Payment Links → create products, paste URLs below
         const monetization = {
-            amazonTag: "modelvault-20", // TODO: replace with your Amazon Associates tag
+            // Live Amazon Associates tag (from your amzn.to link)
+            amazonTag: "modelvault00-20",
+            // Your sitewide Amazon affiliate short link
+            amazonStoreLink: "https://amzn.to/4vIi97k",
             stripeFeaturedPaymentLink: "", // e.g. https://buy.stripe.com/xxxx
             stripePopularPaymentLink: "",  // e.g. https://buy.stripe.com/yyyy
-            // Optional: live sponsored creatives (leave empty to keep default "Your model here" cards)
+            // Optional: live sponsored creatives
             sponsoredFeatured: {
                 enabled: true,
                 href: "#boost",
@@ -1126,8 +1129,15 @@
                 blurb: "Paid placement under Most Popular — clearly labeled.",
                 image: "https://picsum.photos/id/201/1200/800"
             },
-            // Gear products — use real product URLs; amazonTag is appended when domain is amazon.
+            // Gear products — amazon:true appends your Associates tag to amazon.com URLs
             gear: [
+                {
+                    title: "Shop Amazon (Affiliate)",
+                    blurb: "Browse Amazon through ModelVault's affiliate link — filament, tools, printers, and more. Costs you nothing extra.",
+                    price: "Open Amazon",
+                    url: "https://amzn.to/4vIi97k",
+                    amazon: false
+                },
                 {
                     title: "PLA+ Filament (1kg)",
                     blurb: "Reliable everyday filament for organizers, minis, and functional prints.",
@@ -1174,6 +1184,9 @@
         };
 
         function withAffiliate(url, isAmazon) {
+            // Keep amzn.to / a.co short links as-is (tag is already baked in)
+            if (!url) return monetization.amazonStoreLink || '#';
+            if (/amzn\.to|a\.co\//i.test(url)) return url;
             if (!isAmazon || !monetization.amazonTag) return url;
             try {
                 const u = new URL(url);
@@ -1199,6 +1212,11 @@
                     </div>
                 </a>`;
             }).join('');
+            const note = document.getElementById('affiliateNote');
+            if (note) {
+                note.innerHTML = 'As an Amazon Associate, ModelVault earns from qualifying purchases. Primary affiliate link: <a href="' +
+                    (monetization.amazonStoreLink || '#') + '" target="_blank" rel="noopener sponsored nofollow" style="color:#93c5fd;">amzn.to storefront</a>.';
+            }
         }
 
         function applySponsoredSlot(prefix, conf) {
