@@ -25,6 +25,11 @@
         .card:hover { transform: translateY(-12px); box-shadow: 0 25px 50px rgba(59, 130, 246, 0.4); }
         .card h3 { font-size: 1.7em; margin: 0 0 14px 0; color: #bae6fd; }
         .card p { color: #94a3b8; line-height: 1.55; }
+        .featured-card { padding: 0; overflow: hidden; position: relative; min-height: 320px; display: flex; align-items: flex-end; }
+        .featured-card img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+        .featured-info { position: relative; z-index: 1; width: 100%; padding: 24px; background: linear-gradient(to top, rgba(10,15,28,0.95) 30%, rgba(10,15,28,0.4) 75%, transparent); }
+        .featured-info h3 { margin: 0 0 8px 0; font-size: 1.4em; color: #bae6fd; }
+        .featured-info p { margin: 0; color: #cbd5e1; font-size: 0.95em; }
         .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
         form { background: #172554; padding: 40px; border-radius: 20px; max-width: 700px; margin: 60px auto; }
         input, textarea { width: 100%; padding: 15px; margin: 12px 0; background: #1e2937; border: none; border-radius: 10px; color: white; font-size: 1em; box-sizing: border-box; }
@@ -77,30 +82,30 @@
 
     <div class="section">
         <h2>Featured Models</h2>
-        <div class="category-grid">
-            <a href="https://www.printables.com/model/1279641-giant-mimic-dnd-mini-mimic-dd-model-dungeons-and-d" class="card" target="_blank" rel="noopener">
-                <h3>Giant Mimic Mini</h3>
-                <p>Detailed D&D mimic monster miniature</p>
+        <div class="category-grid featured-grid">
+            <a href="https://www.printables.com/model/1279641-giant-mimic-dnd-mini-mimic-dd-model-dungeons-and-d" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/ffe98ad5-0a83-4bf2-8dad-81f630ae0adf/images/9626199_6bdb8f6f-74b9-4928-a5ce-216b1cfc1a89_adb29ff6-27d9-47f3-8523-0a864f2c3332/thumbs/cover/1200x630/gif/2024-07-11_5ae4c50324b4f1.gif" alt="Giant Mimic Mini" loading="lazy">
+                <div class="featured-info"><h3>Giant Mimic Mini</h3><p>Detailed D&D mimic monster miniature</p></div>
             </a>
-            <a href="https://www.printables.com/model/296095-female-human-dnd-mini" class="card" target="_blank" rel="noopener">
-                <h3>Female Human D&D Mini</h3>
-                <p>Posable tabletop RPG character model</p>
+            <a href="https://www.printables.com/model/296095-female-human-dnd-mini" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg" alt="Female Human D&D Mini" loading="lazy">
+                <div class="featured-info"><h3>Female Human D&D Mini</h3><p>Posable tabletop RPG character model</p></div>
             </a>
-            <a href="https://www.printables.com/model/527750-star-wars-the-mandalorian-full-costumecosplay-helm" class="card" target="_blank" rel="noopener">
-                <h3>Mandalorian Cosplay Helmet</h3>
-                <p>Full Star Wars costume helmet, wearable print</p>
+            <a href="https://www.printables.com/model/527750-star-wars-the-mandalorian-full-costumecosplay-helm" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/527750/images/4264610_85a3baaf-fddf-4657-ae5e-2d9958071553/thumbs/cover/1200x630/jpg/downloadmando.jpg" alt="Mandalorian Cosplay Helmet" loading="lazy">
+                <div class="featured-info"><h3>Mandalorian Cosplay Helmet</h3><p>Full Star Wars costume helmet, wearable print</p></div>
             </a>
-            <a href="https://www.printables.com/model/851935-dice-tower-castle-stairs" class="card" target="_blank" rel="noopener">
-                <h3>Dice Tower Castle Stairs</h3>
-                <p>Castle-themed dice tower with cascading stairs</p>
+            <a href="https://www.printables.com/model/851935-dice-tower-castle-stairs" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg" alt="Dice Tower Castle Stairs" loading="lazy">
+                <div class="featured-info"><h3>Dice Tower Castle Stairs</h3><p>Castle-themed dice tower with cascading stairs</p></div>
             </a>
-            <a href="https://www.printables.com/model/564262-portable-cable-organizer-winder" class="card" target="_blank" rel="noopener">
-                <h3>Portable Cable Organizer</h3>
-                <p>Compact winder to keep cables tangle-free</p>
+            <a href="https://www.printables.com/model/564262-portable-cable-organizer-winder" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg" alt="Portable Cable Organizer" loading="lazy">
+                <div class="featured-info"><h3>Portable Cable Organizer</h3><p>Compact winder to keep cables tangle-free</p></div>
             </a>
-            <a href="https://www.printables.com/model/187125-phone-stand" class="card" target="_blank" rel="noopener">
-                <h3>Adjustable Phone Stand</h3>
-                <p>Simple, sturdy desk phone holder</p>
+            <a href="https://www.printables.com/model/187125-phone-stand" class="card featured-card" target="_blank" rel="noopener">
+                <img src="https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg" alt="Adjustable Phone Stand" loading="lazy">
+                <div class="featured-info"><h3>Adjustable Phone Stand</h3><p>Simple, sturdy desk phone holder</p></div>
             </a>
         </div>
     </div>
