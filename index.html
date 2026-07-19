@@ -47,6 +47,28 @@
         input.invalid, textarea.invalid { border: 2px solid #ef4444 !important; box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important; }
         .char-count { text-align: right; font-size: 0.85em; color: #64748b; margin-top: -6px; }
         button:disabled { opacity: 0.6; cursor: not-allowed; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: #93c5fd; text-decoration: none; font-weight: 600; cursor: pointer; }
+        .back-link:hover { text-decoration: underline; }
+        .bar-list { display: flex; flex-direction: column; gap: 10px; }
+        .model-bar { display: flex; align-items: center; height: 72px; background: #172554; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.35); cursor: pointer; transition: transform 0.15s; }
+        .model-bar:hover { transform: translateY(-2px); }
+        .model-bar img { width: 72px; height: 72px; object-fit: cover; flex-shrink: 0; }
+        .model-bar-info { flex: 1; min-width: 0; padding: 0 16px; }
+        .model-bar-title { font-weight: 600; color: #bae6fd; font-size: 1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .model-bar-rating { font-size: 0.8em; color: #94a3b8; margin-top: 3px; }
+        .model-bar-actions { display: flex; align-items: center; gap: 6px; padding-right: 14px; flex-shrink: 0; }
+        .bar-control { background: #1e293b; border: none; color: #e0f2fe; width: auto; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .bar-control:hover { background: #2a3b5c; }
+        .bar-control.dl-btn { background: #3b82f6; }
+        .bar-control.dl-btn:hover { background: #2563eb; }
+        .bar-control.vote-up.active { background: #14532d; color: #bbf7d0; }
+        .bar-control.vote-down.active { background: #7f1d1d; color: #fecaca; }
+        .bar-control.mv-rating { background: transparent; cursor: default; color: #94a3b8; padding: 8px 6px; }
+        @media (max-width: 640px) {
+            .model-bar-title { font-size: 0.9em; }
+            .model-bar-rating { display: none; }
+            .bar-control span.label { display: none; }
+        }
         @media (max-width: 640px) {
             nav { padding: 14px 20px; flex-direction: column; gap: 10px; }
             .nav-links a { margin: 0 10px; }
@@ -78,14 +100,20 @@
         <p class="search-hint">Filters categories as you type • press Enter to search all of Printables</p>
     </header>
 
-    <div class="section">
+    <div class="section" id="categoryPage" style="display:none;">
+        <a class="back-link" id="backLink">← Back to ModelVault</a>
+        <h2 id="categoryPageTitle">Category</h2>
+        <div class="bar-list" id="categoryPageList"></div>
+    </div>
+
+    <div class="section home-section">
         <h2>Explore Categories</h2>
         <div class="category-grid" id="categoryGrid">
             <!-- Populated by JS -->
         </div>
     </div>
 
-    <div class="section">
+    <div class="section home-section">
         <h2>Featured Models</h2>
         <div class="category-grid featured-grid">
             <a href="https://www.printables.com/model/1279641-giant-mimic-dnd-mini-mimic-dd-model-dungeons-and-d" class="card featured-card" target="_blank" rel="noopener">
@@ -115,14 +143,14 @@
         </div>
     </div>
 
-    <div class="section" id="about">
+    <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
             <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from across the web. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Have a model worth sharing? Submit it below and we'll add it to the vault.</p>
         </div>
     </div>
 
-    <div class="section" id="submit">
+    <div class="section home-section" id="submit">
         <h2>Submit a Model</h2>
         <form id="submitForm" action="https://formspree.io/f/mkodrdjo" method="POST">
             <input type="text" name="model_name" placeholder="Model Name" required>
@@ -143,18 +171,37 @@
 
     <script>
         const categories = [
-            {title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
-            {title: "🐉 Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon", thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg"},
-            {title: "🔧 Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer", thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg"},
-            {title: "🎭 Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay", thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp"},
-            {title: "🧸 Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget", thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp"},
-            {title: "🏠 Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase", thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg"},
-            {title: "⚙️ Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical", thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg"},
-            {title: "🚀 Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi", thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg"},
-            {title: "🏰 Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain", thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg"},
-            {title: "🎲 Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower", thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg"},
-            {title: "🦖 Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal", thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp"},
-            {title: "📱 Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand", thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg"}
+            {slug: "tabletop-minis", title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
+            {slug: "dragons-monsters", title: "🐉 Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon", thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg"},
+            {slug: "functional-prints", title: "🔧 Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer", thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg"},
+            {slug: "cosplay-props", title: "🎭 Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay", thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp"},
+            {slug: "toys-fidgets", title: "🧸 Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget", thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp"},
+            {slug: "home-decor", title: "🏠 Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase", thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg"},
+            {slug: "mechanical-parts", title: "⚙️ Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical", thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg"},
+            {slug: "scifi-tech", title: "🚀 Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi", thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg"},
+            {slug: "terrain-scenery", title: "🏰 Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain", thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg"},
+            {slug: "dice-accessories", title: "🎲 Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower", thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg"},
+            {slug: "animals-wildlife", title: "🦖 Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal", thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp"},
+            {slug: "phone-stands", title: "📱 Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand", thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg"}
+        ];
+
+        // Real models with real ratings pulled from each model's own Printables page (schema.org data). Download
+        // buttons open the model's page — Printables doesn't expose a static, hotlinkable file URL, so an instant
+        // in-browser download from our own site isn't reliably available; this is the most honest "direct" option.
+        const modelDirectory = [
+            {id: "giant-mimic", title: "Giant Mimic Mini", cats: ["tabletop-minis"], thumb: "https://media.printables.com/media/prints/ffe98ad5-0a83-4bf2-8dad-81f630ae0adf/images/9626199_6bdb8f6f-74b9-4928-a5ce-216b1cfc1a89_adb29ff6-27d9-47f3-8523-0a864f2c3332/thumbs/cover/1200x630/gif/2024-07-11_5ae4c50324b4f1.gif", link: "https://www.printables.com/model/1279641-giant-mimic-dnd-mini-mimic-dd-model-dungeons-and-d", rating: {value: 4.6, count: 15}},
+            {id: "female-human-mini", title: "Female Human D&D Mini", cats: ["tabletop-minis"], thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg", link: "https://www.printables.com/model/296095-female-human-dnd-mini", rating: {value: 5.0, count: 5}},
+            {id: "mando-helmet", title: "Mandalorian Cosplay Helmet", cats: ["cosplay-props"], thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp", link: "https://www.printables.com/model/527750-star-wars-the-mandalorian-full-costumecosplay-helm", rating: {value: 4.8, count: 94}},
+            {id: "dice-tower-castle", title: "Dice Tower Castle Stairs", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg", link: "https://www.printables.com/model/851935-dice-tower-castle-stairs", rating: {value: 4.9, count: 569}},
+            {id: "cable-organizer", title: "Portable Cable Organizer", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg", link: "https://www.printables.com/model/564262-portable-cable-organizer-winder", rating: {value: 4.8, count: 1896}},
+            {id: "phone-stand", title: "Adjustable Phone Stand", cats: ["phone-stands"], thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg", link: "https://www.printables.com/model/187125-phone-stand", rating: {value: 4.9, count: 803}},
+            {id: "night-spirit-dragon", title: "Articulated Night Spirit Dragon", cats: ["dragons-monsters"], thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg", link: "https://www.printables.com/model/413203-articulated-night-spirit-dragon", rating: {value: 4.9, count: 1515}},
+            {id: "spiral-fidget", title: "Spiral Cone Fidget Toy", cats: ["toys-fidgets"], thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp", link: "https://www.printables.com/model/927393-spiral-cone-fidget-toy", rating: {value: 4.8, count: 596}},
+            {id: "spiral-vase-rose", title: "Spiral Vase Rose", cats: ["home-decor"], thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg", link: "https://www.printables.com/model/131488-spiral-vase-rose", rating: {value: 4.9, count: 2412}},
+            {id: "gear-card-holder", title: "Mechanical Gear Card Holder", cats: ["mechanical-parts"], thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg", link: "https://www.printables.com/model/370363-mechanical-gear-reprap-logo-bussines-card-holder", rating: {value: 4.0, count: 2}},
+            {id: "combat-drone", title: "Sci-Fi Flying Combat Drone", cats: ["scifi-tech"], thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg", link: "https://www.printables.com/model/410721-scifi-flying-combat-drone", rating: null},
+            {id: "terrain-rollers", title: "D&D Terrain Texture Rollers", cats: ["terrain-scenery"], thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg", link: "https://www.printables.com/model/723226-dnd-terrain-texture-rollers-free", rating: {value: 5.0, count: 11}},
+            {id: "bison-figurine", title: "Bison Wild Animal Figurine", cats: ["animals-wildlife"], thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp", link: "https://www.printables.com/model/1320373-bison-powerful-wild-animal-figurine", rating: {value: 5.0, count: 1}}
         ];
 
         function renderCategories(filtered = categories) {
@@ -166,14 +213,95 @@
             }
             filtered.forEach(cat => {
                 const card = document.createElement('a');
-                card.href = cat.link;
-                card.target = "_blank";
-                card.rel = "noopener";
+                card.href = "#category/" + cat.slug;
                 card.className = "card category-photo";
                 card.innerHTML = `<img src="${cat.thumb}" alt="${cat.title}" loading="lazy"><div class="category-overlay"><h3>${cat.title}</h3><p>${cat.desc}</p></div>`;
                 grid.appendChild(card);
             });
         }
+
+        // Thumbs up/down votes are stored per-browser (localStorage) — there's no backend/database, so
+        // this is a personal "your votes" record, not a shared global tally across all visitors.
+        function getVotes() {
+            return JSON.parse(localStorage.getItem('mv_votes') || '{}');
+        }
+        function castVote(modelId, type) {
+            const store = getVotes();
+            const entry = store[modelId] || {up: 0, down: 0, mine: null};
+            if (entry.mine === type) {
+                entry[type]--;
+                entry.mine = null;
+            } else {
+                if (entry.mine) entry[entry.mine]--;
+                entry[type]++;
+                entry.mine = type;
+            }
+            store[modelId] = entry;
+            localStorage.setItem('mv_votes', JSON.stringify(store));
+            renderCategoryPage(currentSlug);
+        }
+
+        let currentSlug = null;
+
+        function renderCategoryPage(slug) {
+            currentSlug = slug;
+            const cat = categories.find(c => c.slug === slug);
+            const list = document.getElementById('categoryPageList');
+            document.getElementById('categoryPageTitle').textContent = cat ? cat.title : 'Category';
+            const models = modelDirectory.filter(m => m.cats.includes(slug));
+            if (models.length === 0) {
+                list.innerHTML = '<p class="no-results">No models added to this category yet — check back soon.</p>';
+                return;
+            }
+            const votes = getVotes();
+            list.innerHTML = models.map(m => {
+                const v = votes[m.id] || {up: 0, down: 0, mine: null};
+                const netVotes = v.up - v.down;
+                const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
+                const ratingHtml = m.rating
+                    ? `★ ${m.rating.value.toFixed(1)} (${m.rating.count})`
+                    : 'No ratings yet';
+                return `
+                <div class="model-bar" data-link="${m.link}">
+                    <img src="${m.thumb}" alt="${m.title}" loading="lazy">
+                    <div class="model-bar-info">
+                        <div class="model-bar-title">${m.title}</div>
+                        <div class="model-bar-rating">${ratingHtml}</div>
+                    </div>
+                    <div class="model-bar-actions">
+                        <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();">⬇ <span class="label">Download</span></button>
+                        <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍</button>
+                        <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎</button>
+                        <span class="bar-control mv-rating" title="ModelVault score from visitor votes">MV ${mvRating}</span>
+                    </div>
+                </div>`;
+            }).join('');
+            list.querySelectorAll('.model-bar').forEach(bar => {
+                bar.addEventListener('click', () => window.open(bar.dataset.link, '_blank', 'noopener'));
+            });
+        }
+
+        function showCategoryPage(slug) {
+            document.querySelectorAll('.home-section').forEach(el => el.style.display = 'none');
+            document.getElementById('categoryPage').style.display = 'block';
+            renderCategoryPage(slug);
+            window.scrollTo(0, 0);
+        }
+        function showHome() {
+            document.querySelectorAll('.home-section').forEach(el => el.style.display = '');
+            document.getElementById('categoryPage').style.display = 'none';
+            window.scrollTo(0, 0);
+        }
+        function routeFromHash() {
+            const hash = location.hash;
+            if (hash.startsWith('#category/')) {
+                showCategoryPage(hash.replace('#category/', ''));
+            } else {
+                showHome();
+            }
+        }
+        document.getElementById('backLink').addEventListener('click', () => { location.hash = ''; });
+        window.addEventListener('hashchange', routeFromHash);
 
         const searchInput = document.getElementById('searchInput');
         searchInput.addEventListener('keyup', (e) => {
@@ -192,6 +320,7 @@
         });
 
         renderCategories();
+        routeFromHash();
 
         // Character counter for description field
         const description = document.getElementById('description');
