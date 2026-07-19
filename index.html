@@ -61,6 +61,24 @@
         .boost-btn.secondary { background: #3b82f6; color: #fff; margin-top: 10px; }
         .boost-btn.secondary:hover { background: #2563eb; }
         .boost-btn.disabled { opacity: 0.55; pointer-events: none; }
+        .paid-badge { display: inline-block; background: rgba(16,185,129,0.22); color: #6ee7b7; font-size: 0.72em; font-weight: 700; letter-spacing: 0.03em; text-transform: uppercase; padding: 3px 10px; border-radius: 9999px; }
+        .paid-price { font-size: 1.35em; font-weight: 700; color: #e0f2fe; margin: 4px 0 8px; }
+        .paid-price span { font-size: 0.55em; font-weight: 500; color: #94a3b8; }
+        .paid-card { background: #172554; border-radius: 16px; overflow: hidden; box-shadow: 0 12px 28px rgba(0,0,0,0.4); display: flex; flex-direction: column; transition: transform 0.2s; }
+        .paid-card:hover { transform: translateY(-6px); }
+        .paid-card img { width: 100%; height: 180px; object-fit: cover; display: block; }
+        .paid-card-body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .paid-card-body h3 { margin: 0; font-size: 1.15em; color: #bae6fd; }
+        .paid-card-body p { margin: 0; color: #94a3b8; font-size: 0.9em; line-height: 1.45; flex: 1; }
+        .paid-creator { font-size: 0.82em; color: #93c5fd; }
+        .paid-buy { display: block; text-align: center; background: #10b981; color: #042f2e; font-weight: 700; padding: 12px; border-radius: 10px; text-decoration: none; margin-top: 8px; }
+        .paid-buy:hover { background: #34d399; }
+        .paid-buy.external { background: #3b82f6; color: #fff; }
+        .paid-empty { grid-column: 1 / -1; text-align: center; color: #94a3b8; padding: 28px; background: #172554; border-radius: 16px; }
+        .creator-perks { list-style: none; padding: 0; margin: 0 0 16px 0; color: #94a3b8; font-size: 0.92em; line-height: 1.6; }
+        .creator-perks li::before { content: "✓ "; color: #6ee7b7; font-weight: 700; }
+        .hosting-note { background: #0f1f42; border: 1px solid rgba(148,163,184,0.2); border-radius: 12px; padding: 14px 18px; color: #94a3b8; font-size: 0.9em; line-height: 1.5; max-width: 900px; margin: 0 auto 28px; }
+
         .money-banner { background: linear-gradient(135deg, #1e3a5f, #172554); border: 1px solid rgba(234,179,8,0.25); border-radius: 14px; padding: 16px 20px; margin: 0 auto 28px; max-width: 900px; text-align: center; color: #fde68a; font-size: 0.95em; }
 
         .no-results { grid-column: 1 / -1; text-align: center; color: #94a3b8; font-size: 1.1em; padding: 20px; }
@@ -159,6 +177,8 @@
             <a href="#">Home</a>
             <a href="#popular">Popular</a>
             <a href="#gear">Gear</a>
+            <a href="#paid-models">Paid Models</a>
+            <a href="#creators">Creators</a>
             <a href="#boost">Boost</a>
             <a href="#submit">Submit Model</a>
             <a href="#about">About</a>
@@ -467,6 +487,75 @@
     </div>
 
 
+
+    <div class="section home-section" id="paid-models">
+        <h2>Paid Models from Creators</h2>
+        <p class="section-sub">Premium designs sold by ModelVault Creator subscribers. Buy unlocks the file from the creator (Stripe / Gumroad / host link). Free models stay free above.</p>
+        <div class="hosting-note">
+            <strong style="color:#bae6fd;">How hosting works:</strong>
+            Creators join the monthly Creator Sub, then list paid models here with a cover image, price, description, and a secure checkout or download link they control (Stripe Payment Link, Gumroad, etc.).
+            ModelVault hosts the storefront listing; file delivery stays with the creator&rsquo;s checkout so licenses and refunds stay clear.
+            After you subscribe, submit a listing with the form under <a href="#creators" style="color:#93c5fd;">Creators</a>.
+        </div>
+        <div class="gear-grid" id="paidModelsGrid">
+            <!-- Populated by JS from paidModels catalog -->
+        </div>
+    </div>
+
+    <div class="section home-section" id="creators">
+        <h2>Creator Subscription</h2>
+        <p class="section-sub">Sell paid models on ModelVault. Keep ownership of your files — we give you a storefront slot and traffic.</p>
+        <div class="boost-grid">
+            <div class="boost-card">
+                <h3>Creator Sub</h3>
+                <p>List paid models on ModelVault with a paid badge, cover art, price, and checkout link.</p>
+                <ul class="creator-perks">
+                    <li>Unlimited paid model listings while subscribed</li>
+                    <li>Shown in the Paid Models gallery</li>
+                    <li>Optional Boost add-ons for Featured / Popular</li>
+                    <li>You set the price and keep file delivery</li>
+                </ul>
+                <div class="boost-price">$12 <span>/ month</span></div>
+                <a class="boost-btn" id="creatorSubBtn" href="#creatorListForm">Subscribe as Creator</a>
+            </div>
+            <div class="boost-card">
+                <h3>What you provide</h3>
+                <ul class="creator-perks">
+                    <li>Title, cover image URL, short description</li>
+                    <li>Your price (USD)</li>
+                    <li>Buy / download URL (Stripe, Gumroad, Payhip, etc.)</li>
+                    <li>Active Creator Sub (or we email you the Stripe link)</li>
+                </ul>
+                <p style="color:#94a3b8;font-size:0.9em;margin:0;">We review listings so the storefront stays trustworthy.</p>
+            </div>
+            <div class="boost-card">
+                <h3>Buyer experience</h3>
+                <ul class="creator-perks">
+                    <li>Browse Paid Models next to free catalogs</li>
+                    <li>Clear Paid badge and price</li>
+                    <li>One-click checkout on your link</li>
+                    <li>Never mixed into free organic rankings</li>
+                </ul>
+            </div>
+        </div>
+        <h2 style="font-size:1.5em;margin-top:10px;">List a paid model</h2>
+        <p class="section-sub" style="margin-top:0;">Creators: send listing details after subscribing. We publish approved models to the Paid Models grid.</p>
+        <form id="creatorListForm" action="https://formspree.io/f/mkodrdjo" method="POST">
+            <input type="hidden" name="_subject" value="ModelVault Paid Model Listing (Creator Sub)">
+            <input type="text" name="creator_name" placeholder="Creator / brand name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="model_title" placeholder="Model title" required>
+            <input type="url" name="cover_image_url" placeholder="Cover image URL (https://...)" required>
+            <input type="url" name="buy_url" placeholder="Checkout / file delivery URL (Stripe, Gumroad, etc.)" required>
+            <input type="text" name="price_usd" placeholder="Price USD (e.g. 8)" required>
+            <input type="text" name="category" placeholder="Category (tabletop, cosplay, organizers...)">
+            <textarea name="description" rows="5" placeholder="Description buyers will see (from your listing text)" required maxlength="800"></textarea>
+            <input type="text" name="subscription_status" placeholder="Creator Sub status (subscribed / need link)">
+            <button type="submit" id="creatorListBtn">Submit paid listing</button>
+            <div class="form-status" id="creatorListStatus"></div>
+        </form>
+    </div>
+
     <div class="section home-section" id="gear">
         <h2>Maker Gear (Affiliate)</h2>
         <p class="section-sub">Tools and materials makers actually buy. Links may earn ModelVault a small commission at no extra cost to you.</p>
@@ -517,7 +606,7 @@
     <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
-            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below — or use Boost for a paid Sponsored spotlight. Gear links may use affiliate programs.</p>
+            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from Printables, Thingiverse, MyMiniFactory, Cults3D, MakerWorld, and more. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below — or use Boost for a paid Sponsored spotlight. Creators can subscribe to host paid models in the Paid Models gallery. Gear links may use affiliate programs.</p>
         </div>
     </div>
 
@@ -1107,6 +1196,25 @@
         // === Monetization config — fill these in to go live ===
         // Amazon Associates: create a tag, then wrap product URLs with tag=YOURTAG-20
         // Stripe: Dashboard → Payment Links → create products, paste URLs below
+
+        // Paid model storefront — add approved creator listings here after Creator Sub + review.
+        // buyUrl should be the creator's Stripe Payment Link, Gumroad, Payhip, etc.
+        // ModelVault hosts the listing; the creator hosts/delivers the files via buyUrl.
+        const paidModels = [
+            // Example structure (remove or replace when you have real creator listings):
+            // {
+            //   id: "paid-example-flexi-pack",
+            //   title: "Premium Flexi Dragon Pack",
+            //   creator: "Example Studio",
+            //   price: 8,
+            //   currency: "USD",
+            //   thumb: "https://...",
+            //   description: "Three exclusive flexi dragons with commercial license option.",
+            //   buyUrl: "https://buy.stripe.com/...",
+            //   cats: ["creatures", "toys-games"]
+            // }
+        ];
+
         const monetization = {
             // Live Amazon Associates tag (from your amzn.to link)
             amazonTag: "modelvault00-20",
@@ -1114,6 +1222,8 @@
             amazonStoreLink: "https://amzn.to/4vIi97k",
             stripeFeaturedPaymentLink: "", // e.g. https://buy.stripe.com/xxxx
             stripePopularPaymentLink: "",  // e.g. https://buy.stripe.com/yyyy
+            stripeCreatorSubPaymentLink: "", // monthly Creator Sub e.g. https://buy.stripe.com/zzzz
+            creatorSubPriceLabel: "$12 / month",
             // Optional: live sponsored creatives
             sponsoredFeatured: {
                 enabled: true,
@@ -1314,8 +1424,98 @@
             });
         }
 
+
+        function renderPaidModels() {
+            const grid = document.getElementById('paidModelsGrid');
+            if (!grid) return;
+            if (!paidModels || paidModels.length === 0) {
+                grid.innerHTML = `<div class="paid-empty">
+                    <p style="margin:0 0 12px 0;"><strong style="color:#bae6fd;">No paid models listed yet.</strong></p>
+                    <p style="margin:0;">Creators: start a Creator Sub, then submit a listing.
+                    <a href="#creators" style="color:#93c5fd;">Become a creator →</a></p>
+                </div>`;
+                return;
+            }
+            grid.innerHTML = paidModels.map(m => {
+                const price = (m.currency || 'USD') === 'USD'
+                    ? ('$' + Number(m.price).toFixed(m.price % 1 ? 2 : 0))
+                    : (Number(m.price) + ' ' + (m.currency || ''));
+                const buy = m.buyUrl || '#creators';
+                const external = /^https?:/i.test(buy);
+                return `<div class="paid-card">
+                    <img src="${escapeHtml(m.thumb || '')}" alt="${escapeHtml(m.title || 'Paid model')}" loading="lazy">
+                    <div class="paid-card-body">
+                        <span class="paid-badge">Paid</span>
+                        <h3>${escapeHtml(m.title || 'Untitled')}</h3>
+                        <div class="paid-creator">by ${escapeHtml(m.creator || 'Creator')}</div>
+                        <div class="paid-price">${escapeHtml(price)} <span>one-time</span></div>
+                        <p>${escapeHtml(m.description || 'Premium model from a ModelVault creator.')}</p>
+                        <a class="paid-buy ${external ? 'external' : ''}" href="${escapeHtml(buy)}"
+                           ${external ? 'target="_blank" rel="noopener"' : ''}>
+                           Buy &amp; download
+                        </a>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function wireCreatorSub() {
+            const btn = document.getElementById('creatorSubBtn');
+            if (!btn) return;
+            const link = monetization.stripeCreatorSubPaymentLink;
+            if (link) {
+                btn.href = link;
+                btn.target = '_blank';
+                btn.rel = 'noopener';
+                btn.textContent = 'Subscribe as Creator — Stripe';
+            } else {
+                btn.href = '#creatorListForm';
+                btn.textContent = 'Subscribe (set Stripe Creator Sub link in config)';
+            }
+            const priceEl = document.querySelector('#creators .boost-price');
+            if (priceEl && monetization.creatorSubPriceLabel) {
+                // keep static HTML price unless we want dynamic — optional
+            }
+        }
+
+        function wireCreatorListForm() {
+            const form = document.getElementById('creatorListForm');
+            if (!form) return;
+            const status = document.getElementById('creatorListStatus');
+            const btn = document.getElementById('creatorListBtn');
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                if (status) { status.className = 'form-status'; status.textContent = ''; }
+                if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+                try {
+                    const res = await fetch(form.action, {
+                        method: 'POST',
+                        body: new FormData(form),
+                        headers: { 'Accept': 'application/json' }
+                    });
+                    if (res.ok) {
+                        form.reset();
+                        if (status) {
+                            status.textContent = 'Listing request received. After Creator Sub is confirmed we will publish it to Paid Models.';
+                            status.className = 'form-status success';
+                        }
+                    } else { throw new Error(); }
+                } catch (err) {
+                    if (status) {
+                        status.textContent = 'Could not send — try again in a minute.';
+                        status.className = 'form-status error';
+                    }
+                } finally {
+                    if (btn) { btn.disabled = false; btn.textContent = 'Submit paid listing'; }
+                }
+            });
+        }
+
         function initMonetization() {
             renderGear();
+            renderPaidModels();
+            wireCreatorSub();
+            wireCreatorListForm();
             applySponsoredSlot('sponsoredFeatured', monetization.sponsoredFeatured);
             applySponsoredSlot('sponsoredPopular', monetization.sponsoredPopular);
             wireBoostButtons();
