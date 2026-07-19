@@ -50,20 +50,34 @@
         .back-link { display: inline-block; margin-bottom: 24px; color: #93c5fd; text-decoration: none; font-weight: 600; cursor: pointer; }
         .back-link:hover { text-decoration: underline; }
         .bar-list { display: flex; flex-direction: column; gap: 10px; }
-        .model-bar { display: flex; align-items: center; height: 72px; background: #172554; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.35); cursor: pointer; transition: transform 0.15s; }
-        .model-bar:hover { transform: translateY(-2px); }
-        .model-bar img { width: 72px; height: 72px; object-fit: cover; flex-shrink: 0; }
+        .model-bar { background: #172554; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.35); }
+        .model-bar-top { display: flex; align-items: center; height: 72px; cursor: pointer; transition: background 0.15s; }
+        .model-bar-top:hover { background: rgba(255,255,255,0.03); }
+        .model-bar-top img { width: 72px; height: 72px; object-fit: cover; flex-shrink: 0; }
         .model-bar-info { flex: 1; min-width: 0; padding: 0 16px; }
         .model-bar-title { font-weight: 600; color: #bae6fd; font-size: 1em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .model-bar-rating { font-size: 0.8em; color: #94a3b8; margin-top: 3px; }
         .model-bar-actions { display: flex; align-items: center; gap: 6px; padding-right: 14px; flex-shrink: 0; }
-        .bar-control { background: #1e293b; border: none; color: #e0f2fe; width: auto; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+        .bar-control { background: #1e293b; border: none; color: #e0f2fe; width: auto; padding: 8px 10px; border-radius: 8px; cursor: pointer; font-size: 0.85em; font-weight: 600; display: flex; align-items: center; gap: 4px; text-decoration: none; }
         .bar-control:hover { background: #2a3b5c; }
         .bar-control.dl-btn { background: #3b82f6; }
         .bar-control.dl-btn:hover { background: #2563eb; }
         .bar-control.vote-up.active { background: #14532d; color: #bbf7d0; }
         .bar-control.vote-down.active { background: #7f1d1d; color: #fecaca; }
         .bar-control.mv-rating { background: transparent; cursor: default; color: #94a3b8; padding: 8px 6px; }
+        .model-bar-expand { display: none; padding: 20px; gap: 22px; background: #0f1f42; border-top: 1px solid rgba(255,255,255,0.06); }
+        .model-bar.expanded .model-bar-expand { display: flex; }
+        .expand-photo { width: 280px; max-width: 40%; height: 280px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
+        .expand-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+        .expand-info h4 { margin: 0; font-size: 1.5em; color: #bae6fd; }
+        .expand-info .expand-meta { color: #94a3b8; font-size: 0.95em; line-height: 1.6; }
+        .expand-info .expand-source { display: inline-block; background: #1e293b; color: #93c5fd; font-size: 0.8em; padding: 3px 10px; border-radius: 9999px; width: fit-content; }
+        .expand-view-link { align-self: flex-start; background: #3b82f6; color: white; padding: 12px 22px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: auto; }
+        .expand-view-link:hover { background: #2563eb; }
+        @media (max-width: 640px) {
+            .model-bar-expand { flex-direction: column; }
+            .expand-photo { width: 100%; max-width: 100%; height: 200px; }
+        }
         @media (max-width: 640px) {
             .model-bar-title { font-size: 0.9em; }
             .model-bar-rating { display: none; }
@@ -248,7 +262,46 @@
 
             {id: "geared-phone-stand", title: "Geared Phone Stand", cats: ["phone-stands"], thumb: "https://media.printables.com/media/prints/1202776/images/9033750_5e4c01fe-51f3-41e4-a8ac-f2867d5ed0a4_2914c063-ede2-4712-92e9-c6a6f514a855/thumbs/cover/1200x630/jpg/img20250222183712.jpg", link: "https://www.printables.com/model/1202776-geared-phone-stand", rating: {value: 4.9, count: 620}},
             {id: "curved-phone-stand", title: "Modern Curved Phone Stand", cats: ["phone-stands"], thumb: "https://media.printables.com/media/prints/177533/images/1663943_79bfb833-22bd-4698-9fc4-1db8155b52f7/thumbs/cover/1200x630/jpg/img_9994.jpg", link: "https://www.printables.com/model/177533-phone-stand-modern-curved-design", rating: {value: 4.9, count: 283}},
-            {id: "industrial-phone-stand", title: "Industrial Phone Stand", cats: ["phone-stands"], thumb: "https://media.printables.com/media/prints/813099/images/6285703_deeb4004-b7d0-4dc4-8a1a-32e8ab2111d5_f815b579-78eb-47ef-a487-e02b49177af7/thumbs/cover/1200x630/jpg/dscf9971.jpg", link: "https://www.printables.com/model/813099-phone-stand-industrial", rating: {value: 4.9, count: 155}}
+            {id: "industrial-phone-stand", title: "Industrial Phone Stand", cats: ["phone-stands"], thumb: "https://media.printables.com/media/prints/813099/images/6285703_deeb4004-b7d0-4dc4-8a1a-32e8ab2111d5_f815b579-78eb-47ef-a487-e02b49177af7/thumbs/cover/1200x630/jpg/dscf9971.jpg", link: "https://www.printables.com/model/813099-phone-stand-industrial", rating: {value: 4.9, count: 155}},
+
+            // --- Additional Printables (verified from live pages) ---
+            {id: "gridfinity-ultra-light-bins", title: "Gridfinity Ultra Light Bins", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/627719/images/5896303_5b46b131-24c1-42f7-bddb-32f36d1f78e3_9477de6c-8620-4fb0-96ad-a015f72c4988/thumbs/cover/1200x630/png/gridfinity_plain_1_final.png", link: "https://www.printables.com/model/627719-gridfinity-ultra-light-bins-plain-edition", rating: {value: 5.0, count: 220}},
+            {id: "gridfinity-storage-box", title: "Gridfinity Storage Box", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/543553/images/4458653_d5337ae3-6bdd-4001-ad56-ae21b014991e/thumbs/cover/1200x630/jpg/20230817_171603.jpg", link: "https://www.printables.com/model/543553-gridfinity-storage-box-by-pred-now-parametric", rating: {value: 4.9, count: 534}},
+            {id: "modern-gridfinity-case", title: "Modern Gridfinity Case", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/894202/images/7404466_f6bc51a8-ad6d-4151-91c3-f263ed72018c_7198cb4f-c3ac-492b-9fad-9ef10f05b227/thumbs/cover/1200x630/jpg/pxl_20240810_225249137.jpg", link: "https://www.printables.com/model/894202-modern-gridfinity-case", rating: {value: 4.9, count: 211}},
+            {id: "gridfinity-baseplate-lite", title: "Gridfinity Baseplate Lite", cats: ["functional-prints", "mechanical-parts"], thumb: "https://media.printables.com/media/prints/fcdc3bb4-bb83-4a20-b4e2-a6192594cf23/images/10595864_6dac47bd-1fa8-4b76-b9f2-0c062c8fa79d_22a201b2-d3bb-4d44-bfd3-1c1390b43a4d/thumbs/cover/1200x630/png/4x3-thumbnail2x.png", link: "https://www.printables.com/model/478930-gridfinity-baseplate-quick-print-lite-version-less", rating: {value: 5.0, count: 61}},
+            {id: "parametric-gridfinity", title: "Actually Parametric Gridfinity Base + Bins", cats: ["functional-prints", "mechanical-parts"], thumb: "https://media.printables.com/media/prints/399759/images/3332346_b5bfbc0d-721e-4164-ab81-97655bb72890/thumbs/cover/1200x630/jpg/actually-parametric-gridfinity.jpg", link: "https://www.printables.com/model/399759-actually-parametric-gridfinity-base-grid-bins", rating: {value: 4.7, count: 23}},
+            {id: "gridfinity-voronoi-bins", title: "Gridfinity Voronoi Bins", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/716015/images/5778546_1de112d0-20f3-4968-be1f-314fdb54551b_a3decdea-daec-4758-89f3-9c9fdcfeb554/thumbs/cover/1200x630/png/multivoronoihexgridpattern00000.png", link: "https://www.printables.com/model/716015-gridfinity-voronoi-bins-all-sizes", rating: {value: 4.6, count: 8}},
+            {id: "gridfinity-encyclopedia", title: "Gridfinity Encyclopedia", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/565495/images/6437034_04bc1169-72cc-4dba-8055-120ef6feb14e_a133624d-c710-4f2b-9968-6a9cf37d4bd8/thumbs/cover/1200x630/png/1-copia.png", link: "https://www.printables.com/model/565495-gridfinity-encyclopedia", rating: {value: 5.0, count: 7}},
+            {id: "gridfinity-caliper-holder", title: "Gridfinity Caliper Holder", cats: ["functional-prints", "mechanical-parts"], thumb: "https://media.printables.com/media/prints/567890/images/4546559_9153312c-5f49-4f16-a066-c771348f7e14/thumbs/cover/1200x630/jpg/pxl_20230830_092429329.jpg", link: "https://www.printables.com/model/567890-gridfinity-caliper-holder-low-profileextra-storage", rating: {value: 5.0, count: 11}},
+            {id: "gridflock-baseplate", title: "GridFlock Baseplate Generator", cats: ["functional-prints", "mechanical-parts"], thumb: "https://media.printables.com/media/prints/77bb5498-3029-40e6-90cc-e4104a9f7396/images/12060566_5a75d141-c5f5-4856-8101-d3916d866a4c_88e450cd-2847-49d6-a7f5-d15114881ac7/thumbs/cover/1200x630/png/title.png", link: "https://www.printables.com/model/1579487-gridflock-gridfinity-baseplate-generator", rating: {value: 5.0, count: 5}},
+            {id: "headphone-cable-clip-gladius", title: "Headphone Cable Clip", cats: ["functional-prints", "phone-stands"], thumb: "https://media.printables.com/media/prints/18559/images/180644_1115bb44-c0b9-478f-a8eb-50acc4a2e10f/thumbs/cover/1200x630/jpeg/headphone_clamp_image2.jpg", link: "https://www.printables.com/model/18559-headphone-cable-clip", rating: {value: 5.0, count: 2}},
+            {id: "headphone-holder-cable-clip", title: "Headphone Holder with Cable Clip", cats: ["functional-prints", "phone-stands"], thumb: "https://media.printables.com/media/prints/144036/images/1362866_b7ab4832-0440-42bb-a370-da322ae5e338/thumbs/cover/1200x630/jpg/20220302_151259.jpg", link: "https://www.printables.com/model/144036-headphone-holder-with-cable-clip", rating: {value: 5.0, count: 1}},
+            {id: "headphone-cable-clip-javar", title: "Headphone Cable Clip (Javar)", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/221627/images/2026258_12036c99-2b9c-4eed-be6c-2510a3c9a6a3/thumbs/cover/1200x630/jpg/headphone_cable_clip.jpg", link: "https://www.printables.com/model/221627-headphone-cable-clip", rating: {value: 5.0, count: 3}},
+            {id: "headphone-cable-organizer", title: "Headphone Cable Organizer", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/565531/images/4529254_221f89cc-4920-4c02-83fb-babe8495ffc1/thumbs/cover/1200x630/jpeg/dcbeab45-381a-41aa-8ff8-3fe107e5001b.jpg", link: "https://www.printables.com/model/565531-headphone-cable-organizer", rating: {value: 4.5, count: 15}},
+            {id: "iem-cable-clip", title: "IEM Headphone Cable Clip", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/562785/images/4509787_4e00025a-a3d0-4fa4-9db9-4e4d9a5dca32/thumbs/cover/1200x630/jpg/clip.jpg", link: "https://www.printables.com/model/562785-iem-headphone-cable-clipholder", rating: {value: 4.3, count: 3}},
+            {id: "earbud-shirt-clip", title: "Earbud/Headphone Shirt Clip", cats: ["functional-prints"], thumb: "https://media.printables.com/media/prints/103502/images/1076706_0a72d0aa-c2a5-4835-81cd-26afa6928920/thumbs/cover/1200x630/jpg/img_20211229_214955.jpg", link: "https://www.printables.com/model/103502-earbudheadphone-shirt-clip", rating: {value: 4.8, count: 5}},
+            {id: "cotton-pad-dispenser", title: "Cotton Pad Holder/Dispenser", cats: ["home-decor", "functional-prints"], thumb: "https://media.printables.com/media/prints/133729/images/1280971_6d31a868-4537-4929-a3d8-d40dfa8888da/thumbs/cover/1200x630/jpg/20220213_214705.jpg", link: "https://www.printables.com/model/133729-cotton-pad-holderdispenser", rating: {value: 4.9, count: 22}},
+            {id: "oil-lamp-shade", title: "Oil Lamp Style Lamp Shade", cats: ["home-decor"], thumb: "https://media.printables.com/media/prints/325910/images/2807315_4e3ae416-c850-4a9a-9baf-d1d36d278505/thumbs/cover/1200x630/jpg/1.jpg", link: "https://www.printables.com/model/325910-ds3d4u-oil-lamp-style-lamp-shade", rating: null},
+            {id: "super-screw-scrubber", title: "Super Screw Scrubber", cats: ["functional-prints", "mechanical-parts"], thumb: "https://media.printables.com/media/prints/476890/images/3901866_7e8b4176-d0a7-4766-83b3-94f9898bfdbb/thumbs/cover/1200x630/jpg/img_3581.jpg", link: "https://www.printables.com/model/476890-super-screw-scrubber-a-sensational-solution-for-sp", rating: {value: 5.0, count: 18}},
+            {id: "telescoping-cat-wand", title: "Telescoping Cat Wand", cats: ["toys-fidgets", "animals-wildlife"], thumb: "https://media.printables.com/media/prints/412890/images/3426016_d043efb0-1e1d-4e2b-ab99-5694b212e5b6/thumbs/cover/1200x630/jpg/img_2668.jpg", link: "https://www.printables.com/model/412890-telescoping-cat-wand", rating: null},
+
+            // --- Thingiverse (verified from live pages; ratings null when page has no aggregateRating) ---
+            {id: "tv-eastern-dragon", title: "Majestic Eastern Dragon Articulated Flexi", cats: ["dragons-monsters", "toys-fidgets"], thumb: "https://cdn.thingiverse.com/assets/b7/81/e6/b8/b7/dragonimg8.jpg", link: "https://www.thingiverse.com/thing:7033864", rating: null},
+            {id: "tv-3dbenchy", title: "#3DBenchy Torture Test", cats: ["mechanical-parts", "scifi-tech"], thumb: "https://cdn.thingiverse.com/assets/ee/dc/9a/fb/74/1_3D-printed_3DBenchy_by_Creative-Tools.com.JPG", link: "https://www.thingiverse.com/thing:763622", rating: null},
+            {id: "tv-air-spinner", title: "Air Spinner Fidget", cats: ["toys-fidgets"], thumb: "https://cdn.thingiverse.com/assets/03/23/98/d2/61/IMGP7387.jpg", link: "https://www.thingiverse.com/thing:2823006", rating: null},
+            {id: "tv-iron-man-helmet", title: "Iron Man Helmet Articulated Wearable", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/b5/a9/c2/f6/7d/IronMan_paint3.jpg", link: "https://www.thingiverse.com/thing:4629346", rating: null},
+            {id: "tv-stormtrooper-helmet", title: "Full Scale Stormtrooper Helmet", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/81/54/94/3a/1d/stm.png", link: "https://www.thingiverse.com/thing:391664", rating: null},
+            {id: "tv-auto-transmission", title: "Automatic Transmission Model", cats: ["mechanical-parts"], thumb: "https://cdn.thingiverse.com/renders/26/14/39/6f/c3/transmission4.jpg", link: "https://www.thingiverse.com/thing:34778", rating: null},
+            {id: "tv-phone-stand-m", title: "Phone Stand (M)", cats: ["phone-stands"], thumb: "https://cdn.thingiverse.com/assets/78/75/7b/96/ca/Cool_Fulffy.png", link: "https://www.thingiverse.com/thing:5352621", rating: null},
+            {id: "tv-cable-mount", title: "Customisable Cable Mount", cats: ["functional-prints"], thumb: "https://cdn.thingiverse.com/renders/2e/02/34/f4/66/921ed1cbc55da81c0f5c0347d422e9ea.png", link: "https://www.thingiverse.com/thing:2789105", rating: null},
+            {id: "tv-terrain-floor-tiles", title: "Modular Terrain System Floor Tiles", cats: ["terrain-scenery"], thumb: "https://cdn.thingiverse.com/renders/c0/f1/48/c1/8c/eb1baca5ff3b3ce06af62b4ea406b3a6.png", link: "https://www.thingiverse.com/thing:2779071", rating: null},
+            {id: "tv-gear-bearing", title: "Gear Bearing (5 Planets)", cats: ["mechanical-parts"], thumb: "https://cdn.thingiverse.com/renders/f1/7a/db/19/8c/f9f69198f27f99276ce52c7101bb2d02.png", link: "https://www.thingiverse.com/thing:1682742", rating: null},
+            {id: "tv-gas-mask", title: "Gas Mask Cosplay", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/02/8c/37/98/88/53dcc3ea-3ceb-47c5-a51f-1b9dfd5a215d.png", link: "https://www.thingiverse.com/thing:6524277", rating: null},
+            {id: "tv-chainsaw-man-costume", title: "Chainsaw Man Motorized Costume", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/6a/1d/00/c5/3a/cffb7bae-5969-4521-aa1e-e1495f037cc4.jpg", link: "https://www.thingiverse.com/thing:6091701", rating: null},
+            {id: "tv-c3po-mask", title: "C-3PO Wearable Mask", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/8f/fc/05/0c/7d/CC33.png", link: "https://www.thingiverse.com/thing:1257485", rating: null},
+            {id: "tv-death-trooper-helmet", title: "Death Trooper Full Scale Helmet", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/b3/69/9f/a9/e9/title.png", link: "https://www.thingiverse.com/thing:1904115", rating: null},
+            {id: "tv-dnd-shaman", title: "D&D Dragon Shaman Mini", cats: ["tabletop-minis"], thumb: "https://cdn.thingiverse.com/assets/6e/b4/6c/e3/92/49ae7760-69db-4ebf-b4e0-4f018b6b79bc.png", link: "https://www.thingiverse.com/thing:5935210", rating: null},
+            {id: "tv-kettle-helm", title: "Articulated Kettle Helm", cats: ["cosplay-props", "tabletop-minis"], thumb: "https://cdn.thingiverse.com/assets/b2/82/cc/ec/50/Screenshot_2025-10-27_094748.png", link: "https://www.thingiverse.com/thing:7183697", rating: null}
         ];
 
         function renderCategories(filtered = categories) {
@@ -301,43 +354,74 @@
                 return;
             }
             const votes = getVotes();
+            const expandedId = list.dataset.expandedId || null;
             list.innerHTML = models.map(m => {
                 const v = votes[m.id] || {up: 0, down: 0, mine: null};
                 const netVotes = v.up - v.down;
                 const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
                 const ratingHtml = m.rating
-                    ? `★ ${m.rating.value.toFixed(1)} (${m.rating.count})`
+                    ? `★ ${m.rating.value.toFixed(1)} (${m.rating.count} ratings)`
                     : 'No ratings yet';
+                const source = sourceFromLink(m.link);
+                const isExpanded = m.id === expandedId;
                 return `
-                <div class="model-bar" data-link="${m.link}">
-                    <img src="${m.thumb}" alt="${m.title}" loading="lazy">
-                    <div class="model-bar-info">
-                        <div class="model-bar-title">${m.title}</div>
-                        <div class="model-bar-rating">${ratingHtml}</div>
+                <div class="model-bar${isExpanded ? ' expanded' : ''}" data-id="${m.id}">
+                    <div class="model-bar-top" onclick="toggleExpand('${m.id}')">
+                        <img src="${m.thumb}" alt="${m.title}" loading="lazy">
+                        <div class="model-bar-info">
+                            <div class="model-bar-title">${m.title}</div>
+                            <div class="model-bar-rating">${ratingHtml}</div>
+                        </div>
+                        <div class="model-bar-actions">
+                            <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();">⬇ <span class="label">Download</span></button>
+                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍</button>
+                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎</button>
+                            <span class="bar-control mv-rating" title="ModelVault score from visitor votes">MV ${mvRating}</span>
+                        </div>
                     </div>
-                    <div class="model-bar-actions">
-                        <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();">⬇ <span class="label">Download</span></button>
-                        <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍</button>
-                        <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎</button>
-                        <span class="bar-control mv-rating" title="ModelVault score from visitor votes">MV ${mvRating}</span>
+                    <div class="model-bar-expand">
+                        <img class="expand-photo" src="${m.thumb}" alt="${m.title}" loading="lazy">
+                        <div class="expand-info">
+                            <h4>${m.title}</h4>
+                            <span class="expand-source">Source: ${source}</span>
+                            <div class="expand-meta">${ratingHtml}<br>ModelVault visitor score: ${mvRating} (${v.up} up / ${v.down} down)</div>
+                            <a class="expand-view-link" href="${m.link}" target="_blank" rel="noopener">View full listing on ${source} ↗</a>
+                        </div>
                     </div>
                 </div>`;
             }).join('');
-            list.querySelectorAll('.model-bar').forEach(bar => {
-                bar.addEventListener('click', () => window.open(bar.dataset.link, '_blank', 'noopener'));
-            });
+            // Keep expand state across re-renders (e.g. after voting)
+            list.dataset.expandedId = expandedId || '';
+        }
+
+        // Clicking a bar expands it in place (bigger photo + details) instead of navigating away.
+        // The Download button and the "View full listing" link inside the expanded panel are the
+        // explicit ways to actually leave the site.
+        function toggleExpand(modelId) {
+            const list = document.getElementById('categoryPageList');
+            const bar = list.querySelector(`.model-bar[data-id="${modelId}"]`);
+            const wasExpanded = bar.classList.contains('expanded');
+            list.dataset.expandedId = wasExpanded ? '' : modelId;
+            list.querySelectorAll('.model-bar.expanded').forEach(b => b.classList.remove('expanded'));
+            if (!wasExpanded) bar.classList.add('expanded');
+        }
+
+        function sourceFromLink(link) {
+            if (link.includes('printables.com')) return 'Printables';
+            if (link.includes('thingiverse.com')) return 'Thingiverse';
+            if (link.includes('myminifactory.com')) return 'MyMiniFactory';
+            if (link.includes('cults3d.com')) return 'Cults3D';
+            return 'the web';
         }
 
         function showCategoryPage(slug) {
             document.querySelectorAll('.home-section').forEach(el => el.style.display = 'none');
             document.getElementById('categoryPage').style.display = 'block';
             renderCategoryPage(slug);
-            window.scrollTo(0, 0);
         }
         function showHome() {
             document.querySelectorAll('.home-section').forEach(el => el.style.display = '');
             document.getElementById('categoryPage').style.display = 'none';
-            window.scrollTo(0, 0);
         }
         function routeFromHash() {
             const hash = location.hash;
