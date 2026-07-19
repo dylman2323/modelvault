@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ModelVault • Free 3D Models</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖨️</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><rect width=%22100%22 height=%22100%22 rx=%2218%22 fill=%22%23172554%22/><text x=%2250%22 y=%2268%22 text-anchor=%22middle%22 font-size=%2254%22 font-family=%22sans-serif%22 fill=%22%23bae6fd%22>MV</text></svg>"><text y=%22.9em%22 font-size=%2290%22></text></svg>">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap');
 
@@ -148,7 +148,7 @@
                 <button type="submit" id="authSubmitBtn">Sign in</button>
             </form>
             <p class="auth-error" id="authError"></p>
-            <p class="auth-secure">🔒 Secure email/password auth via Firebase Auth (free). Your vote is locked once cast.</p>
+            <p class="auth-secure">Secure email/password auth via Firebase Auth (free). Your vote is locked once cast.</p>
         </div>
     </div>
     <div class="toast" id="toast" role="status"></div>
@@ -226,7 +226,7 @@
 
     <footer>
         <p>&copy; 2026 ModelVault • Curated free 3D models</p>
-        <p>Respect all model licenses • Made with ❤️ for makers</p>
+        <p>Respect all model licenses • Made with love for makers</p>
     </footer>
 
     <!-- Firebase Auth + Firestore (free Spark plan). Config is public by design; security is in rules. -->
@@ -235,18 +235,18 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>
         const categories = [
-            {slug: "tabletop-minis", title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
-            {slug: "dragons-monsters", title: "🐉 Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon", thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg"},
-            {slug: "functional-prints", title: "🔧 Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer", thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg"},
-            {slug: "cosplay-props", title: "🎭 Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay", thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp"},
-            {slug: "toys-fidgets", title: "🧸 Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget", thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp"},
-            {slug: "home-decor", title: "🏠 Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase", thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg"},
-            {slug: "mechanical-parts", title: "⚙️ Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical", thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg"},
-            {slug: "scifi-tech", title: "🚀 Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi", thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg"},
-            {slug: "terrain-scenery", title: "🏰 Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain", thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg"},
-            {slug: "dice-accessories", title: "🎲 Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower", thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg"},
-            {slug: "animals-wildlife", title: "🦖 Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal", thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp"},
-            {slug: "phone-stands", title: "📱 Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand", thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg"}
+            {slug: "tabletop-minis", title: "Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
+            {slug: "dragons-monsters", title: "Dragons & Monsters", desc: "Fantasy creatures", link: "https://www.printables.com/search/models?q=dragon", thumb: "https://media.printables.com/media/prints/413203/images/3462216_1f951c31-7a55-4542-822c-1792f736de19/thumbs/cover/1200x630/jpg/20230306_120910.jpg"},
+            {slug: "functional-prints", title: "Functional Prints", desc: "Organizers & tools", link: "https://www.printables.com/search/models?q=organizer", thumb: "https://media.printables.com/media/prints/564262/images/4519807_a7db1182-86e1-43e0-9357-0fd7784a9063/thumbs/cover/1200x630/jpg/20230826_102119.jpg"},
+            {slug: "cosplay-props", title: "Cosplay Props", desc: "Armor, weapons, helmets", link: "https://www.printables.com/search/models?q=cosplay", thumb: "https://media.printables.com/media/prints/527750/images/4264371_b17ca36b-7d17-4545-94a7-b14ab3911181/thumbs/inside/1280x960/jpg/photo_2023-07-12_05-27-46.webp"},
+            {slug: "toys-fidgets", title: "Toys & Fidgets", desc: "Puzzles, board games, fidgets", link: "https://www.printables.com/search/models?q=fidget", thumb: "https://media.printables.com/media/prints/927393/images/7072504_5c9174c3-fda6-4b25-8778-90d120dd4584_fc740d62-e3b7-4be3-9ff9-1b4ccdd0e7df/thumbs/cover/1200x630/webp/large_display_5126fcd5-c325-487b-80b6-25cd37e1b849.webp"},
+            {slug: "home-decor", title: "Home & Decor", desc: "Vases, lamps, planters", link: "https://www.printables.com/search/models?q=vase", thumb: "https://media.printables.com/media/prints/131488/images/4214139_996b8f90-6b8f-494d-9597-a2cfde30e16a/thumbs/cover/1200x630/jpg/vaserose_wlogo.jpg"},
+            {slug: "mechanical-parts", title: "Mechanical Parts", desc: "Gears, brackets, engineering", link: "https://www.printables.com/search/models?q=mechanical", thumb: "https://media.printables.com/media/prints/370363/images/3120222_73ea8239-0b3e-47aa-832e-893217d1a6f3/thumbs/cover/1200x630/jpg/card-holder-1.jpg"},
+            {slug: "scifi-tech", title: "Sci-Fi & Tech", desc: "Drones, gadgets, sci-fi props", link: "https://www.printables.com/search/models?q=scifi", thumb: "https://media.printables.com/media/prints/410721/images/3411246_392aec97-75c1-4b87-aec1-8cd8b8b2fd7e/thumbs/cover/1200x630/jpg/ultrasuperbox_flyingcombatdrone_big_a4918ffb843adba327a188b2595e84c635d7af7a.jpg"},
+            {slug: "terrain-scenery", title: "Terrain & Scenery", desc: "D&D terrain, buildings", link: "https://www.printables.com/search/models?q=terrain", thumb: "https://media.printables.com/media/prints/723226/images/5666102_23ff81d6-79b4-43b3-a430-cd0ee393249b_1a96f353-360a-493f-b816-16d1edd92548/thumbs/cover/1200x630/jpg/dnd-terrain-free-roller-tiles-grid-maker-3dpint.jpg"},
+            {slug: "dice-accessories", title: "Dice & Accessories", desc: "Custom dice towers, trays", link: "https://www.printables.com/search/models?q=dice+tower", thumb: "https://media.printables.com/media/prints/851935/images/6560725_674b33a8-8b4a-46af-b11b-ffd0fdf7e3c6_d58033ce-a4c1-45d0-bfdd-9fa74237e9e4/thumbs/cover/1200x630/jpg/20240421_190956.jpg"},
+            {slug: "animals-wildlife", title: "Animals & Wildlife", desc: "Realistic and fantasy creatures", link: "https://www.printables.com/search/models?q=animal", thumb: "https://media.printables.com/media/prints/4b763908-c5c7-4b46-aa76-ade87e49145b/images/9961852_c9d09251-46d4-4554-b1a0-c55a918c1352_f31ed180-295d-4e62-9381-28d07d158680/thumbs/cover/1200x630/webp/bison.webp"},
+            {slug: "phone-stands", title: "Phone & Desk Stands", desc: "Holders, mounts, organizers", link: "https://www.printables.com/search/models?q=phone+stand", thumb: "https://media.printables.com/media/prints/187125/images/1744516_d3dcf9f7-b0e5-4579-99f1-87e23bc610d6/thumbs/cover/1200x630/jpg/img_5985.jpg"}
         ];
 
         // Real models with real ratings pulled from each model's own Printables page (schema.org data). Download
@@ -352,8 +352,43 @@
             {id: "tv-c3po-mask", title: "C-3PO Wearable Mask", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/8f/fc/05/0c/7d/CC33.png", link: "https://www.thingiverse.com/thing:1257485", rating: null},
             {id: "tv-death-trooper-helmet", title: "Death Trooper Full Scale Helmet", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/b3/69/9f/a9/e9/title.png", link: "https://www.thingiverse.com/thing:1904115", rating: null},
             {id: "tv-dnd-shaman", title: "D&D Dragon Shaman Mini", cats: ["tabletop-minis"], thumb: "https://cdn.thingiverse.com/assets/6e/b4/6c/e3/92/49ae7760-69db-4ebf-b4e0-4f018b6b79bc.png", link: "https://www.thingiverse.com/thing:5935210", rating: null},
-            {id: "tv-kettle-helm", title: "Articulated Kettle Helm", cats: ["cosplay-props", "tabletop-minis"], thumb: "https://cdn.thingiverse.com/assets/b2/82/cc/ec/50/Screenshot_2025-10-27_094748.png", link: "https://www.thingiverse.com/thing:7183697", rating: null}
-        ];
+            {id: "tv-kettle-helm", title: "Articulated Kettle Helm", cats: ["cosplay-props", "tabletop-minis"], thumb: "https://cdn.thingiverse.com/assets/b2/82/cc/ec/50/Screenshot_2025-10-27_094748.png", link: "https://www.thingiverse.com/thing:7183697", rating: null},
+        
+
+            // --- Verified expansion batch ---
+            {id: "polyhedral-dice-gridfinity-storage", title: "Polyhedral dice storage, parametric, gridfinity", cats: ["dice-accessories", "functional-prints"], thumb: "https://media.printables.com/media/prints/658134/images/5186491_5057e04a-793a-4c31-b7b3-8b5fdc652ce2_0c99e288-dead-4066-ab3e-edbf0c886348/thumbs/cover/1200x630/jpg/img_4802.jpg", link: "https://www.printables.com/model/658134-polyhedral-dice-storage-parametric-gridfinity", rating: null},
+            {id: "ttrpg-dice-box", title: "TTRPG Dice Box", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/463534/images/3802202_c463ec9d-3962-40a2-b4d2-681af9c27f91/thumbs/cover/1200x630/jpg/20230426_181733.jpg", link: "https://www.printables.com/model/463534-ttrpg-dice-box", rating: {value: 4.0, count: 1}},
+            {id: "pip-dnd-dice-holder", title: "Print in Place DND Dice Holder", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/834816/images/6433087_75835ccd-719f-435b-b722-530b36fbc7ce_1b8d34d8-c462-4eee-9c07-2cc8f519e2a0/thumbs/cover/1200x630/jpg/dice-holder-1-of-4.jpg", link: "https://www.printables.com/model/834816-print-in-place-dnd-dice-holder", rating: {value: 4.0, count: 1}},
+            {id: "polyhedral-7-dice-box", title: "Polyhedral Set of 7 Dice Box (MMU-less)", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/440155/images/3638427_a3398044-b846-42fa-8559-80acfbf73d15/thumbs/cover/1200x630/jpg/side-by-side.jpg", link: "https://www.printables.com/model/440155-polyhedral-set-of-7-dice-box-mmu-less", rating: {value: 5.0, count: 8}},
+            {id: "chamfered-d20-dice", title: "Chamfered d20 dice", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/113783/images/1116453_bac7a530-b60e-4647-8259-081f5e4f90ca/thumbs/cover/1200x630/jpg/20220105_221839.jpg", link: "https://www.printables.com/model/113783-chamfered-d20-dice", rating: {value: 4.9, count: 13}},
+            {id: "dnd-dice-set-container", title: "Very Cool D&D Dice-Set Container (Beginner Friendly)", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/568677/images/4702508_2c7f1cbc-23a0-4010-9275-dcfd3527ec80_7406f482-afe7-407c-8840-9b452e23543d/thumbs/cover/1200x630/jpg/eyJyb3RhdGVBbmdsZSI6OTB9/img_20230922_011338735.jpg", link: "https://www.printables.com/model/568677-very-cool-dd-dice-set-container-beginner-friendly", rating: {value: 5.0, count: 3}},
+            {id: "labelled-polyhedral-dice-box", title: "Labelled Polyhedral Dice Box", cats: ["dice-accessories"], thumb: "https://media.printables.com/media/prints/383759/images/3217686_87718e35-eeb6-4ca7-a8a4-e7d4f28f12da/thumbs/cover/1200x630/jpg/img_5972.jpg", link: "https://www.printables.com/model/383759-labelled-polyhedral-dice-box", rating: null},
+            {id: "parametric-dice-tray-tablet", title: "Parametric Dice Tray, Tablet Holder, and Storage Box", cats: ["dice-accessories", "phone-stands"], thumb: "https://media.printables.com/media/prints/1408554/images/10630486_6f403dcd-78d4-471b-b782-6dd8b539d7d4_31a47cbf-7e5d-4ce2-857b-1f8171f481e0/thumbs/cover/1200x630/jpg/large_display_13d6b739-5fe2-494e-b078-b6f82e6541b1_1408554.jpg", link: "https://www.printables.com/model/1408554-parametric-dice-tray-tablet-holder-and-storage-box", rating: null},
+            {id: "tv-gear-bearing-classic", title: "Gear Bearing", cats: ["mechanical-parts", "functional-prints"], thumb: "https://cdn.thingiverse.com/renders/fb/fb/e1/5f/48/bearing08.jpg", link: "https://www.thingiverse.com/thing:53451", rating: null},
+            {id: "tv-wades-extruder", title: "Accessible Wade's Extruder for MB", cats: ["mechanical-parts"], thumb: "https://cdn.thingiverse.com/renders/5b/3b/8d/25/2f/Picture_066_display_large.jpg", link: "https://www.thingiverse.com/thing:10007", rating: null},
+            {id: "tv-jedi-training-remote", title: "Jedi Training Remote", cats: ["toys-fidgets", "scifi-tech"], thumb: "https://cdn.thingiverse.com/assets/63/68/45/5d/1b/JTR10.JPG", link: "https://www.thingiverse.com/thing:3019462", rating: null},
+            {id: "tv-vacuum-switch-cover", title: "Vacuum cleaner Switch Cover", cats: ["home-decor"], thumb: "https://cdn.thingiverse.com/renders/2c/ad/b5/ad/90/vacswitch_display_large.jpg", link: "https://www.thingiverse.com/thing:25801", rating: null},
+            {id: "tv-duplicator4-restpad", title: "Duplicator4 restpad", cats: ["phone-stands"], thumb: "https://cdn.thingiverse.com/renders/7d/7d/5f/c5/70/2014-05-14_19.50.51.jpg", link: "https://www.thingiverse.com/thing:331761", rating: null},
+            {id: "tv-rpg-status-token", title: "RPG Status Token Mind Vision", cats: ["toys-fidgets", "scifi-tech"], thumb: "https://cdn.thingiverse.com/renders/a1/08/dd/81/69/d5dad4e113d43aebc35dd1085c3f8154.png", link: "https://www.thingiverse.com/thing:2822996", rating: null},
+
+
+            // --- Verified expansion batch ---
+            {id: "tv-7090080-folding-castle-hex-dice-tower-print-", title: "Folding Castle Hex Dice Tower (print in place)", cats: ["dice-accessories"], thumb: "https://cdn.thingiverse.com/assets/70/37/2e/6d/d6/Folding-Hex-Castle_dice_tower_1.jpg", link: "https://www.thingiverse.com/thing:7090080", rating: null},
+            {id: "tv-4214174-ancient-tower-of-hercules-dice-tower", title: "Ancient Tower of Hercules - Dice Tower", cats: ["dice-accessories"], thumb: "https://cdn.thingiverse.com/assets/ec/92/59/38/58/IMG_1428.JPG", link: "https://www.thingiverse.com/thing:4214174", rating: null},
+            {id: "tv-7015252-cell-phone-stand-dual-angle-simple-m", title: "Cell Phone Stand, Dual Angle, Simple Minimalist Design", cats: ["phone-stands"], thumb: "https://cdn.thingiverse.com/assets/9d/5b/f5/a4/23/Phone_Stand_YTthumbnail.jpg", link: "https://www.thingiverse.com/thing:7015252", rating: null},
+            {id: "tv-512797-elephant-phone-holder-no-supports-re", title: "Elephant Phone Holder (No supports required)", cats: ["phone-stands", "animals-wildlife"], thumb: "https://cdn.thingiverse.com/renders/44/20/73/e5/ab/DSC_0262.jpg", link: "https://www.thingiverse.com/thing:512797", rating: null},
+            {id: "tv-5461124-ripple-vase-ovoid", title: "Ripple Vase (Ovoid)", cats: ["home-decor"], thumb: "https://cdn.thingiverse.com/assets/cf/ac/31/35/77/24279a5a-c5b2-428d-b6f7-871c1f00d674.jpg", link: "https://www.thingiverse.com/thing:5461124", rating: null},
+            {id: "tv-28202-julia-vase-002-yin-yang", title: "Julia Vase #002 - Yin Yang", cats: ["home-decor"], thumb: "https://cdn.thingiverse.com/renders/29/43/13/82/3f/Julia_Vase_002_Color.jpg", link: "https://www.thingiverse.com/thing:28202", rating: null},
+            {id: "tv-968011-herringbone-planetary-gear-bearing-o", title: "Herringbone Planetary Gear/Bearing (Optional HoneyComb) (Customizable)", cats: ["mechanical-parts"], thumb: "https://cdn.thingiverse.com/assets/f6/58/b8/ee/9f/HerringbonePlanetaryGearBearingHoneycomb.PNG", link: "https://www.thingiverse.com/thing:968011", rating: null},
+            {id: "tv-2237509-fidget-spinner-one-piece-print-no-be", title: "Fidget Spinner - One-Piece-Print / No Bearings Required!", cats: ["toys-fidgets"], thumb: "https://cdn.thingiverse.com/assets/3e/55/df/30/d0/fs_00.jpg", link: "https://www.thingiverse.com/thing:2237509", rating: null},
+            {id: "tv-218026-a-better-dragon", title: "A Better Dragon", cats: ["dragons-monsters"], thumb: "https://cdn.thingiverse.com/renders/54/7e/04/59/d9/11703240346_ff9c248b4e_c.jpg", link: "https://www.thingiverse.com/thing:218026", rating: null},
+            {id: "tv-6515841-flexi-japanese-dragon-print-in-place", title: "Flexi Japanese Dragon (Print-in-place)", cats: ["dragons-monsters", "toys-fidgets"], thumb: "https://cdn.thingiverse.com/assets/42/b9/eb/1a/1b/465ca5cb-e2d3-422a-a04c-17029ee28338.jpg", link: "https://www.thingiverse.com/thing:6515841", rating: null},
+            {id: "tv-3578797-the-mandalorian-helmet", title: "The Mandalorian Helmet", cats: ["cosplay-props"], thumb: "https://cdn.thingiverse.com/assets/9b/07/95/5d/1a/2_1543_0001.jpg", link: "https://www.thingiverse.com/thing:3578797", rating: null},
+            {id: "tv-3433643-dice-tower-single-piece-no-supports-", title: "Dice Tower, single piece, no supports required", cats: ["dice-accessories"], thumb: "https://cdn.thingiverse.com/assets/d1/ca/21/0a/cf/tower2.jpg", link: "https://www.thingiverse.com/thing:3433643", rating: null},
+            {id: "tv-3663547-flexi-articulated-gecko-keychain", title: "Flexi Articulated Gecko Keychain", cats: ["toys-fidgets", "animals-wildlife"], thumb: "https://cdn.thingiverse.com/assets/d3/05/82/e7/e6/jtronics_flexi_gecko_klein.jpg", link: "https://www.thingiverse.com/thing:3663547", rating: null},
+            {id: "tv-937740-low-poly-fox", title: "Low Poly Fox", cats: ["animals-wildlife", "home-decor"], thumb: "https://cdn.thingiverse.com/assets/2a/b1/6e/5a/86/IMG_5035.JPG", link: "https://www.thingiverse.com/thing:937740", rating: null},
+            {id: "tv-6912958-heroscape-hex-terrain-tiles-reimagin", title: "Heroscape Hex Terrain Tiles Reimagined - No Supports/removable top", cats: ["terrain-scenery"], thumb: "https://cdn.thingiverse.com/assets/25/bb/56/63/3f/IMG_0055.jpg", link: "https://www.thingiverse.com/thing:6912958", rating: null},
+];
 
         function renderCategories(filtered = categories) {
             const grid = document.getElementById('categoryGrid');
@@ -601,7 +636,7 @@
                     down: cur.down + (type === "down" ? 1 : 0)
                 };
                 if (currentSlug) renderCategoryPage(currentSlug);
-                showToast(type === "up" ? "Thanks for the 👍" : "Thanks for the 👎");
+                showToast(type === "up" ? "Thanks for the upvote" : "Thanks for the downvote");
             } catch (e) {
                 if (String(e.message || e).includes("already-voted")) {
                     myVotes[modelId] = myVotes[modelId] || type;
@@ -632,7 +667,7 @@
                 const netVotes = v.up - v.down;
                 const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
                 const ratingHtml = m.rating
-                    ? `★ ${m.rating.value.toFixed(1)} (${m.rating.count} ratings)`
+                    ? `Rating ${m.rating.value.toFixed(1)} (${m.rating.count})`
                     : 'No ratings yet';
                 const source = sourceFromLink(m.link);
                 const isExpanded = m.id === expandedId;
@@ -651,9 +686,9 @@
                             <div class="model-bar-rating">${ratingHtml}</div>
                         </div>
                         <div class="model-bar-actions">
-                            <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();">⬇ <span class="label">Download</span></button>
-                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍 <span class="vote-count">${v.up}</span></button>
-                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎 <span class="vote-count">${v.down}</span></button>
+                            <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();"><span class="label">Download</span></button>
+                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${m.id}','up'); event.stopPropagation();">Up <span class="vote-count">${v.up}</span></button>
+                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${m.id}','down'); event.stopPropagation();">Down <span class="vote-count">${v.down}</span></button>
                             <span class="bar-control mv-rating" title="ModelVault score from signed-in visitor votes">MV ${mvRating}</span>
                         </div>
                     </div>
@@ -662,7 +697,7 @@
                         <div class="expand-info">
                             <h4>${m.title}</h4>
                             <span class="expand-source">Source: ${source}</span>
-                            <div class="expand-meta">${ratingHtml}<br>ModelVault votes: ${v.up} up · ${v.down} down · score ${mvRating}${v.mine ? '<br>Your vote: ' + (v.mine === 'up' ? '👍' : '👎') + ' (locked)' : ''}<br><span style="opacity:0.8">Sign in free to vote · one vote per model</span></div>
+                            <div class="expand-meta">${ratingHtml}<br>ModelVault votes: ${v.up} up · ${v.down} down · score ${mvRating}${v.mine ? '<br>Your vote: ' + (v.mine === 'up' ? 'up' : 'down') + ' (locked)' : ''}<br><span style="opacity:0.8">Sign in free to vote · one vote per model</span></div>
                             <a class="expand-view-link" href="${m.link}" target="_blank" rel="noopener">View full listing on ${source} ↗</a>
                         </div>
                     </div>
@@ -775,7 +810,7 @@
                 if (res.ok) {
                     form.reset();
                     charCount.textContent = '300 characters remaining';
-                    status.textContent = 'Thanks! Your model was submitted for review. 🎉';
+                    status.textContent = 'Thanks! Your model was submitted for review.';
                     status.className = 'form-status success';
                 } else { throw new Error(); }
             } catch {
