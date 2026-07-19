@@ -64,7 +64,31 @@
         .bar-control.dl-btn:hover { background: #2563eb; }
         .bar-control.vote-up.active { background: #14532d; color: #bbf7d0; }
         .bar-control.vote-down.active { background: #7f1d1d; color: #fecaca; }
+        .bar-control.vote-up.locked, .bar-control.vote-down.locked { opacity: 0.55; cursor: default; }
+        .bar-control .vote-count { font-variant-numeric: tabular-nums; min-width: 1ch; }
         .bar-control.mv-rating { background: transparent; cursor: default; color: #94a3b8; padding: 8px 6px; }
+        .nav-links { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 0; }
+        .nav-auth { margin-left: 28px; display: flex; align-items: center; gap: 10px; }
+        .nav-auth-btn { background: #3b82f6; color: #fff; border: none; border-radius: 9999px; padding: 8px 16px; font-size: 0.9em; font-weight: 600; cursor: pointer; width: auto; }
+        .nav-auth-btn:hover { background: #2563eb; }
+        .nav-auth-btn.ghost { background: transparent; border: 1px solid #475569; color: #e0f2fe; }
+        .nav-auth-btn.ghost:hover { background: #1e293b; }
+        .nav-user { font-size: 0.85em; color: #94a3b8; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .auth-overlay { display: none; position: fixed; inset: 0; background: rgba(2,6,23,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+        .auth-overlay.open { display: flex; }
+        .auth-card { background: #172554; border-radius: 16px; padding: 28px; width: 100%; max-width: 420px; box-shadow: 0 25px 60px rgba(0,0,0,0.55); position: relative; }
+        .auth-card h3 { margin: 0 0 6px 0; color: #bae6fd; font-size: 1.45em; }
+        .auth-sub { margin: 0 0 18px 0; color: #94a3b8; font-size: 0.92em; line-height: 1.45; }
+        .auth-close { position: absolute; top: 12px; right: 14px; background: transparent; border: none; color: #94a3b8; font-size: 1.5em; cursor: pointer; width: auto; padding: 4px 10px; }
+        .auth-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+        .auth-tabs button { width: auto; flex: 1; padding: 10px; background: #1e293b; color: #94a3b8; font-size: 0.9em; }
+        .auth-tabs button.active { background: #3b82f6; color: #fff; }
+        .auth-card input { margin: 8px 0; }
+        .auth-card button[type="submit"] { margin-top: 10px; }
+        .auth-error { color: #fecaca; font-size: 0.9em; min-height: 1.2em; margin: 8px 0 0 0; }
+        .auth-secure { margin: 14px 0 0 0; font-size: 0.8em; color: #64748b; line-height: 1.4; }
+        .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #e0f2fe; padding: 12px 20px; border-radius: 10px; z-index: 1100; box-shadow: 0 10px 30px rgba(0,0,0,0.45); font-weight: 500; display: none; max-width: 90%; text-align: center; }
+        .toast.show { display: block; }
         .model-bar-expand { display: none; padding: 20px; gap: 22px; background: #0f1f42; border-top: 1px solid rgba(255,255,255,0.06); }
         .model-bar.expanded .model-bar-expand { display: flex; }
         .expand-photo { width: 280px; max-width: 40%; height: 280px; object-fit: cover; border-radius: 12px; flex-shrink: 0; }
@@ -103,8 +127,31 @@
             <a href="#">Home</a>
             <a href="#submit">Submit Model</a>
             <a href="#about">About</a>
+            <div class="nav-auth" id="authNav">
+                <button type="button" class="nav-auth-btn" id="signInNavBtn" onclick="openAuthModal('signin')">Sign in</button>
+            </div>
         </div>
     </nav>
+
+    <div class="auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+        <div class="auth-card">
+            <button type="button" class="auth-close" onclick="closeAuthModal()" aria-label="Close">×</button>
+            <h3 id="authTitle">Sign in to vote</h3>
+            <p class="auth-sub">Free account · takes about 20 seconds · one vote per model. Passwords are handled by Google Firebase (we never store them).</p>
+            <div class="auth-tabs">
+                <button type="button" id="tabSignin" class="active" onclick="setAuthMode('signin')">Sign in</button>
+                <button type="button" id="tabSignup" onclick="setAuthMode('signup')">Create free account</button>
+            </div>
+            <form id="authForm">
+                <input type="email" id="authEmail" placeholder="Email" required autocomplete="email">
+                <input type="password" id="authPassword" placeholder="Password (6+ characters)" required minlength="6" autocomplete="current-password">
+                <button type="submit" id="authSubmitBtn">Sign in</button>
+            </form>
+            <p class="auth-error" id="authError"></p>
+            <p class="auth-secure">🔒 Secure email/password auth via Firebase Auth (free). Your vote is locked once cast.</p>
+        </div>
+    </div>
+    <div class="toast" id="toast" role="status"></div>
 
     <header>
         <h1>ModelVault</h1>
@@ -159,7 +206,7 @@
     <div class="section home-section" id="about">
         <h2>About ModelVault</h2>
         <div class="card" style="max-width: 800px; margin: 0 auto; cursor: default;">
-            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from across the web. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Have a model worth sharing? Submit it below and we'll add it to the vault.</p>
+            <p style="margin: 0;">ModelVault is a curated directory of the best free 3D-printable models from across the web. Instead of digging through endless search results, browse by category or check our featured picks — every link points straight to the original creator's page. Like or dislike models after a free sign-in (one vote per model). Have a model worth sharing? Submit it below and we'll add it to the vault.</p>
         </div>
     </div>
 
@@ -182,6 +229,10 @@
         <p>Respect all model licenses • Made with ❤️ for makers</p>
     </footer>
 
+    <!-- Firebase Auth + Firestore (free Spark plan). Config is public by design; security is in rules. -->
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
     <script>
         const categories = [
             {slug: "tabletop-minis", title: "🏹 Tabletop Minis", desc: "D&D, Warhammer, RPG minis", link: "https://www.printables.com/search/models?q=dnd+mini", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/thumbs/cover/1200x630/jpg/img_20221015_123953942.jpg"},
@@ -320,25 +371,248 @@
             });
         }
 
-        // Thumbs up/down votes are stored per-browser (localStorage) — there's no backend/database, so
-        // this is a personal "your votes" record, not a shared global tally across all visitors.
-        function getVotes() {
-            return JSON.parse(localStorage.getItem('mv_votes') || '{}');
+        // --- Auth + votes (Firebase Auth + Firestore, free Spark plan) ---
+        // Create a free project at https://console.firebase.google.com , enable Email/Password,
+        // create a Firestore database, publish firestore.rules from this repo, then paste config below.
+        // Authorized domains must include dylman2323.github.io and localhost.
+        const firebaseConfig = {
+            apiKey: "AIzaSyDummyReplaceMe_ModelVaultConfig",
+            authDomain: "modelvault-app.firebaseapp.com",
+            projectId: "modelvault-app",
+            storageBucket: "modelvault-app.appspot.com",
+            messagingSenderId: "000000000000",
+            appId: "1:000000000000:web:0000000000000000000000"
+        };
+        // Set true only after real Firebase config is pasted above
+        const firebaseConfigured = firebaseConfig.apiKey && !firebaseConfig.apiKey.includes("DummyReplaceMe");
+
+        let mvAuth = null;
+        let mvDb = null;
+        let mvUser = null;
+        // Global tallies: { [modelId]: { up, down } }
+        let voteStats = {};
+        // Current user's votes: { [modelId]: 'up' | 'down' }
+        let myVotes = {};
+        let authMode = "signin";
+        let pendingVote = null; // { modelId, type } after sign-in
+        let votesReady = false;
+
+        function showToast(msg, ms = 3200) {
+            const el = document.getElementById("toast");
+            el.textContent = msg;
+            el.classList.add("show");
+            clearTimeout(showToast._t);
+            showToast._t = setTimeout(() => el.classList.remove("show"), ms);
         }
-        function castVote(modelId, type) {
-            const store = getVotes();
-            const entry = store[modelId] || {up: 0, down: 0, mine: null};
-            if (entry.mine === type) {
-                entry[type]--;
-                entry.mine = null;
-            } else {
-                if (entry.mine) entry[entry.mine]--;
-                entry[type]++;
-                entry.mine = type;
+
+        function initFirebase() {
+            if (!firebaseConfigured || typeof firebase === "undefined") return false;
+            try {
+                if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
+                mvAuth = firebase.auth();
+                mvDb = firebase.firestore();
+                mvAuth.onAuthStateChanged(async (user) => {
+                    mvUser = user;
+                    renderAuthNav();
+                    if (user) {
+                        await loadMyVotes();
+                        if (pendingVote) {
+                            const p = pendingVote;
+                            pendingVote = null;
+                            await castVote(p.modelId, p.type);
+                        }
+                    } else {
+                        myVotes = {};
+                    }
+                    if (currentSlug) renderCategoryPage(currentSlug);
+                });
+                loadVoteStats();
+                return true;
+            } catch (e) {
+                console.error("Firebase init failed", e);
+                return false;
             }
-            store[modelId] = entry;
-            localStorage.setItem('mv_votes', JSON.stringify(store));
-            renderCategoryPage(currentSlug);
+        }
+
+        async function loadVoteStats() {
+            if (!mvDb) return;
+            try {
+                const snap = await mvDb.collection("modelStats").get();
+                const next = {};
+                snap.forEach((doc) => {
+                    const d = doc.data() || {};
+                    next[doc.id] = { up: d.up || 0, down: d.down || 0 };
+                });
+                voteStats = next;
+                votesReady = true;
+                if (currentSlug) renderCategoryPage(currentSlug);
+            } catch (e) {
+                console.warn("Could not load vote stats", e);
+            }
+        }
+
+        async function loadMyVotes() {
+            if (!mvDb || !mvUser) { myVotes = {}; return; }
+            try {
+                const snap = await mvDb.collection("userVotes").where("uid", "==", mvUser.uid).get();
+                const next = {};
+                snap.forEach((doc) => {
+                    const d = doc.data();
+                    if (d && d.modelId && d.type) next[d.modelId] = d.type;
+                });
+                myVotes = next;
+            } catch (e) {
+                console.warn("Could not load your votes", e);
+                myVotes = {};
+            }
+        }
+
+        function getModelVotes(modelId) {
+            const s = voteStats[modelId] || { up: 0, down: 0 };
+            return { up: s.up || 0, down: s.down || 0, mine: myVotes[modelId] || null };
+        }
+
+        function renderAuthNav() {
+            const nav = document.getElementById("authNav");
+            if (!nav) return;
+            if (mvUser) {
+                const label = mvUser.email || "Signed in";
+                nav.innerHTML = `<span class="nav-user" title="${label}">${label}</span>
+                    <button type="button" class="nav-auth-btn ghost" onclick="signOutMv()">Sign out</button>`;
+            } else {
+                nav.innerHTML = `<button type="button" class="nav-auth-btn" onclick="openAuthModal('signin')">Sign in</button>`;
+            }
+        }
+
+        function openAuthModal(mode) {
+            setAuthMode(mode === "signup" ? "signup" : "signin");
+            document.getElementById("authError").textContent = "";
+            document.getElementById("authOverlay").classList.add("open");
+            setTimeout(() => document.getElementById("authEmail").focus(), 50);
+        }
+        function closeAuthModal() {
+            document.getElementById("authOverlay").classList.remove("open");
+            document.getElementById("authError").textContent = "";
+        }
+        function setAuthMode(mode) {
+            authMode = mode;
+            const signin = mode === "signin";
+            document.getElementById("tabSignin").classList.toggle("active", signin);
+            document.getElementById("tabSignup").classList.toggle("active", !signin);
+            document.getElementById("authTitle").textContent = signin ? "Sign in to vote" : "Create a free account";
+            document.getElementById("authSubmitBtn").textContent = signin ? "Sign in" : "Create free account";
+            document.getElementById("authPassword").autocomplete = signin ? "current-password" : "new-password";
+        }
+
+        async function signOutMv() {
+            if (mvAuth) await mvAuth.signOut();
+            showToast("Signed out");
+        }
+
+        document.getElementById("authForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const email = document.getElementById("authEmail").value.trim();
+            const password = document.getElementById("authPassword").value;
+            const err = document.getElementById("authError");
+            err.textContent = "";
+            if (!firebaseConfigured || !mvAuth) {
+                err.textContent = "Voting auth is not connected yet. Site owner: add a free Firebase config (see script comments).";
+                return;
+            }
+            const btn = document.getElementById("authSubmitBtn");
+            btn.disabled = true;
+            try {
+                if (authMode === "signup") {
+                    await mvAuth.createUserWithEmailAndPassword(email, password);
+                    showToast("Account created — you're signed in");
+                } else {
+                    await mvAuth.signInWithEmailAndPassword(email, password);
+                    showToast("Signed in");
+                }
+                closeAuthModal();
+                document.getElementById("authForm").reset();
+            } catch (ex) {
+                err.textContent = friendlyAuthError(ex);
+            } finally {
+                btn.disabled = false;
+            }
+        });
+
+        function friendlyAuthError(ex) {
+            const code = (ex && ex.code) || "";
+            if (code === "auth/email-already-in-use") return "That email already has an account — try Sign in.";
+            if (code === "auth/invalid-email") return "Enter a valid email address.";
+            if (code === "auth/weak-password") return "Password must be at least 6 characters.";
+            if (code === "auth/user-not-found" || code === "auth/wrong-password" || code === "auth/invalid-credential")
+                return "Email or password is incorrect.";
+            if (code === "auth/too-many-requests") return "Too many attempts — wait a minute and try again.";
+            if (code === "auth/network-request-failed") return "Network error — check your connection.";
+            if (code === "auth/operation-not-allowed") return "Email/password sign-in is not enabled in Firebase console yet.";
+            if (code === "auth/invalid-api-key" || code === "auth/api-key-not-valid") return "Firebase API key is invalid — paste a real free project config.";
+            return (ex && ex.message) || "Could not sign in. Try again.";
+        }
+
+        document.getElementById("authOverlay").addEventListener("click", (e) => {
+            if (e.target.id === "authOverlay") closeAuthModal();
+        });
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape") closeAuthModal();
+        });
+
+        async function castVote(modelId, type) {
+            if (type !== "up" && type !== "down") return;
+            if (!firebaseConfigured || !mvDb || !mvAuth) {
+                showToast("Voting backend not connected yet (free Firebase setup needed).");
+                openAuthModal("signin");
+                return;
+            }
+            if (!mvUser) {
+                pendingVote = { modelId, type };
+                openAuthModal("signin");
+                showToast("Sign in free to vote — one vote per model");
+                return;
+            }
+            if (myVotes[modelId]) {
+                showToast("You already voted on this model (one vote only)");
+                return;
+            }
+            const uid = mvUser.uid;
+            const voteRef = mvDb.collection("userVotes").doc(uid + "_" + modelId);
+            const statsRef = mvDb.collection("modelStats").doc(modelId);
+            try {
+                await mvDb.runTransaction(async (tx) => {
+                    const existing = await tx.get(voteRef);
+                    if (existing.exists) throw new Error("already-voted");
+                    const statsSnap = await tx.get(statsRef);
+                    const prev = statsSnap.exists ? statsSnap.data() : { up: 0, down: 0 };
+                    const up = (prev.up || 0) + (type === "up" ? 1 : 0);
+                    const down = (prev.down || 0) + (type === "down" ? 1 : 0);
+                    tx.set(voteRef, {
+                        uid,
+                        modelId,
+                        type,
+                        at: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    tx.set(statsRef, { up, down }, { merge: true });
+                });
+                myVotes[modelId] = type;
+                const cur = voteStats[modelId] || { up: 0, down: 0 };
+                voteStats[modelId] = {
+                    up: cur.up + (type === "up" ? 1 : 0),
+                    down: cur.down + (type === "down" ? 1 : 0)
+                };
+                if (currentSlug) renderCategoryPage(currentSlug);
+                showToast(type === "up" ? "Thanks for the 👍" : "Thanks for the 👎");
+            } catch (e) {
+                if (String(e.message || e).includes("already-voted")) {
+                    myVotes[modelId] = myVotes[modelId] || type;
+                    showToast("You already voted on this model (one vote only)");
+                    if (currentSlug) renderCategoryPage(currentSlug);
+                    return;
+                }
+                console.error(e);
+                showToast("Vote failed — check connection or Firebase rules");
+            }
         }
 
         let currentSlug = null;
@@ -353,10 +627,9 @@
                 list.innerHTML = '<p class="no-results">No models added to this category yet — check back soon.</p>';
                 return;
             }
-            const votes = getVotes();
             const expandedId = list.dataset.expandedId || null;
             list.innerHTML = models.map(m => {
-                const v = votes[m.id] || {up: 0, down: 0, mine: null};
+                const v = getModelVotes(m.id);
                 const netVotes = v.up - v.down;
                 const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
                 const ratingHtml = m.rating
@@ -364,6 +637,12 @@
                     : 'No ratings yet';
                 const source = sourceFromLink(m.link);
                 const isExpanded = m.id === expandedId;
+                const locked = !!v.mine;
+                const upLocked = locked && v.mine !== 'up' ? ' locked' : '';
+                const downLocked = locked && v.mine !== 'down' ? ' locked' : '';
+                const voteHint = locked
+                    ? 'You already voted on this model'
+                    : (mvUser ? 'Cast your one vote' : 'Sign in free to vote');
                 return `
                 <div class="model-bar${isExpanded ? ' expanded' : ''}" data-id="${m.id}">
                     <div class="model-bar-top" onclick="toggleExpand('${m.id}')">
@@ -374,9 +653,9 @@
                         </div>
                         <div class="model-bar-actions">
                             <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();">⬇ <span class="label">Download</span></button>
-                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍</button>
-                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎</button>
-                            <span class="bar-control mv-rating" title="ModelVault score from visitor votes">MV ${mvRating}</span>
+                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${m.id}','up'); event.stopPropagation();">👍 <span class="vote-count">${v.up}</span></button>
+                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${m.id}','down'); event.stopPropagation();">👎 <span class="vote-count">${v.down}</span></button>
+                            <span class="bar-control mv-rating" title="ModelVault score from signed-in visitor votes">MV ${mvRating}</span>
                         </div>
                     </div>
                     <div class="model-bar-expand">
@@ -384,7 +663,7 @@
                         <div class="expand-info">
                             <h4>${m.title}</h4>
                             <span class="expand-source">Source: ${source}</span>
-                            <div class="expand-meta">${ratingHtml}<br>ModelVault visitor score: ${mvRating} (${v.up} up / ${v.down} down)</div>
+                            <div class="expand-meta">${ratingHtml}<br>ModelVault votes: ${v.up} up · ${v.down} down · score ${mvRating}${v.mine ? '<br>Your vote: ' + (v.mine === 'up' ? '👍' : '👎') + ' (locked)' : ''}<br><span style="opacity:0.8">Sign in free to vote · one vote per model</span></div>
                             <a class="expand-view-link" href="${m.link}" target="_blank" rel="noopener">View full listing on ${source} ↗</a>
                         </div>
                     </div>
@@ -450,6 +729,8 @@
             }
         });
 
+        renderAuthNav();
+        initFirebase();
         renderCategories();
         routeFromHash();
 

@@ -1,0 +1,51 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read of tallies. Writes only from signed-in users, and only +1 style updates.
+    match /modelStats/{modelId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['up', 'down'])
+        && request.resource.data.up is int
+        && request.resource.data.down is int
+        && request.resource.data.up >= 0
+        && request.resource.data.down >= 0
+        && (
+          (request.resource.data.up == 1 && request.resource.data.down == 0) ||
+          (request.resource.data.up == 0 && request.resource.data.down == 1)
+        );
+
+      allow update: if request.auth != null
+        && request.resource.data.keys().hasOnly(['up', 'down'])
+        && request.resource.data.up is int
+        && request.resource.data.down is int
+        && resource.data.up is int
+        && resource.data.down is int
+        && (
+          (request.resource.data.up == resource.data.up + 1
+            && request.resource.data.down == resource.data.down) ||
+          (request.resource.data.down == resource.data.down + 1
+            && request.resource.data.up == resource.data.up)
+        );
+
+      allow delete: if false;
+    }
+
+    // One document per user+model. Create once; never update/delete (one vote only).
+    match /userVotes/{voteId} {
+      allow read: if true;
+
+      allow create: if request.auth != null
+        && request.resource.data.keys().hasOnly(['uid', 'modelId', 'type', 'at'])
+        && request.resource.data.uid == request.auth.uid
+        && voteId == request.auth.uid + '_' + request.resource.data.modelId
+        && request.resource.data.modelId is string
+        && request.resource.data.modelId.size() > 0
+        && request.resource.data.modelId.size() < 200
+        && request.resource.data.type in ['up', 'down'];
+
+      allow update, delete: if false;
+    }
+  }
+}
