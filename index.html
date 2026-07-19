@@ -123,11 +123,20 @@
         .back-link { display: inline-block; margin-bottom: 28px; color: #93c5fd; text-decoration: none; font-weight: 600; cursor: pointer; font-size: 1.1em; }
         .back-link:hover { text-decoration: underline; }
         /* Category listings — larger section and rows */
-        #categoryPage.section { max-width: 1520px; margin: 48px auto 100px; padding: 0 48px; }
-        #categoryPage .category-page-head h2 { font-size: 2.6em; text-align: left; margin-bottom: 0; }
-        #categoryPage .sort-label { font-size: 1.05em; }
-        #categoryPage .sort-label select { min-width: 300px; padding: 12px 14px; font-size: 1em; }
-        #categoryPage .sort-note { font-size: 0.98em; margin: 0 0 28px 0; }
+        #categoryPage.section,
+        #searchPage.section { max-width: 1520px; margin: 48px auto 100px; padding: 0 48px; }
+        #categoryPage .category-page-head h2,
+        #searchPage .category-page-head h2 { font-size: 2.6em; text-align: left; margin-bottom: 0; }
+        #categoryPage .sort-label,
+        #searchPage .sort-label { font-size: 1.05em; }
+        #categoryPage .sort-label select,
+        #searchPage .sort-label select { min-width: 300px; padding: 12px 14px; font-size: 1em; }
+        #categoryPage .sort-note,
+        #searchPage .sort-note { font-size: 0.98em; margin: 0 0 28px 0; }
+        .search-wrap { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; max-width: 920px; margin: 0 auto; }
+        .search-wrap .search { flex: 1 1 320px; width: auto; max-width: 100%; }
+        .search-go { width: auto; padding: 18px 28px; border-radius: 9999px; font-size: 1.1em; font-weight: 700; box-shadow: 0 10px 28px rgba(0,0,0,0.35); }
+        .search-go:hover { background: #2563eb; }
         .bar-list { display: flex; flex-direction: column; gap: 16px; }
         .model-bar { background: #172554; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 28px rgba(0,0,0,0.4); }
         .model-bar-top { display: flex; align-items: center; min-height: 112px; height: auto; cursor: pointer; transition: background 0.15s; }
@@ -182,15 +191,19 @@
         .expand-view-link { align-self: flex-start; background: #3b82f6; color: white; padding: 14px 28px; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 1.05em; margin-top: auto; }
         .expand-view-link:hover { background: #2563eb; }
         @media (max-width: 900px) {
-            #categoryPage.section { max-width: 100%; padding: 0 24px; }
+            #categoryPage.section,
+            #searchPage.section { max-width: 100%; padding: 0 24px; }
             .model-bar-top { min-height: 96px; }
             .model-bar-top img { width: 96px; height: 96px; }
             .model-bar-title { font-size: 1.12em; }
             .expand-photo { width: 280px; height: 280px; }
         }
         @media (max-width: 640px) {
-            #categoryPage.section { padding: 0 16px; margin: 32px auto 60px; }
-            #categoryPage .category-page-head h2 { font-size: 1.85em; }
+            #categoryPage.section,
+            #searchPage.section { padding: 0 16px; margin: 32px auto 60px; }
+            #categoryPage .category-page-head h2,
+            #searchPage .category-page-head h2 { font-size: 1.85em; }
+            .search-go { width: 100%; max-width: 280px; }
             .model-bar-top { flex-wrap: wrap; min-height: 0; }
             .model-bar-top img { width: 88px; height: 88px; }
             .model-bar-info { padding: 12px 14px; flex: 1 1 calc(100% - 88px); }
@@ -255,8 +268,11 @@
     <header>
         <h1>ModelVault</h1>
         <p class="tagline">Free 3D printable models, curated for makers</p>
-        <input type="text" class="search" id="searchInput" placeholder="Search models (goblin, organizer, cosplay...)">
-        <p class="search-hint">Type to filter categories • press Enter to search Printables</p>
+        <div class="search-wrap">
+            <input type="search" class="search" id="searchInput" placeholder="Search models (goblin, organizer, cosplay...)" enterkeyhint="search" autocomplete="off">
+            <button type="button" class="search-go" id="searchGoBtn">Search</button>
+        </div>
+        <p class="search-hint">Search every model listed on ModelVault • press Enter or Search</p>
     </header>
 
     <div class="section" id="categoryPage" style="display:none;">
@@ -279,6 +295,28 @@
         </div>
         <p class="sort-note" id="categorySortNote">Sorted by popularity using download and rating data from the original listing sites.</p>
         <div class="bar-list" id="categoryPageList"></div>
+    </div>
+
+    <div class="section" id="searchPage" style="display:none;">
+        <a class="back-link" id="searchBackLink">← Back to ModelVault</a>
+        <div class="category-page-head">
+            <h2 id="searchPageTitle">Search results</h2>
+            <label class="sort-label">Sort by
+                <select id="searchSortSelect" aria-label="Sort search results">
+                    <option value="popularity" selected>Popularity (source downloads / ratings)</option>
+                    <option value="rating">Highest rated</option>
+                    <option value="newest">Newest (date released)</option>
+                    <option value="oldest">Oldest</option>
+                    <option value="filesize-desc">Largest file size</option>
+                    <option value="filesize-asc">Smallest file size</option>
+                    <option value="name-asc">Name A–Z</option>
+                    <option value="name-desc">Name Z–A</option>
+                    <option value="mv-votes">ModelVault votes</option>
+                </select>
+            </label>
+        </div>
+        <p class="sort-note" id="searchSortNote">Showing models from the ModelVault catalog that match your search.</p>
+        <div class="bar-list" id="searchPageList"></div>
     </div>
 
     <div class="section home-section">
@@ -1088,7 +1126,7 @@
             const grid = document.getElementById('categoryGrid');
             grid.innerHTML = '';
             if (filtered.length === 0) {
-                grid.innerHTML = '<p class="no-results">No matching categories — press Enter to search Printables (or browse sources in each listing).</p>';
+                grid.innerHTML = '<p class="no-results">No matching categories — press Enter to search all listed models on ModelVault.</p>';
                 return;
             }
             filtered.forEach(cat => {
@@ -1250,11 +1288,13 @@
             return { up: s.up || 0, down: s.down || 0, mine: myVotes[modelId] || null };
         }
 
-        /** Push latest global tallies into the open category list (real-time for all visitors). */
+        /** Push latest global tallies into the open list (real-time for all visitors). */
         function refreshVisibleVotes() {
-            if (!currentSlug) return;
-            // Re-sort if ordered by ModelVault votes; otherwise just repaint bars
-            renderCategoryPage(currentSlug);
+            if (currentSearchQuery) {
+                renderSearchPage(currentSearchQuery);
+                return;
+            }
+            if (currentSlug) renderCategoryPage(currentSlug);
         }
 
         function renderAuthNav() {
@@ -1402,6 +1442,7 @@
         }
 
         let currentSlug = null;
+        let currentSearchQuery = '';
         let categorySortMode = 'popularity';
 
         function modelPopularityScore(m) {
@@ -1484,9 +1525,7 @@
             return list;
         }
 
-        function updateSortNote(mode) {
-            const el = document.getElementById('categorySortNote');
-            if (!el) return;
+        function sortNoteText(mode) {
             const notes = {
                 popularity: 'Sorted by popularity using download counts, likes, and ratings from the original listing sites.',
                 rating: 'Sorted by average community rating from the source site (models without ratings last).',
@@ -1498,91 +1537,172 @@
                 'name-desc': 'Sorted reverse-alphabetically by model name.',
                 'mv-votes': 'Sorted by ModelVault visitor votes (signed-in votes on this site).'
             };
-            el.textContent = notes[mode] || notes.popularity;
+            return notes[mode] || notes.popularity;
+        }
+
+        function updateSortNote(mode, elId) {
+            const el = document.getElementById(elId || 'categorySortNote');
+            if (el) el.textContent = sortNoteText(mode);
+        }
+
+        function modelMatchesQuery(m, query) {
+            const q = (query || '').trim().toLowerCase();
+            if (!q) return false;
+            const words = q.split(/\s+/).filter(Boolean);
+            const catNames = (m.cats || []).map(slug => {
+                const c = categories.find(x => x.slug === slug);
+                return c ? (c.title + ' ' + c.desc) : slug;
+            }).join(' ');
+            const hay = [
+                m.title || '',
+                m.description || '',
+                m.id || '',
+                sourceFromLink(m.link),
+                catNames,
+                (m.cats || []).join(' ')
+            ].join(' ').toLowerCase();
+            // All words must appear somewhere (AND search)
+            return words.every(w => hay.includes(w));
+        }
+
+        function searchModels(query) {
+            return modelDirectory.filter(m => modelMatchesQuery(m, query));
+        }
+
+        function buildModelBarHtml(m, expandedId) {
+            const v = getModelVotes(m.id);
+            const netVotes = v.up - v.down;
+            const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
+            const ratingHtml = m.rating
+                ? `Rating ${m.rating.value.toFixed(1)} (${m.rating.count})`
+                : 'No ratings yet';
+            const source = sourceFromLink(m.link);
+            const isExpanded = m.id === expandedId;
+            const locked = !!v.mine;
+            const upLocked = locked && v.mine !== 'up' ? ' locked' : '';
+            const downLocked = locked && v.mine !== 'down' ? ' locked' : '';
+            const voteHint = locked
+                ? 'You already voted on this model'
+                : (mvUser ? 'Cast your one vote' : 'Sign in free to vote');
+            const popBits = [];
+            if (m.downloads) popBits.push(Number(m.downloads).toLocaleString() + ' downloads');
+            if (m.likes) popBits.push(Number(m.likes).toLocaleString() + ' likes');
+            if (m.published) popBits.push('Released ' + m.published);
+            const fs = formatFileSize(m.fileSize);
+            if (fs) popBits.push(fs + ' files');
+            const metaLine = popBits.length ? popBits.join(' · ') : ratingHtml;
+            const safeLink = String(m.link || '').replace(/'/g, "\\'");
+            return `
+                <div class="model-bar${isExpanded ? ' expanded' : ''}" data-id="${escapeHtml(m.id)}">
+                    <div class="model-bar-top" onclick="toggleExpand('${escapeHtml(m.id)}')">
+                        <img src="${escapeHtml(m.thumb || '')}" alt="${escapeHtml(m.title)}" loading="lazy">
+                        <div class="model-bar-info">
+                            <div class="model-bar-title">${escapeHtml(m.title)}</div>
+                            <div class="model-bar-rating">${escapeHtml(metaLine)}</div>
+                        </div>
+                        <div class="model-bar-actions">
+                            <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${safeLink}','_blank','noopener'); event.stopPropagation();"><span class="label">Download</span></button>
+                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${escapeHtml(m.id)}','up'); event.stopPropagation();">Up <span class="vote-count">${v.up}</span></button>
+                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${escapeHtml(m.id)}','down'); event.stopPropagation();">Down <span class="vote-count">${v.down}</span></button>
+                            <span class="bar-control mv-rating" title="Live ModelVault score — global votes from all signed-in visitors">MV ${mvRating}</span>
+                        </div>
+                    </div>
+                    <div class="model-bar-expand">
+                        <img class="expand-photo" src="${escapeHtml(m.thumb || '')}" alt="${escapeHtml(m.title)}" loading="lazy">
+                        <div class="expand-info">
+                            <h4>${escapeHtml(m.title)}</h4>
+                            <span class="expand-source">Source: ${escapeHtml(source)}</span>
+                            <div class="expand-details">
+                                <span class="expand-chip">${escapeHtml(ratingHtml)}</span>
+                                ${m.downloads ? '<span class="expand-chip">' + Number(m.downloads).toLocaleString() + ' downloads</span>' : ''}
+                                ${m.likes ? '<span class="expand-chip">' + Number(m.likes).toLocaleString() + ' likes</span>' : ''}
+                                ${m.published ? '<span class="expand-chip">Released ' + escapeHtml(m.published) + '</span>' : ''}
+                                ${fs ? '<span class="expand-chip">' + escapeHtml(fs) + ' total files</span>' : ''}
+                                <span class="expand-chip">MV ${mvRating} (${v.up} up / ${v.down} down)</span>
+                                ${v.mine ? '<span class="expand-chip">Your vote: ' + (v.mine === 'up' ? 'up' : 'down') + ' (locked)</span>' : '<span class="expand-chip">Sign in free to vote · one vote per model</span>'}
+                            </div>
+                            <p class="expand-desc ${m.description ? '' : 'empty'}">${m.description ? escapeHtml(m.description) : 'No description was found on the source page. Open the full listing for more details.'}</p>
+                            <a class="expand-view-link" href="${escapeHtml(m.link || '#')}" target="_blank" rel="noopener">View full listing on ${escapeHtml(source)} ↗</a>
+                        </div>
+                    </div>
+                </div>`;
+        }
+
+        function fillModelList(listEl, models, emptyMsg) {
+            if (!listEl) return;
+            if (!models.length) {
+                listEl.innerHTML = '<p class="no-results">' + (emptyMsg || 'No models found.') + '</p>';
+                return;
+            }
+            const expandedId = listEl.dataset.expandedId || null;
+            listEl.innerHTML = models.map(m => buildModelBarHtml(m, expandedId)).join('');
+            listEl.dataset.expandedId = expandedId || '';
         }
 
         function renderCategoryPage(slug) {
             currentSlug = slug;
+            currentSearchQuery = '';
             const cat = categories.find(c => c.slug === slug);
             const list = document.getElementById('categoryPageList');
             document.getElementById('categoryPageTitle').textContent = cat ? cat.title : 'Category';
             const sortSelect = document.getElementById('categorySortSelect');
             if (sortSelect && sortSelect.value) categorySortMode = sortSelect.value;
-            updateSortNote(categorySortMode);
+            updateSortNote(categorySortMode, 'categorySortNote');
             let models = modelDirectory.filter(m => m.cats.includes(slug));
             models = sortCategoryModels(models, categorySortMode);
-            if (models.length === 0) {
-                list.innerHTML = '<p class="no-results">No models added to this category yet — check back soon.</p>';
-                return;
+            fillModelList(list, models, 'No models added to this category yet — check back soon.');
+        }
+
+        function renderSearchPage(query) {
+            currentSearchQuery = (query || '').trim();
+            currentSlug = null;
+            const list = document.getElementById('searchPageList');
+            const titleEl = document.getElementById('searchPageTitle');
+            const noteEl = document.getElementById('searchSortNote');
+            const sortSelect = document.getElementById('searchSortSelect');
+            if (sortSelect && sortSelect.value) categorySortMode = sortSelect.value;
+            let models = searchModels(currentSearchQuery);
+            models = sortCategoryModels(models, categorySortMode);
+            if (titleEl) {
+                titleEl.textContent = currentSearchQuery
+                    ? ('Results for “' + currentSearchQuery + '”')
+                    : 'Search results';
             }
-            const expandedId = list.dataset.expandedId || null;
-            list.innerHTML = models.map(m => {
-                const v = getModelVotes(m.id);
-                const netVotes = v.up - v.down;
-                const mvRating = (v.up + v.down) === 0 ? 'New' : (netVotes >= 0 ? '+' + netVotes : netVotes);
-                const ratingHtml = m.rating
-                    ? `Rating ${m.rating.value.toFixed(1)} (${m.rating.count})`
-                    : 'No ratings yet';
-                const source = sourceFromLink(m.link);
-                const isExpanded = m.id === expandedId;
-                const locked = !!v.mine;
-                const upLocked = locked && v.mine !== 'up' ? ' locked' : '';
-                const downLocked = locked && v.mine !== 'down' ? ' locked' : '';
-                const voteHint = locked
-                    ? 'You already voted on this model'
-                    : (mvUser ? 'Cast your one vote' : 'Sign in free to vote');
-                const popBits = [];
-                if (m.downloads) popBits.push(Number(m.downloads).toLocaleString() + ' downloads');
-                if (m.likes) popBits.push(Number(m.likes).toLocaleString() + ' likes');
-                if (m.published) popBits.push('Released ' + m.published);
-                const fs = formatFileSize(m.fileSize);
-                if (fs) popBits.push(fs + ' files');
-                const metaLine = popBits.length ? popBits.join(' · ') : ratingHtml;
-                return `
-                <div class="model-bar${isExpanded ? ' expanded' : ''}" data-id="${m.id}">
-                    <div class="model-bar-top" onclick="toggleExpand('${m.id}')">
-                        <img src="${m.thumb}" alt="${m.title}" loading="lazy">
-                        <div class="model-bar-info">
-                            <div class="model-bar-title">${m.title}</div>
-                            <div class="model-bar-rating">${metaLine}</div>
-                        </div>
-                        <div class="model-bar-actions">
-                            <button class="bar-control dl-btn" title="Opens the download on the creator's page" onclick="window.open('${m.link}','_blank','noopener'); event.stopPropagation();"><span class="label">Download</span></button>
-                            <button class="bar-control vote-up ${v.mine === 'up' ? 'active' : ''}${upLocked}" title="${voteHint}" onclick="castVote('${m.id}','up'); event.stopPropagation();">Up <span class="vote-count">${v.up}</span></button>
-                            <button class="bar-control vote-down ${v.mine === 'down' ? 'active' : ''}${downLocked}" title="${voteHint}" onclick="castVote('${m.id}','down'); event.stopPropagation();">Down <span class="vote-count">${v.down}</span></button>
-                            <span class="bar-control mv-rating" title="Live ModelVault score — global votes from all signed-in visitors">MV ${mvRating}</span>
-                        </div>
-                    </div>
-                    <div class="model-bar-expand">
-                        <img class="expand-photo" src="${m.thumb}" alt="${m.title}" loading="lazy">
-                        <div class="expand-info">
-                            <h4>${m.title}</h4>
-                            <span class="expand-source">Source: ${source}</span>
-                            <div class="expand-details">
-                                <span class="expand-chip">${ratingHtml}</span>
-                                ${m.downloads ? '<span class="expand-chip">' + Number(m.downloads).toLocaleString() + ' downloads</span>' : ''}
-                                ${m.likes ? '<span class="expand-chip">' + Number(m.likes).toLocaleString() + ' likes</span>' : ''}
-                                ${m.published ? '<span class="expand-chip">Released ' + m.published + '</span>' : ''}
-                                ${fs ? '<span class="expand-chip">' + fs + ' total files</span>' : ''}
-                                <span class="expand-chip">MV ${mvRating} (${v.up} up / ${v.down} down)</span>
-                                ${v.mine ? '<span class="expand-chip">Your vote: ' + (v.mine === 'up' ? 'up' : 'down') + ' (locked)</span>' : '<span class="expand-chip">Sign in free to vote · one vote per model</span>'}
-                            </div>
-                            <p class="expand-desc ${m.description ? '' : 'empty'}">${m.description ? escapeHtml(m.description) : 'No description was found on the source page. Open the full listing for more details.'}</p>
-                            <a class="expand-view-link" href="${m.link}" target="_blank" rel="noopener">View full listing on ${source} ↗</a>
-                        </div>
-                    </div>
-                </div>`;
-            }).join('');
-            // Keep expand state across re-renders (e.g. after voting)
-            list.dataset.expandedId = expandedId || '';
+            if (noteEl) {
+                const n = models.length;
+                noteEl.textContent = currentSearchQuery
+                    ? (n + ' model' + (n === 1 ? '' : 's') + ' in the ModelVault catalog · ' + sortNoteText(categorySortMode))
+                    : 'Enter a search term to find models listed on ModelVault.';
+            }
+            fillModelList(
+                list,
+                models,
+                currentSearchQuery
+                    ? 'No listed models match “' + escapeHtml(currentSearchQuery) + '”. Try another word, or browse categories on the home page.'
+                    : 'Type a search above and press Enter or Search.'
+            );
+            const input = document.getElementById('searchInput');
+            if (input && currentSearchQuery && input.value.trim() !== currentSearchQuery) {
+                input.value = currentSearchQuery;
+            }
         }
 
         // Clicking a bar expands it in place (bigger photo + details) instead of navigating away.
         // The Download button and the "View full listing" link inside the expanded panel are the
         // explicit ways to actually leave the site.
+        function getActiveListEl() {
+            const searchPage = document.getElementById('searchPage');
+            if (searchPage && searchPage.style.display !== 'none') {
+                return document.getElementById('searchPageList');
+            }
+            return document.getElementById('categoryPageList');
+        }
+
         function toggleExpand(modelId) {
-            const list = document.getElementById('categoryPageList');
+            const list = getActiveListEl();
+            if (!list) return;
             const bar = list.querySelector(`.model-bar[data-id="${modelId}"]`);
+            if (!bar) return;
             const wasExpanded = bar.classList.contains('expanded');
             list.dataset.expandedId = wasExpanded ? '' : modelId;
             list.querySelectorAll('.model-bar.expanded').forEach(b => b.classList.remove('expanded'));
@@ -1787,24 +1907,56 @@
             return 'the web';
         }
 
+        function hideBrowsePages() {
+            const cat = document.getElementById('categoryPage');
+            const search = document.getElementById('searchPage');
+            if (cat) cat.style.display = 'none';
+            if (search) search.style.display = 'none';
+        }
+
         function showCategoryPage(slug) {
             document.querySelectorAll('.home-section').forEach(el => el.style.display = 'none');
+            hideBrowsePages();
             document.getElementById('categoryPage').style.display = 'block';
             renderCategoryPage(slug);
         }
+
+        function showSearchPage(query) {
+            document.querySelectorAll('.home-section').forEach(el => el.style.display = 'none');
+            hideBrowsePages();
+            document.getElementById('searchPage').style.display = 'block';
+            renderSearchPage(query);
+        }
+
         function showHome() {
             document.querySelectorAll('.home-section').forEach(el => el.style.display = '');
-            document.getElementById('categoryPage').style.display = 'none';
+            hideBrowsePages();
+            currentSlug = null;
+            currentSearchQuery = '';
         }
+
+        function goToSearch(query) {
+            const q = (query || '').trim();
+            if (!q) return;
+            location.hash = '#search/' + encodeURIComponent(q);
+        }
+
         function routeFromHash() {
-            const hash = location.hash;
+            const hash = location.hash || '';
             if (hash.startsWith('#category/')) {
-                showCategoryPage(hash.replace('#category/', ''));
+                showCategoryPage(decodeURIComponent(hash.replace('#category/', '')));
+            } else if (hash.startsWith('#search/')) {
+                const q = decodeURIComponent(hash.slice('#search/'.length));
+                showSearchPage(q);
+            } else if (hash === '#search') {
+                showSearchPage('');
             } else {
                 showHome();
             }
         }
         document.getElementById('backLink').addEventListener('click', () => { location.hash = ''; });
+        const searchBack = document.getElementById('searchBackLink');
+        if (searchBack) searchBack.addEventListener('click', () => { location.hash = ''; });
         window.addEventListener('hashchange', routeFromHash);
         const categorySortSelect = document.getElementById('categorySortSelect');
         if (categorySortSelect) {
@@ -1813,21 +1965,39 @@
                 if (currentSlug) renderCategoryPage(currentSlug);
             });
         }
+        const searchSortSelect = document.getElementById('searchSortSelect');
+        if (searchSortSelect) {
+            searchSortSelect.addEventListener('change', () => {
+                categorySortMode = searchSortSelect.value || 'popularity';
+                if (currentSearchQuery || (document.getElementById('searchPage') || {}).style.display === 'block') {
+                    renderSearchPage(currentSearchQuery || document.getElementById('searchInput').value);
+                }
+            });
+        }
 
         const searchInput = document.getElementById('searchInput');
-        searchInput.addEventListener('keyup', (e) => {
-            const term = e.target.value.toLowerCase();
+        const searchGoBtn = document.getElementById('searchGoBtn');
+        if (searchGoBtn) {
+            searchGoBtn.addEventListener('click', () => goToSearch(searchInput.value));
+        }
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                goToSearch(e.target.value);
+            }
+        });
+        // Live-filter categories only while on the home page
+        searchInput.addEventListener('input', (e) => {
+            if (location.hash && location.hash !== '#') return;
+            const term = e.target.value.toLowerCase().trim();
+            if (!term) {
+                renderCategories();
+                return;
+            }
             const filtered = categories.filter(c =>
                 c.title.toLowerCase().includes(term) || c.desc.toLowerCase().includes(term)
             );
             renderCategories(filtered);
-        });
-        // Enter searches the whole Printables catalog for the typed term
-        searchInput.addEventListener('keydown', (e) => {
-            const q = e.target.value.trim();
-            if (e.key === 'Enter' && q) {
-                window.open('https://www.printables.com/search/models?q=' + encodeURIComponent(q), '_blank', 'noopener');
-            }
         });
 
         renderAuthNav();
