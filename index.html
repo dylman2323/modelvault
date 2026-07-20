@@ -597,16 +597,27 @@
 
     <div class="section home-section" id="creators">
         <h2>Creator Subscription</h2>
-        <p class="section-sub">Sell your models on ModelVault. You keep the files and run checkout; we list your work for makers to find. <strong style="color:#e0f2fe;">Sign in required</strong> before subscribing.</p>
+        <p class="section-sub">Want to sell models on ModelVault? Follow the 4 steps below. You keep your files and run your own checkout — we list your work.</p>
+
+        <div class="hosting-note" style="margin-bottom:28px;">
+            <strong style="color:#bae6fd;">How to become a Creator (do these in order):</strong>
+            <ol style="margin:12px 0 0 1.2em; padding:0; color:#94a3b8; line-height:1.65;">
+                <li><strong style="color:#e0f2fe;">Sign in</strong> (top right) — create a free account if you don’t have one.</li>
+                <li>Click <strong style="color:#e0f2fe;">Subscribe as Creator</strong> below — pay $12/month on Square (new tab).</li>
+                <li>Come back to this page and click <strong style="color:#e0f2fe;">I’ve subscribed — activate my Creator account</strong>.</li>
+                <li>Go to <a href="#submit" style="color:#93c5fd;">Submit a Model</a>, choose <strong style="color:#e0f2fe;">Paid listing</strong>, and send your model details.</li>
+            </ol>
+            <p style="margin:12px 0 0; color:#64748b; font-size:0.9em;">Site owner (Dylan): you don’t pay this. When someone completes step 3, Formspree emails you and you can update <code style="color:#93c5fd;">creators.txt</code> from that email.</p>
+        </div>
+
         <div class="boost-grid">
             <div class="boost-card">
-                <h3>Creator Sub</h3>
-                <p>List paid models with a cover image, price, description, and your checkout link.</p>
+                <h3>Creator Sub · $12/month</h3>
+                <p>After you’re signed in, use this button to pay on Square.</p>
                 <ul class="creator-perks">
-                    <li>Sign in with a free ModelVault account first</li>
-                    <li>List as many paid models as you want while subscribed</li>
-                    <li>Appear in the Paid Models section</li>
-                    <li>You set the price and deliver the files</li>
+                    <li>Step 1: Sign in (required)</li>
+                    <li>Step 2: Pay with the button below</li>
+                    <li>Step 3: Confirm on this page after paying</li>
                 </ul>
                 <div class="boost-price">$12 <span>/ month</span></div>
                 <div class="square-checkout-wrap">
@@ -615,34 +626,33 @@
                        href="#creators"
                        role="button">Subscribe as Creator</a>
                 </div>
-                <p class="creator-auth-note" id="creatorAuthNote">Sign in to unlock Creator subscription checkout.</p>
+                <p class="creator-auth-note" id="creatorAuthNote">Sign in first (top right), then this button will open Square checkout.</p>
                 <div class="creator-status-line" id="creatorStatusLine" aria-live="polite"></div>
                 <div class="creator-confirm-box" id="creatorConfirmBox">
-                    <p>Finish checkout on Square (opens in a new tab). When payment succeeds, come back here and confirm so we can activate your Creator account and notify the site owner.</p>
+                    <p><strong style="color:#e0f2fe;">Step 3 — almost done:</strong> Finish payment on Square, then click below. That activates your Creator account and emails the site owner.</p>
                     <button type="button" class="boost-btn secondary" id="creatorConfirmBtn">I’ve subscribed — activate my Creator account</button>
                 </div>
             </div>
             <div class="boost-card">
-                <h3>What you provide</h3>
+                <h3>What you send after subscribing</h3>
                 <ul class="creator-perks">
-                    <li>Title, cover image URL, short description</li>
+                    <li>Model title + short description</li>
+                    <li>Cover image URL</li>
                     <li>Your price (USD)</li>
-                    <li>Checkout link (Square, Stripe, Gumroad, Payhip, etc.)</li>
-                    <li>Active Creator subscription (sign in + paid sub)</li>
+                    <li>Your checkout link (Square, Gumroad, etc.)</li>
                 </ul>
-                <p style="color:#94a3b8;font-size:0.9em;margin:0;">We review every listing before it goes live.</p>
+                <p style="color:#94a3b8;font-size:0.9em;margin:0;">Use <a href="#submit" style="color:#93c5fd;">Submit a Model</a> → Paid listing. We review before it goes live.</p>
             </div>
             <div class="boost-card">
-                <h3>Buyer experience</h3>
+                <h3>What buyers see</h3>
                 <ul class="creator-perks">
-                    <li>Browse paid models alongside free ones</li>
+                    <li>Your model in Paid Models</li>
                     <li>Clear Paid label and price</li>
-                    <li>Checkout on the creator’s link</li>
-                    <li>Never mixed into free model rankings</li>
+                    <li>They pay you on your link</li>
+                    <li>You send them the files</li>
                 </ul>
             </div>
         </div>
-        <p class="section-sub" style="margin-top:8px;">After you subscribe, list your models with <a href="#submit" style="color:#93c5fd;">Submit a Model</a> (choose Paid listing).</p>
     </div>
 
     <div class="section home-section" id="gear">
