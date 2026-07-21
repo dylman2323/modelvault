@@ -1883,6 +1883,15 @@
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 mvAuth = firebase.auth();
                 mvDb = firebase.firestore();
+                // Stay signed in across visits (survives browser close). SESSION = this tab only.
+                try {
+                    const wantRemember = localStorage.getItem(MV_REMEMBER_PREF_KEY) !== "0";
+                    mvAuth.setPersistence(
+                        wantRemember
+                            ? firebase.auth.Auth.Persistence.LOCAL
+                            : firebase.auth.Auth.Persistence.SESSION
+                    ).catch(function () { /* ignore */ });
+                } catch (e) { /* ignore */ }
                 // Keep clients in sync — enable offline cache so tallies feel instant
                 try {
                     mvDb.enablePersistence({ synchronizeTabs: true }).catch(function () { /* multi-tab ok */ });
@@ -1891,6 +1900,13 @@
                     mvUser = user;
                     renderAuthNav();
                     if (user) {
+                        // Restored session from a previous visit
+                        if (!authFormJustSignedIn && authFirstStateResolved) {
+                            // subsequent auth events (token refresh) — no toast
+                        } else if (!authFormJustSignedIn && !authFirstStateResolved) {
+                            showToast("Welcome back — you’re still signed in");
+                        }
+                        authFormJustSignedIn = false;
                         subscribeMyVotes(user.uid);
                         await loadMyCreatorProfile();
                         updateCreatorSubUI();
@@ -1910,6 +1926,7 @@
                         updateCreatorSubUI();
                         if (currentSlug) renderCategoryPage(currentSlug);
                     }
+                    authFirstStateResolved = true;
                 });
                 // Live global tallies — every open browser updates when anyone votes
                 subscribeVoteStats();
@@ -1917,6 +1934,38 @@
             } catch (e) {
                 console.error("Firebase init failed", e);
                 return false;
+            }
+        }
+
+        function applyRememberedAuthFields() {
+            try {
+                const emailEl = document.getElementById("authEmail");
+                const rememberEl = document.getElementById("authRemember");
+                if (rememberEl) {
+                    rememberEl.checked = localStorage.getItem(MV_REMEMBER_PREF_KEY) !== "0";
+                }
+                if (emailEl && !emailEl.value) {
+                    const saved = localStorage.getItem(MV_REMEMBER_EMAIL_KEY) || "";
+                    if (saved) emailEl.value = saved;
+                }
+            } catch (e) { /* private mode */ }
+        }
+
+        async function setAuthPersistenceFromCheckbox() {
+            if (!mvAuth) return;
+            const rememberEl = document.getElementById("authRemember");
+            const keep = !rememberEl || rememberEl.checked;
+            try {
+                localStorage.setItem(MV_REMEMBER_PREF_KEY, keep ? "1" : "0");
+            } catch (e) { /* ignore */ }
+            try {
+                await mvAuth.setPersistence(
+                    keep
+                        ? firebase.auth.Auth.Persistence.LOCAL
+                        : firebase.auth.Auth.Persistence.SESSION
+                );
+            } catch (e) {
+                console.warn("Could not set auth persistence", e);
             }
         }
 
@@ -2038,8 +2087,17 @@
         function openAuthModal(mode) {
             setAuthMode(mode === "signup" ? "signup" : "signin");
             document.getElementById("authError").textContent = "";
+            applyRememberedAuthFields();
             document.getElementById("authOverlay").classList.add("open");
-            setTimeout(() => document.getElementById("authEmail").focus(), 50);
+            setTimeout(() => {
+                const emailEl = document.getElementById("authEmail");
+                const passEl = document.getElementById("authPassword");
+                if (emailEl && emailEl.value) {
+                    if (passEl) passEl.focus();
+                } else if (emailEl) {
+                    emailEl.focus();
+                }
+            }, 50);
         }
         function closeAuthModal() {
             document.getElementById("authOverlay").classList.remove("open");
@@ -2310,6 +2368,8 @@
             e.preventDefault();
             const email = document.getElementById("authEmail").value.trim();
             const password = document.getElementById("authPassword").value;
+            const rememberEl = document.getElementById("authRemember");
+            const keepSignedIn = !rememberEl || rememberEl.checked;
             const err = document.getElementById("authError");
             err.textContent = "";
             if (!firebaseConfigured || !mvAuth) {
@@ -2319,16 +2379,26 @@
             const btn = document.getElementById("authSubmitBtn");
             btn.disabled = true;
             try {
+                // LOCAL = stay signed in after closing the browser; SESSION = until tab closes
+                await setAuthPersistenceFromCheckbox();
+                authFormJustSignedIn = true;
                 if (authMode === "signup") {
                     await mvAuth.createUserWithEmailAndPassword(email, password);
-                    showToast("Account created — you’re signed in");
+                    showToast(keepSignedIn ? "Account created — you’ll stay signed in on this device" : "Account created — signed in for this visit");
                 } else {
                     await mvAuth.signInWithEmailAndPassword(email, password);
-                    showToast("Signed in");
+                    showToast(keepSignedIn ? "Signed in — we’ll remember you on this device" : "Signed in for this browser session");
                 }
+                try {
+                    if (keepSignedIn) localStorage.setItem(MV_REMEMBER_EMAIL_KEY, email);
+                    else localStorage.removeItem(MV_REMEMBER_EMAIL_KEY);
+                } catch (e2) { /* ignore */ }
                 closeAuthModal();
-                document.getElementById("authForm").reset();
+                // Keep email prefills; only clear password
+                const passEl = document.getElementById("authPassword");
+                if (passEl) passEl.value = "";
             } catch (ex) {
+                authFormJustSignedIn = false;
                 err.textContent = friendlyAuthError(ex);
             } finally {
                 btn.disabled = false;
