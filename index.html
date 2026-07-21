@@ -206,6 +206,13 @@
         .auth-tabs button.active { background: #3b82f6; color: #fff; }
         .auth-card input { margin: 8px 0; }
         .auth-card button[type="submit"] { margin-top: 10px; }
+        .auth-remember {
+            display: flex; align-items: center; gap: 10px; margin: 10px 0 4px;
+            color: #94a3b8; font-size: 0.9em; cursor: pointer; user-select: none;
+        }
+        .auth-remember input {
+            width: 18px; height: 18px; margin: 0; accent-color: #3b82f6; cursor: pointer; flex-shrink: 0;
+        }
         .auth-error { color: #fecaca; font-size: 0.9em; min-height: 1.2em; margin: 8px 0 0 0; }
         .auth-secure { margin: 14px 0 0 0; font-size: 0.8em; color: #64748b; line-height: 1.4; }
         .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: #1e293b; color: #e0f2fe; padding: 12px 20px; border-radius: 10px; z-index: 1100; box-shadow: 0 10px 30px rgba(0,0,0,0.45); font-weight: 500; display: none; max-width: 90%; text-align: center; }
@@ -282,7 +289,7 @@
         <div class="auth-card">
             <button type="button" class="auth-close" onclick="closeAuthModal()" aria-label="Close">×</button>
             <h3 id="authTitle">Sign in to vote</h3>
-            <p class="auth-sub">Free account · about 20 seconds · one vote per model. Passwords are handled securely by Firebase (we never store them).</p>
+            <p class="auth-sub">Free account · about 20 seconds · one vote per model. Passwords are handled securely by Firebase (we never store them). Stay signed in so you don’t have to log in every visit.</p>
             <div class="auth-tabs">
                 <button type="button" id="tabSignin" class="active" onclick="setAuthMode('signin')">Sign in</button>
                 <button type="button" id="tabSignup" onclick="setAuthMode('signup')">Create free account</button>
@@ -290,10 +297,14 @@
             <form id="authForm">
                 <input type="email" id="authEmail" placeholder="Email" required autocomplete="email">
                 <input type="password" id="authPassword" placeholder="Password (6+ characters)" required minlength="6" autocomplete="current-password">
+                <label class="auth-remember">
+                    <input type="checkbox" id="authRemember" checked>
+                    <span>Keep me signed in on this device</span>
+                </label>
                 <button type="submit" id="authSubmitBtn">Sign in</button>
             </form>
             <p class="auth-error" id="authError"></p>
-            <p class="auth-secure">Free email sign-in via Firebase. Your vote is locked once you cast it.</p>
+            <p class="auth-secure">Free email sign-in via Firebase. With “Keep me signed in” on, your session is saved in this browser until you sign out. Your vote is locked once you cast it.</p>
         </div>
     </div>
     <div class="toast" id="toast" role="status"></div>
@@ -1849,6 +1860,10 @@
         let votesReady = false;
         let unsubVoteStats = null;
         let unsubMyVotes = null;
+        let authFormJustSignedIn = false; // skip "welcome back" toast right after manual sign-in
+        let authFirstStateResolved = false;
+        const MV_REMEMBER_EMAIL_KEY = "mv_remember_email";
+        const MV_REMEMBER_PREF_KEY = "mv_remember_pref"; // '1' or '0'
         // Creator subscription
         const SQUARE_CREATOR_URL = "https://square.link/u/soifdoLq?src=embed";
         const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkodrdjo";
