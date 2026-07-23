@@ -751,7 +751,7 @@
     <div class="section home-section" id="submit">
         <h2>Submit a Model</h2>
         <p class="section-sub">One form for free directory listings and paid Creator listings. Paid listings unlock only for accounts with Creator status.</p>
-        <p class="submit-locked-note" id="submitLockedNote">Paid listing is locked for member accounts. <a href="#creators" style="color:#93c5fd;">Become a Creator</a> to unlock it.</p>
+        <p class="submit-locked-note" id="submitLockedNote">Paid listing is locked for member accounts. <a href="#creators" style="color:#93c5fd;">Become a Creator</a> to unlock it. When you subscribe, use the <strong>same email on Square</strong> as your ModelVault login or the payment won’t link to your account.</p>
         <form id="submitForm" action="https://formspree.io/f/mkodrdjo" method="POST">
             <select id="listingType" name="listing_type" required aria-label="Listing type">
                 <option value="free">Free model (directory listing)</option>
@@ -2330,12 +2330,21 @@
             const checkoutStarted = !!(myAccount && myAccount.status === "checkout_started")
                 || sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1";
 
+            const emailHint = document.getElementById("creatorEmailWarningAccount");
+            if (emailHint) {
+                if (mvUser && mvUser.email) {
+                    emailHint.innerHTML = " Your login email is <code>" + escapeHtml(mvUser.email) + "</code> — use that on Square.";
+                } else {
+                    emailHint.textContent = " Sign in first so we can show which email Square must use.";
+                }
+            }
+
             if (!mvUser) {
                 btn.classList.remove("is-disabled");
                 btn.textContent = "Sign in to subscribe";
                 if (note) {
                     note.style.display = "";
-                    note.innerHTML = 'You must <a href="#" id="creatorSignInLink">sign in</a> (or create a free account) before purchasing Creator status.';
+                    note.innerHTML = 'You must <a href="#" id="creatorSignInLink">sign in</a> first. Then pay on Square with that <strong>same email</strong> so we can match your subscription.';
                     const link = document.getElementById("creatorSignInLink");
                     if (link) link.onclick = (e) => { e.preventDefault(); pendingCreatorSub = true; openAuthModal("signin"); };
                 }
@@ -2344,7 +2353,10 @@
                 return;
             }
 
-            if (note) note.style.display = "none";
+            if (note) {
+                note.style.display = "";
+                note.innerHTML = '⚠ Pay on Square with <code style="color:#93c5fd;">' + escapeHtml(mvUser.email || "your login email") + '</code> — it must match this account.';
+            }
 
             if (isCreator) {
                 btn.classList.remove("is-disabled");
@@ -2360,11 +2372,11 @@
             btn.textContent = checkoutStarted ? "Open Square checkout again" : "Subscribe as Creator";
             if (statusLine) {
                 if (myAccount && myAccount.status === "expired") {
-                    statusLine.textContent = "Account status: Member (subscription expired) — renew below.";
+                    statusLine.textContent = "Account status: Member (subscription expired) — renew below. Use the same email on Square as " + (mvUser.email || "your login") + ".";
                 } else if (checkoutStarted) {
-                    statusLine.textContent = "Checkout started — pay on Square, then return here so we can verify with Square.";
+                    statusLine.textContent = "Checkout started — pay with " + (mvUser.email || "your login email") + " on Square, then return here to verify.";
                 } else {
-                    statusLine.textContent = "Account status: Member · " + (mvUser.email || "") + " · Subscribe to unlock Creator abilities.";
+                    statusLine.textContent = "Account status: Member · " + (mvUser.email || "") + " · Square must use this same email.";
                 }
             }
             if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted || isCreatorReturnSuccess());
@@ -2390,6 +2402,18 @@
          */
         async function startVerifiedCreatorCheckout() {
             if (!mvUser || !mvDb) throw new Error("not-signed-in");
+            const loginEmail = (mvUser.email || "").trim();
+            if (loginEmail) {
+                const ok = window.confirm(
+                    "Important: On Square, pay with this exact email:\n\n" +
+                    loginEmail +
+                    "\n\nIf you use a different email, we cannot match your payment to this account and Creator will stay locked.\n\nContinue to Square?"
+                );
+                if (!ok) {
+                    showToast("Checkout cancelled — use the same email as your login when you subscribe");
+                    return;
+                }
+            }
             await markCreatorCheckoutStarted();
             try { sessionStorage.setItem(MV_CHECKOUT_PENDING_KEY, "1"); } catch (e) {}
 
@@ -2399,7 +2423,7 @@
                     const res = await callable({});
                     const url = res && res.data && res.data.url;
                     if (url) {
-                        showToast("Opening secure Square checkout…");
+                        showToast("Opening Square — pay with " + (loginEmail || "your login email"));
                         window.location.href = url;
                         return;
                     }
@@ -2409,7 +2433,7 @@
             }
 
             // Fallback static Payment Link (still requires webhook/confirmCreatorPayment to grant access)
-            showToast("Opening Square checkout…");
+            showToast("Opening Square — pay with " + (loginEmail || "your login email"));
             window.location.href = SQUARE_CREATOR_URL;
         }
 
