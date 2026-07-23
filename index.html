@@ -195,6 +195,15 @@
         .nav-auth-btn.ghost { background: transparent; border: 1px solid #475569; color: #e0f2fe; }
         .nav-auth-btn.ghost:hover { background: #1e293b; }
         .nav-user { font-size: 0.85em; color: #94a3b8; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .nav-role-badge {
+            display: inline-block; font-size: 0.72em; font-weight: 700; letter-spacing: 0.04em;
+            text-transform: uppercase; padding: 3px 9px; border-radius: 9999px; margin-right: 4px;
+            vertical-align: middle;
+        }
+        .nav-role-badge.member { background: rgba(148,163,184,0.2); color: #cbd5e1; }
+        .nav-role-badge.creator { background: rgba(16,185,129,0.22); color: #6ee7b7; }
+        .submit-locked-note { color: #fde68a; font-size: 0.9em; margin: 0 0 10px; line-height: 1.45; display: none; }
+        .submit-locked-note.show { display: block; }
         .auth-overlay { display: none; position: fixed; inset: 0; background: rgba(2,6,23,0.75); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
         .auth-overlay.open { display: flex; }
         .auth-card { background: #172554; border-radius: 16px; padding: 28px; width: 100%; max-width: 420px; box-shadow: 0 25px 60px rgba(0,0,0,0.55); position: relative; }
@@ -634,24 +643,24 @@
         <p class="section-sub">Want to sell models on ModelVault? Follow the 4 steps below. You keep your files and run your own checkout — we list your work.</p>
 
         <div class="hosting-note" style="margin-bottom:28px;">
-            <strong style="color:#bae6fd;">How to become a Creator (do these in order):</strong>
+            <strong style="color:#bae6fd;">How Creator status works:</strong>
             <ol style="margin:12px 0 0 1.2em; padding:0; color:#94a3b8; line-height:1.65;">
-                <li><strong style="color:#e0f2fe;">Sign in</strong> (top right) — create a free account if you don’t have one.</li>
-                <li>Click <strong style="color:#e0f2fe;">Subscribe as Creator</strong> below — pay $12/month on Square (new tab).</li>
-                <li>Come back to this page and click <strong style="color:#e0f2fe;">I’ve subscribed — activate my Creator account</strong>.</li>
-                <li>Go to <a href="#submit" style="color:#93c5fd;">Submit a Model</a>, choose <strong style="color:#e0f2fe;">Paid listing</strong>, and send your model details.</li>
+                <li><strong style="color:#e0f2fe;">Sign in</strong> — every account starts as a normal member (vote + free submissions).</li>
+                <li><strong style="color:#e0f2fe;">Subscribe as Creator</strong> — pay $12/month on Square while signed in.</li>
+                <li>When payment finishes, Square sends you back here and your account flips to <strong style="color:#e0f2fe;">Creator</strong> automatically.</li>
+                <li>Creators can submit <strong style="color:#e0f2fe;">Paid listings</strong>. Members can only submit free models.</li>
             </ol>
-            <p style="margin:12px 0 0; color:#64748b; font-size:0.9em;">Site owner (Dylan): you don’t pay this. When someone completes step 3, Formspree emails you and you can update <code style="color:#93c5fd;">creators.txt</code> from that email.</p>
+            <p style="margin:12px 0 0; color:#64748b; font-size:0.9em;">Owner setup: in your Square payment link, set the after-payment redirect to your site with <code style="color:#93c5fd;">?creator_sub=success</code> (example: <code style="color:#93c5fd;">https://dylman2323.github.io/modelvault/?creator_sub=success#creators</code>). Formspree still emails you the roster.</p>
         </div>
 
         <div class="boost-grid">
             <div class="boost-card">
                 <h3>Creator Sub · $12/month</h3>
-                <p>After you’re signed in, use this button to pay on Square.</p>
+                <p>Signed-in members pay here. After checkout, status upgrades to Creator.</p>
                 <ul class="creator-perks">
-                    <li>Step 1: Sign in (required)</li>
-                    <li>Step 2: Pay with the button below</li>
-                    <li>Step 3: Confirm on this page after paying</li>
+                    <li>Member: vote + free model submissions</li>
+                    <li>Creator: paid listings unlocked</li>
+                    <li>Status checked every time you sign in</li>
                 </ul>
                 <div class="boost-price">$12 <span>/ month</span></div>
                 <div class="square-checkout-wrap">
@@ -663,8 +672,8 @@
                 <p class="creator-auth-note" id="creatorAuthNote">Sign in first (top right), then this button will open Square checkout.</p>
                 <div class="creator-status-line" id="creatorStatusLine" aria-live="polite"></div>
                 <div class="creator-confirm-box" id="creatorConfirmBox">
-                    <p><strong style="color:#e0f2fe;">Step 3 — almost done:</strong> Finish payment on Square, then click below. That activates your Creator account and emails the site owner.</p>
-                    <button type="button" class="boost-btn secondary" id="creatorConfirmBtn">I’ve subscribed — activate my Creator account</button>
+                    <p><strong style="color:#e0f2fe;">Backup:</strong> If Square didn’t send you back automatically, finish payment, then click below to activate Creator status.</p>
+                    <button type="button" class="boost-btn secondary" id="creatorConfirmBtn">I’ve paid — set my account to Creator</button>
                 </div>
             </div>
             <div class="boost-card">
@@ -707,11 +716,12 @@
 
     <div class="section home-section" id="submit">
         <h2>Submit a Model</h2>
-        <p class="section-sub">One form for free directory listings and paid Creator listings. Paid models need an active Creator subscription.</p>
+        <p class="section-sub">One form for free directory listings and paid Creator listings. Paid listings unlock only for accounts with Creator status.</p>
+        <p class="submit-locked-note" id="submitLockedNote">Paid listing is locked for member accounts. <a href="#creators" style="color:#93c5fd;">Become a Creator</a> to unlock it.</p>
         <form id="submitForm" action="https://formspree.io/f/mkodrdjo" method="POST">
             <select id="listingType" name="listing_type" required aria-label="Listing type">
                 <option value="free">Free model (directory listing)</option>
-                <option value="paid">Paid model (Creator listing)</option>
+                <option value="paid" id="listingTypePaidOpt">Paid model (Creator listing)</option>
             </select>
             <p class="submit-type-hint" id="submitTypeHint">Link to an existing free model on Printables, Thingiverse, MakerWorld, etc.</p>
 
@@ -1864,10 +1874,16 @@
         let authFirstStateResolved = false;
         const MV_REMEMBER_EMAIL_KEY = "mv_remember_email";
         const MV_REMEMBER_PREF_KEY = "mv_remember_pref"; // '1' or '0'
-        // Creator subscription
+        // Account roles + Creator subscription
+        // role: member (default) | creator
+        // status: active | checkout_started | expired
         const SQUARE_CREATOR_URL = "https://square.link/u/soifdoLq?src=embed";
         const FORMSPREE_ENDPOINT = "https://formspree.io/f/mkodrdjo";
-        let myCreatorProfile = null; // { email, lastRenewal, status, ... }
+        const CREATOR_GRACE_DAYS = 40; // monthly sub + short grace period
+        const MV_CHECKOUT_PENDING_KEY = "mv_creator_checkout_pending";
+        let myAccount = null; // Firestore accounts/{uid}
+        let myCreatorProfile = null; // alias for legacy UI (same as myAccount when present)
+        let pendingCreatorActivate = false; // activate after sign-in from Square return
 
         function showToast(msg, ms = 3200) {
             const el = document.getElementById("toast");
@@ -1898,7 +1914,6 @@
                 } catch (e) { /* older browsers */ }
                 mvAuth.onAuthStateChanged(async (user) => {
                     mvUser = user;
-                    renderAuthNav();
                     if (user) {
                         // Restored session from a previous visit
                         if (!authFormJustSignedIn && authFirstStateResolved) {
@@ -1908,22 +1923,29 @@
                         }
                         authFormJustSignedIn = false;
                         subscribeMyVotes(user.uid);
-                        await loadMyCreatorProfile();
-                        updateCreatorSubUI();
+                        await loadAccountStatus(); // role/status for abilities
+                        applyAccountAbilities();
                         if (pendingVote) {
                             const p = pendingVote;
                             pendingVote = null;
                             await castVote(p.modelId, p.type);
                         }
-                        if (pendingCreatorSub) {
+                        if (pendingCreatorActivate || isCreatorReturnSuccess()) {
+                            pendingCreatorActivate = false;
+                            await activateCreatorFromPurchase("square_return");
+                        } else if (pendingCreatorSub) {
                             pendingCreatorSub = false;
                             beginCreatorCheckout();
+                        } else if (sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1") {
+                            // Returned to the site after Square without redirect params
+                            updateCreatorSubUI();
                         }
                     } else {
                         if (unsubMyVotes) { unsubMyVotes(); unsubMyVotes = null; }
                         myVotes = {};
+                        myAccount = null;
                         myCreatorProfile = null;
-                        updateCreatorSubUI();
+                        applyAccountAbilities();
                         if (currentSlug) renderCategoryPage(currentSlug);
                     }
                     authFirstStateResolved = true;
@@ -2077,7 +2099,12 @@
             if (!nav) return;
             if (mvUser) {
                 const label = mvUser.email || "Signed in";
-                nav.innerHTML = `<span class="nav-user" title="${label}">${label}</span>
+                const creator = isCreatorAccount();
+                const badge = creator
+                    ? '<span class="nav-role-badge creator" title="Creator account — paid listings unlocked">Creator</span>'
+                    : '<span class="nav-role-badge member" title="Member account — vote & free submissions">Member</span>';
+                nav.innerHTML = badge +
+                    `<span class="nav-user" title="${label}">${label}</span>
                     <button type="button" class="nav-auth-btn ghost" onclick="signOutMv()">Sign out</button>`;
             } else {
                 nav.innerHTML = `<button type="button" class="nav-auth-btn" onclick="openAuthModal('signin')">Sign in</button>`;
@@ -2115,7 +2142,7 @@
             document.getElementById("authPassword").autocomplete = signin ? "current-password" : "new-password";
         }
 
-        // --- Creator subscription (sign-in required) ---
+        // --- Account status (member vs creator) ---
         function todayISODate() {
             const d = new Date();
             const y = d.getFullYear();
@@ -2124,12 +2151,47 @@
             return y + "-" + m + "-" + day;
         }
 
+        function isCreatorReturnSuccess() {
+            try {
+                const q = new URLSearchParams(location.search || "");
+                const v = (q.get("creator_sub") || q.get("subscription") || "").toLowerCase();
+                return v === "success" || v === "1" || v === "paid" || v === "complete";
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function clearCreatorReturnParams() {
+            try {
+                if (!isCreatorReturnSuccess()) return;
+                const u = new URL(location.href);
+                u.searchParams.delete("creator_sub");
+                u.searchParams.delete("subscription");
+                history.replaceState(null, "", u.pathname + u.search + (u.hash || "#creators"));
+            } catch (e) { /* ignore */ }
+        }
+
+        /** True when this account should get Creator abilities. */
+        function isCreatorAccount() {
+            if (!myAccount) return false;
+            if (myAccount.role !== "creator") return false;
+            if (myAccount.status && myAccount.status !== "active") return false;
+            // Optional expiry: monthly sub + grace
+            if (myAccount.lastRenewal) {
+                const t = Date.parse(myAccount.lastRenewal);
+                if (!isNaN(t)) {
+                    const days = (Date.now() - t) / 86400000;
+                    if (days > CREATOR_GRACE_DAYS) return false;
+                }
+            }
+            return true;
+        }
+
         function formatCreatorsTxt(rows) {
             const lines = [
                 "# ModelVault Creators",
-                "# One line per creator: email | display name | last renewal (YYYY-MM-DD) | status",
-                "# Source of truth: Firebase collection \"creators\" + Formspree email alerts",
-                "# Updated when someone signs in and confirms Creator subscription",
+                "# One line per creator: email | display name | last renewal (YYYY-MM-DD) | role | status",
+                "# Source of truth: Firebase collection \"accounts\" (role=creator)",
                 ""
             ];
             rows.sort((a, b) => String(a.email || "").localeCompare(String(b.email || "")));
@@ -2137,23 +2199,104 @@
                 const email = (r.email || "").replace(/\|/g, "/");
                 const name = (r.displayName || "").replace(/\|/g, "/");
                 const renew = r.lastRenewal || "";
+                const role = r.role || "creator";
                 const status = r.status || "active";
-                lines.push(email + " | " + name + " | " + renew + " | " + status);
+                lines.push(email + " | " + name + " | " + renew + " | " + role + " | " + status);
             });
             if (rows.length === 0) lines.push("# (no creators yet)");
             lines.push("");
             return lines.join("\n");
         }
 
-        async function loadMyCreatorProfile() {
+        /**
+         * Load (or create) accounts/{uid}. Checks role/status on every login.
+         * Migrates legacy creators/{uid} active docs into creator role.
+         */
+        async function loadAccountStatus() {
+            myAccount = null;
             myCreatorProfile = null;
             if (!mvDb || !mvUser) return;
+            const ref = mvDb.collection("accounts").doc(mvUser.uid);
             try {
-                const snap = await mvDb.collection("creators").doc(mvUser.uid).get();
-                if (snap.exists) myCreatorProfile = snap.data() || null;
+                let snap = await ref.get();
+                if (!snap.exists) {
+                    // New member account
+                    const base = {
+                        uid: mvUser.uid,
+                        email: mvUser.email || "",
+                        displayName: (mvUser.displayName || "").trim(),
+                        role: "member",
+                        status: "active",
+                        lastRenewal: null,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    };
+                    // Migrate from legacy creators collection if they already paid
+                    try {
+                        const legacy = await mvDb.collection("creators").doc(mvUser.uid).get();
+                        if (legacy.exists) {
+                            const L = legacy.data() || {};
+                            if (L.status === "active") {
+                                base.role = "creator";
+                                base.status = "active";
+                                base.lastRenewal = L.lastRenewal || todayISODate();
+                            } else if (L.status === "checkout_started") {
+                                base.status = "checkout_started";
+                            }
+                            if (L.email) base.email = L.email;
+                            if (L.displayName) base.displayName = L.displayName;
+                        }
+                    } catch (e) { /* ignore migrate errors */ }
+                    await ref.set(base, { merge: true });
+                    snap = await ref.get();
+                }
+                myAccount = snap.data() || null;
+                // Keep email fresh
+                if (myAccount && mvUser.email && myAccount.email !== mvUser.email) {
+                    await ref.set({ email: mvUser.email, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
+                    myAccount.email = mvUser.email;
+                }
+                // Auto-expire stale creators
+                if (myAccount && myAccount.role === "creator" && myAccount.lastRenewal) {
+                    const t = Date.parse(myAccount.lastRenewal);
+                    if (!isNaN(t) && (Date.now() - t) / 86400000 > CREATOR_GRACE_DAYS) {
+                        await ref.set({
+                            role: "member",
+                            status: "expired",
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        }, { merge: true });
+                        myAccount.role = "member";
+                        myAccount.status = "expired";
+                    }
+                }
+                myCreatorProfile = myAccount;
             } catch (e) {
-                console.warn("Could not load creator profile", e);
+                console.warn("Could not load account status", e);
             }
+        }
+
+        function applyAccountAbilities() {
+            renderAuthNav();
+            updateCreatorSubUI();
+            updateSubmitAbilities();
+        }
+
+        function updateSubmitAbilities() {
+            const paidOpt = document.getElementById("listingTypePaidOpt");
+            const listingType = document.getElementById("listingType");
+            const note = document.getElementById("submitLockedNote");
+            const creator = isCreatorAccount();
+            if (paidOpt) {
+                paidOpt.disabled = !creator;
+                paidOpt.textContent = creator
+                    ? "Paid model (Creator listing)"
+                    : "Paid model (Creator account required)";
+            }
+            if (listingType && listingType.value === "paid" && !creator) {
+                listingType.value = "free";
+                if (typeof updateListingTypeUI === "function") updateListingTypeUI();
+            }
+            if (note) note.classList.toggle("show", !!mvUser && !creator);
         }
 
         function updateCreatorSubUI() {
@@ -2163,15 +2306,16 @@
             const confirmBox = document.getElementById("creatorConfirmBox");
             if (!btn) return;
 
-            const isCreator = !!(myCreatorProfile && myCreatorProfile.status === "active");
-            const checkoutStarted = !!(myCreatorProfile && myCreatorProfile.status === "checkout_started");
+            const isCreator = isCreatorAccount();
+            const checkoutStarted = !!(myAccount && myAccount.status === "checkout_started")
+                || sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1";
 
             if (!mvUser) {
                 btn.classList.remove("is-disabled");
                 btn.textContent = "Sign in to subscribe";
                 if (note) {
                     note.style.display = "";
-                    note.innerHTML = 'You must <a href="#" id="creatorSignInLink">sign in</a> (or create a free account) before starting Creator subscription.';
+                    note.innerHTML = 'You must <a href="#" id="creatorSignInLink">sign in</a> (or create a free account) before purchasing Creator status.';
                     const link = document.getElementById("creatorSignInLink");
                     if (link) link.onclick = (e) => { e.preventDefault(); pendingCreatorSub = true; openAuthModal("signin"); };
                 }
@@ -2186,18 +2330,22 @@
                 btn.classList.remove("is-disabled");
                 btn.textContent = "Renew Creator Sub";
                 if (statusLine) {
-                    statusLine.textContent = "Active Creator · last renewal " + (myCreatorProfile.lastRenewal || "—");
+                    statusLine.textContent = "Account status: Creator · last renewal " + (myAccount.lastRenewal || "—");
                 }
-                if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted);
+                if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted && !isCreator);
                 return;
             }
 
             btn.classList.remove("is-disabled");
             btn.textContent = checkoutStarted ? "Open Square checkout again" : "Subscribe as Creator";
             if (statusLine) {
-                statusLine.textContent = checkoutStarted
-                    ? "Checkout started — confirm below after you pay on Square."
-                    : "Signed in as " + (mvUser.email || "member") + ". Ready to subscribe.";
+                if (myAccount && myAccount.status === "expired") {
+                    statusLine.textContent = "Account status: Member (subscription expired) — renew below.";
+                } else if (checkoutStarted) {
+                    statusLine.textContent = "Checkout started — after paying, return here (or use the backup button).";
+                } else {
+                    statusLine.textContent = "Account status: Member · " + (mvUser.email || "") + " · Subscribe to unlock Creator abilities.";
+                }
             }
             if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted);
         }
@@ -2209,13 +2357,10 @@
                 showToast("Sign in to become a Creator");
                 return;
             }
-            // Mark checkout started, then open Square payment link
             markCreatorCheckoutStarted().then(() => {
-                window.open(SQUARE_CREATOR_URL, "_blank", "noopener");
-                const confirmBox = document.getElementById("creatorConfirmBox");
-                if (confirmBox) confirmBox.classList.add("show");
-                updateCreatorSubUI();
-                showToast("Complete checkout on Square, then confirm here");
+                try { sessionStorage.setItem(MV_CHECKOUT_PENDING_KEY, "1"); } catch (e) {}
+                // Prefer same-tab so Square redirect can return with ?creator_sub=success
+                window.location.href = SQUARE_CREATOR_URL;
             }).catch((e) => {
                 console.error(e);
                 showToast("Could not start Creator checkout. Try again.");
@@ -2224,75 +2369,112 @@
 
         async function markCreatorCheckoutStarted() {
             if (!mvDb || !mvUser) throw new Error("not-signed-in");
-            const ref = mvDb.collection("creators").doc(mvUser.uid);
-            const prev = myCreatorProfile || {};
+            await loadAccountStatus();
+            const ref = mvDb.collection("accounts").doc(mvUser.uid);
+            const prev = myAccount || {};
             const data = {
                 uid: mvUser.uid,
                 email: mvUser.email || prev.email || "",
                 displayName: (mvUser.displayName || prev.displayName || "").trim(),
+                role: prev.role === "creator" ? "creator" : "member",
                 status: "checkout_started",
                 lastRenewal: prev.lastRenewal || null,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
             if (!prev.createdAt) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
             await ref.set(data, { merge: true });
-            myCreatorProfile = Object.assign({}, prev, data, { status: "checkout_started" });
+            // Mirror to legacy creators collection for roster tools
+            await mvDb.collection("creators").doc(mvUser.uid).set({
+                uid: data.uid,
+                email: data.email,
+                displayName: data.displayName,
+                status: "checkout_started",
+                lastRenewal: data.lastRenewal,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }, { merge: true });
+            myAccount = Object.assign({}, prev, data);
+            myCreatorProfile = myAccount;
         }
 
-        async function confirmCreatorSubscription() {
+        /**
+         * Flip account to Creator after Square purchase (auto return or backup button).
+         */
+        async function activateCreatorFromPurchase(source) {
             if (!mvUser || !mvDb) {
-                pendingCreatorSub = true;
+                pendingCreatorActivate = true;
                 openAuthModal("signin");
+                showToast("Sign in to finish activating Creator status");
                 return;
             }
             const btn = document.getElementById("creatorConfirmBtn");
             if (btn) btn.disabled = true;
             try {
+                await loadAccountStatus();
                 const lastRenewal = todayISODate();
-                const ref = mvDb.collection("creators").doc(mvUser.uid);
-                const prev = myCreatorProfile || {};
-                const isRenewal = !!(prev.status === "active" && prev.lastRenewal);
+                const prev = myAccount || {};
+                const wasCreator = prev.role === "creator" && prev.status === "active";
                 const data = {
                     uid: mvUser.uid,
                     email: mvUser.email || prev.email || "",
                     displayName: (mvUser.displayName || prev.displayName || "").trim(),
+                    role: "creator",
                     status: "active",
                     lastRenewal: lastRenewal,
+                    lastPurchaseSource: source || "purchase",
                     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                 };
                 if (!prev.createdAt) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await ref.set(data, { merge: true });
-                myCreatorProfile = Object.assign({}, prev, data);
-
-                // Build full roster for email + text file
-                const roster = await fetchAllCreators();
-                const rosterTxt = formatCreatorsTxt(roster);
-
-                // Email owner via Formspree (includes full creators.txt roster body)
-                await notifyOwnerCreatorChange({
+                await mvDb.collection("accounts").doc(mvUser.uid).set(data, { merge: true });
+                await mvDb.collection("creators").doc(mvUser.uid).set({
+                    uid: data.uid,
                     email: data.email,
                     displayName: data.displayName,
+                    status: "active",
                     lastRenewal: lastRenewal,
-                    isRenewal: isRenewal,
-                    uid: mvUser.uid,
-                    rosterTxt: rosterTxt
-                });
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+                myAccount = Object.assign({}, prev, data);
+                myCreatorProfile = myAccount;
+                try { sessionStorage.removeItem(MV_CHECKOUT_PENDING_KEY); } catch (e) {}
+                clearCreatorReturnParams();
 
-                updateCreatorSubUI();
-                showToast(isRenewal ? "Creator renewal recorded — owner notified" : "You’re a Creator — owner notified by email");
+                const roster = await fetchAllCreators();
+                const rosterTxt = formatCreatorsTxt(roster);
+                try {
+                    await notifyOwnerCreatorChange({
+                        email: data.email,
+                        displayName: data.displayName,
+                        lastRenewal: lastRenewal,
+                        isRenewal: wasCreator,
+                        uid: mvUser.uid,
+                        rosterTxt: rosterTxt
+                    });
+                } catch (mailErr) {
+                    console.warn("Owner email failed", mailErr);
+                }
+
+                applyAccountAbilities();
+                showToast(wasCreator
+                    ? "Creator subscription renewed — abilities active"
+                    : "Payment recorded — your account is now Creator");
             } catch (e) {
                 console.error(e);
-                showToast("Could not activate Creator account. Check connection and try again.");
+                showToast("Could not update account status. Check connection and try again.");
             } finally {
                 if (btn) btn.disabled = false;
             }
+        }
+
+        async function confirmCreatorSubscription() {
+            await activateCreatorFromPurchase("manual_confirm");
         }
 
         async function fetchAllCreators() {
             const rows = [];
             if (!mvDb) return rows;
             try {
-                const snap = await mvDb.collection("creators").get();
+                // Prefer accounts with creator role
+                const snap = await mvDb.collection("accounts").where("role", "==", "creator").get();
                 snap.forEach((doc) => {
                     const d = doc.data() || {};
                     if (!d.email && !d.uid) return;
@@ -2300,19 +2482,35 @@
                         email: d.email || "",
                         displayName: d.displayName || "",
                         lastRenewal: d.lastRenewal || "",
+                        role: d.role || "creator",
                         status: d.status || ""
                     });
                 });
             } catch (e) {
-                console.warn("Could not list all creators", e);
-                // Fallback: at least include current user
-                if (myCreatorProfile) {
-                    rows.push({
-                        email: myCreatorProfile.email || (mvUser && mvUser.email) || "",
-                        displayName: myCreatorProfile.displayName || "",
-                        lastRenewal: myCreatorProfile.lastRenewal || "",
-                        status: myCreatorProfile.status || ""
+                console.warn("Could not list creators from accounts", e);
+                try {
+                    const snap = await mvDb.collection("creators").get();
+                    snap.forEach((doc) => {
+                        const d = doc.data() || {};
+                        if (d.status !== "active") return;
+                        rows.push({
+                            email: d.email || "",
+                            displayName: d.displayName || "",
+                            lastRenewal: d.lastRenewal || "",
+                            role: "creator",
+                            status: d.status || ""
+                        });
                     });
+                } catch (e2) {
+                    if (myAccount && myAccount.role === "creator") {
+                        rows.push({
+                            email: myAccount.email || (mvUser && mvUser.email) || "",
+                            displayName: myAccount.displayName || "",
+                            lastRenewal: myAccount.lastRenewal || "",
+                            role: "creator",
+                            status: myAccount.status || ""
+                        });
+                    }
                 }
             }
             return rows;
@@ -2356,7 +2554,29 @@
                     confirmCreatorSubscription();
                 });
             }
+            // If user returns from Square with success query (or had checkout pending), handle on load
+            if (isCreatorReturnSuccess()) {
+                if (mvUser) {
+                    activateCreatorFromPurchase("square_return");
+                } else {
+                    pendingCreatorActivate = true;
+                    showToast("Sign in to finish applying your Creator subscription");
+                    openAuthModal("signin");
+                }
+            }
+            // When they come back to this tab after paying (no redirect param)
+            document.addEventListener("visibilitychange", () => {
+                if (document.visibilityState !== "visible") return;
+                if (!mvUser) return;
+                if (isCreatorAccount()) return;
+                try {
+                    if (sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1") {
+                        updateCreatorSubUI();
+                    }
+                } catch (e) { /* ignore */ }
+            });
             updateCreatorSubUI();
+            updateSubmitAbilities();
         }
 
         async function signOutMv() {
@@ -3255,18 +3475,18 @@
                     openAuthModal('signin');
                     return;
                 }
-                if (!myCreatorProfile || myCreatorProfile.status !== 'active') {
+                if (!isCreatorAccount()) {
                     if (status) {
-                        status.textContent = 'Active Creator subscription required. Subscribe under Creators, then confirm after Square checkout.';
+                        status.textContent = 'Creator account required for paid listings. Subscribe under Creators — status upgrades after payment.';
                         status.className = 'form-status error';
                     }
                     try { location.hash = 'creators'; } catch (e) {}
                     return;
                 }
-                // Stamp account email onto the form for the owner
+                // Stamp account status onto the form for the owner
                 const subStatus = document.getElementById('subscriptionStatus');
                 if (subStatus) {
-                    subStatus.value = 'active · last renewal ' + (myCreatorProfile.lastRenewal || todayISODate()) + ' · ' + (mvUser.email || '');
+                    subStatus.value = 'creator · active · last renewal ' + ((myAccount && myAccount.lastRenewal) || todayISODate()) + ' · ' + (mvUser.email || '');
                 }
                 const emailField = document.getElementById('submitEmail');
                 if (emailField && mvUser.email && !emailField.value) emailField.value = mvUser.email;

@@ -1,8 +1,7 @@
 # ModelVault Creators
-# One line per creator: email | display name | last renewal (YYYY-MM-DD) | status
-# Source of truth: Firebase "creators" collection
-# When someone signs in and confirms Creator Sub, Formspree emails you with the full roster
-# in the "creators_roster" field — paste that body over this file in E:\website\creators.txt
-# (and mv-repo\creators.txt) to keep your local list current.
+# One line: email | display name | last renewal (YYYY-MM-DD) | role | status
+# Source of truth: Firebase "accounts" where role=creator
+# After a Square purchase return (?creator_sub=success), the site sets role=creator.
+# Formspree emails you the full roster — paste over this file to refresh the local list.
 #
 # (no creators yet)

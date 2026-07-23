@@ -48,8 +48,31 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Creator subscriptions — signed-in users manage only their own doc;
-    // any signed-in user may list (needed to rebuild creators.txt roster for owner email).
+    // Account status / roles — source of truth for member vs creator abilities.
+    // role: member | creator
+    // status: active | checkout_started | expired
+    match /accounts/{uid} {
+      allow read: if request.auth != null;
+
+      allow create, update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() < 320
+        && request.resource.data.role in ['member', 'creator']
+        && request.resource.data.status in ['active', 'checkout_started', 'expired']
+        && (
+          !('lastRenewal' in request.resource.data)
+          || request.resource.data.lastRenewal == null
+          || (request.resource.data.lastRenewal is string
+              && request.resource.data.lastRenewal.size() == 10)
+        );
+
+      allow delete: if false;
+    }
+
+    // Legacy creators mirror (kept in sync from the client for roster emails)
     match /creators/{uid} {
       allow read: if request.auth != null;
 
