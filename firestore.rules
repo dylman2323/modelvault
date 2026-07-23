@@ -1,11 +1,18 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isSelf(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
     // Public read of tallies. Writes only from signed-in users, and only +1 style updates.
     match /modelStats/{modelId} {
       allow read: if true;
 
-      allow create: if request.auth != null
+      allow create: if signedIn()
         && request.resource.data.keys().hasOnly(['up', 'down'])
         && request.resource.data.up is int
         && request.resource.data.down is int
@@ -16,7 +23,7 @@ service cloud.firestore {
           (request.resource.data.up == 0 && request.resource.data.down == 1)
         );
 
-      allow update: if request.auth != null
+      allow update: if signedIn()
         && request.resource.data.keys().hasOnly(['up', 'down'])
         && request.resource.data.up is int
         && request.resource.data.down is int
@@ -32,11 +39,10 @@ service cloud.firestore {
       allow delete: if false;
     }
 
-    // One document per user+model. Create once; never update/delete (one vote only).
     match /userVotes/{voteId} {
       allow read: if true;
 
-      allow create: if request.auth != null
+      allow create: if signedIn()
         && request.resource.data.keys().hasOnly(['uid', 'modelId', 'type', 'at'])
         && request.resource.data.uid == request.auth.uid
         && voteId == request.auth.uid + '_' + request.resource.data.modelId
@@ -48,48 +54,84 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
-    // Account status / roles — source of truth for member vs creator abilities.
-    // role: member | creator
-    // status: active | checkout_started | expired
+    /**
+     * Account roles — CRITICAL SECURITY
+     * Clients may create/update their own member profile and mark checkout_started.
+     * Clients may NEVER set role to creator or change lastRenewal (only Admin SDK / Cloud Functions after Square verifies payment).
+     */
     match /accounts/{uid} {
-      allow read: if request.auth != null;
+      allow read: if signedIn();
 
-      allow create, update: if request.auth != null
-        && request.auth.uid == uid
+      allow create: if isSelf(uid)
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.email is string
         && request.resource.data.email.size() > 3
         && request.resource.data.email.size() < 320
-        && request.resource.data.role in ['member', 'creator']
-        && request.resource.data.status in ['active', 'checkout_started', 'expired']
+        && request.resource.data.role == 'member'
+        && request.resource.data.status in ['active', 'checkout_started']
         && (
           !('lastRenewal' in request.resource.data)
           || request.resource.data.lastRenewal == null
-          || (request.resource.data.lastRenewal is string
-              && request.resource.data.lastRenewal.size() == 10)
+        );
+
+      allow update: if isSelf(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email is string
+        && request.resource.data.email.size() > 3
+        && request.resource.data.email.size() < 320
+        // Role cannot be changed by the client (stays member, or stays creator if already granted by server)
+        && request.resource.data.role == resource.data.role
+        // lastRenewal cannot be set/changed by the client
+        && (
+          (!('lastRenewal' in request.resource.data) && !('lastRenewal' in resource.data))
+          || request.resource.data.lastRenewal == resource.data.lastRenewal
+        )
+        // Members may only flip between active / checkout_started / expired (not self-upgrade)
+        && request.resource.data.status in ['active', 'checkout_started', 'expired']
+        // Block smuggling creator via other fields
+        && request.resource.data.role in ['member', 'creator'];
+
+      allow delete: if false;
+    }
+
+    // Legacy mirror — clients cannot mark themselves active creators
+    match /creators/{uid} {
+      allow read: if signedIn();
+
+      allow create: if isSelf(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == 'checkout_started'
+        && (
+          !('lastRenewal' in request.resource.data)
+          || request.resource.data.lastRenewal == null
+        );
+
+      allow update: if isSelf(uid)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.status == resource.data.status
+        && (
+          (!('lastRenewal' in request.resource.data) && !('lastRenewal' in resource.data))
+          || request.resource.data.lastRenewal == resource.data.lastRenewal
         );
 
       allow delete: if false;
     }
 
-    // Legacy creators mirror (kept in sync from the client for roster emails)
-    match /creators/{uid} {
-      allow read: if request.auth != null;
-
-      allow create, update: if request.auth != null
-        && request.auth.uid == uid
-        && request.resource.data.uid == request.auth.uid
-        && request.resource.data.email is string
-        && request.resource.data.email.size() > 3
-        && request.resource.data.email.size() < 320
-        && request.resource.data.status in ['checkout_started', 'active']
-        && (
-          request.resource.data.lastRenewal == null
-          || (request.resource.data.lastRenewal is string
-              && request.resource.data.lastRenewal.size() == 10)
-        );
-
-      allow delete: if false;
+    // Written only by Cloud Functions (Admin SDK). Clients cannot write.
+    match /processedPayments/{id} {
+      allow read: if false;
+      allow write: if false;
+    }
+    match /pendingCheckouts/{id} {
+      allow read: if signedIn() && (
+        resource == null
+        || resource.data.uid == request.auth.uid
+        || id == request.auth.uid
+      );
+      allow write: if false;
+    }
+    match /unmatchedPayments/{id} {
+      allow read, write: if false;
     }
   }
 }

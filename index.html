@@ -650,17 +650,17 @@
                 <li>When payment finishes, Square sends you back here and your account flips to <strong style="color:#e0f2fe;">Creator</strong> automatically.</li>
                 <li>Creators can submit <strong style="color:#e0f2fe;">Paid listings</strong>. Members can only submit free models.</li>
             </ol>
-            <p style="margin:12px 0 0; color:#64748b; font-size:0.9em;">Owner setup: in your Square payment link, set the after-payment redirect to your site with <code style="color:#93c5fd;">?creator_sub=success</code> (example: <code style="color:#93c5fd;">https://dylman2323.github.io/modelvault/?creator_sub=success#creators</code>). Formspree still emails you the roster.</p>
+            <p style="margin:12px 0 0; color:#64748b; font-size:0.9em;">Creator status is granted only after <strong style="color:#e0f2fe;">Square confirms payment</strong> on our server (webhook / payment check). Typing a success URL or clicking a button cannot fake a subscription.</p>
         </div>
 
         <div class="boost-grid">
             <div class="boost-card">
                 <h3>Creator Sub · $12/month</h3>
-                <p>Signed-in members pay here. After checkout, status upgrades to Creator.</p>
+                <p>Signed-in members pay via Square. Payment is verified before Creator unlocks.</p>
                 <ul class="creator-perks">
                     <li>Member: vote + free model submissions</li>
                     <li>Creator: paid listings unlocked</li>
-                    <li>Status checked every time you sign in</li>
+                    <li>Verified by Square — not self-serve cheats</li>
                 </ul>
                 <div class="boost-price">$12 <span>/ month</span></div>
                 <div class="square-checkout-wrap">
@@ -672,8 +672,8 @@
                 <p class="creator-auth-note" id="creatorAuthNote">Sign in first (top right), then this button will open Square checkout.</p>
                 <div class="creator-status-line" id="creatorStatusLine" aria-live="polite"></div>
                 <div class="creator-confirm-box" id="creatorConfirmBox">
-                    <p><strong style="color:#e0f2fe;">Backup:</strong> If Square didn’t send you back automatically, finish payment, then click below to activate Creator status.</p>
-                    <button type="button" class="boost-btn secondary" id="creatorConfirmBtn">I’ve paid — set my account to Creator</button>
+                    <p><strong style="color:#e0f2fe;">After paying:</strong> Return here. We’ll ask Square if your payment cleared (use the same email as your ModelVault login). This does not grant free access — only a real payment does.</p>
+                    <button type="button" class="boost-btn secondary" id="creatorConfirmBtn">I’ve paid — verify with Square</button>
                 </div>
             </div>
             <div class="boost-card">
@@ -755,6 +755,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-functions-compat.js"></script>
     <script>
         const categories = [
             {slug: "tabletop-rpg", title: "Tabletop & RPG", desc: "Minis, terrain, dice towers, trays, and gaming accessories", link: "https://www.printables.com/search/models?q=dnd", thumb: "https://media.printables.com/media/prints/296095/images/2596237_ec8c7373-e813-4449-b441-1a346b3a008a/img_20221015_123953942.jpg"},
@@ -1859,6 +1860,7 @@
 
         let mvAuth = null;
         let mvDb = null;
+        let mvFunctions = null;
         let mvUser = null;
         // Global tallies shared by every visitor via Firestore: { [modelId]: { up, down } }
         let voteStats = {};
@@ -1899,6 +1901,11 @@
                 if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
                 mvAuth = firebase.auth();
                 mvDb = firebase.firestore();
+                try {
+                    mvFunctions = firebase.app().functions("us-central1");
+                } catch (e) {
+                    try { mvFunctions = firebase.functions(); } catch (e2) { mvFunctions = null; }
+                }
                 // Stay signed in across visits (survives browser close). SESSION = this tab only.
                 try {
                     const wantRemember = localStorage.getItem(MV_REMEMBER_PREF_KEY) !== "0";
@@ -1932,12 +1939,12 @@
                         }
                         if (pendingCreatorActivate || isCreatorReturnSuccess()) {
                             pendingCreatorActivate = false;
-                            await activateCreatorFromPurchase("square_return");
+                            // Only verifies with Square server-side — never trusts the URL alone
+                            await verifyCreatorPaymentWithServer({ poll: true });
                         } else if (pendingCreatorSub) {
                             pendingCreatorSub = false;
                             beginCreatorCheckout();
                         } else if (sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1") {
-                            // Returned to the site after Square without redirect params
                             updateCreatorSubUI();
                         }
                     } else {
@@ -2220,10 +2227,11 @@
             try {
                 let snap = await ref.get();
                 if (!snap.exists) {
-                    // New member account
+                    // New accounts always start as member — only Square-verified backend can set creator
                     const base = {
                         uid: mvUser.uid,
                         email: mvUser.email || "",
+                        emailLower: String(mvUser.email || "").trim().toLowerCase(),
                         displayName: (mvUser.displayName || "").trim(),
                         role: "member",
                         status: "active",
@@ -2231,22 +2239,12 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         updatedAt: firebase.firestore.FieldValue.serverTimestamp()
                     };
-                    // Migrate from legacy creators collection if they already paid
                     try {
                         const legacy = await mvDb.collection("creators").doc(mvUser.uid).get();
-                        if (legacy.exists) {
-                            const L = legacy.data() || {};
-                            if (L.status === "active") {
-                                base.role = "creator";
-                                base.status = "active";
-                                base.lastRenewal = L.lastRenewal || todayISODate();
-                            } else if (L.status === "checkout_started") {
-                                base.status = "checkout_started";
-                            }
-                            if (L.email) base.email = L.email;
-                            if (L.displayName) base.displayName = L.displayName;
+                        if (legacy.exists && legacy.data() && legacy.data().status === "checkout_started") {
+                            base.status = "checkout_started";
                         }
-                    } catch (e) { /* ignore migrate errors */ }
+                    } catch (e) { /* ignore */ }
                     await ref.set(base, { merge: true });
                     snap = await ref.get();
                 }
@@ -2256,19 +2254,7 @@
                     await ref.set({ email: mvUser.email, updatedAt: firebase.firestore.FieldValue.serverTimestamp() }, { merge: true });
                     myAccount.email = mvUser.email;
                 }
-                // Auto-expire stale creators
-                if (myAccount && myAccount.role === "creator" && myAccount.lastRenewal) {
-                    const t = Date.parse(myAccount.lastRenewal);
-                    if (!isNaN(t) && (Date.now() - t) / 86400000 > CREATOR_GRACE_DAYS) {
-                        await ref.set({
-                            role: "member",
-                            status: "expired",
-                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                        }, { merge: true });
-                        myAccount.role = "member";
-                        myAccount.status = "expired";
-                    }
-                }
+                // Expiry is evaluated client-side for abilities only (server is source of role grant)
                 myCreatorProfile = myAccount;
             } catch (e) {
                 console.warn("Could not load account status", e);
@@ -2342,12 +2328,12 @@
                 if (myAccount && myAccount.status === "expired") {
                     statusLine.textContent = "Account status: Member (subscription expired) — renew below.";
                 } else if (checkoutStarted) {
-                    statusLine.textContent = "Checkout started — after paying, return here (or use the backup button).";
+                    statusLine.textContent = "Checkout started — pay on Square, then return here so we can verify with Square.";
                 } else {
                     statusLine.textContent = "Account status: Member · " + (mvUser.email || "") + " · Subscribe to unlock Creator abilities.";
                 }
             }
-            if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted);
+            if (confirmBox) confirmBox.classList.toggle("show", checkoutStarted || isCreatorReturnSuccess());
         }
 
         function beginCreatorCheckout() {
@@ -2357,16 +2343,43 @@
                 showToast("Sign in to become a Creator");
                 return;
             }
-            markCreatorCheckoutStarted().then(() => {
-                try { sessionStorage.setItem(MV_CHECKOUT_PENDING_KEY, "1"); } catch (e) {}
-                // Prefer same-tab so Square redirect can return with ?creator_sub=success
-                window.location.href = SQUARE_CREATOR_URL;
-            }).catch((e) => {
+            startVerifiedCreatorCheckout().catch((e) => {
                 console.error(e);
-                showToast("Could not start Creator checkout. Try again.");
+                showToast((e && e.message) || "Could not start Creator checkout. Try again.");
             });
         }
 
+        /**
+         * Start checkout: prefer Cloud Function that creates a Square Payment Link
+         * tied to this Firebase user. Fallback: static link + server verification after pay.
+         * Clients never grant Creator — only Square-verified backend does.
+         */
+        async function startVerifiedCreatorCheckout() {
+            if (!mvUser || !mvDb) throw new Error("not-signed-in");
+            await markCreatorCheckoutStarted();
+            try { sessionStorage.setItem(MV_CHECKOUT_PENDING_KEY, "1"); } catch (e) {}
+
+            if (mvFunctions) {
+                try {
+                    const callable = mvFunctions.httpsCallable("createCreatorCheckout");
+                    const res = await callable({});
+                    const url = res && res.data && res.data.url;
+                    if (url) {
+                        showToast("Opening secure Square checkout…");
+                        window.location.href = url;
+                        return;
+                    }
+                } catch (e) {
+                    console.warn("createCreatorCheckout unavailable, using static Square link", e);
+                }
+            }
+
+            // Fallback static Payment Link (still requires webhook/confirmCreatorPayment to grant access)
+            showToast("Opening Square checkout…");
+            window.location.href = SQUARE_CREATOR_URL;
+        }
+
+        /** Client may only mark checkout_started — cannot set role=creator (blocked by rules). */
         async function markCreatorCheckoutStarted() {
             if (!mvDb || !mvUser) throw new Error("not-signed-in");
             await loadAccountStatus();
@@ -2375,98 +2388,101 @@
             const data = {
                 uid: mvUser.uid,
                 email: mvUser.email || prev.email || "",
+                emailLower: String(mvUser.email || prev.email || "").trim().toLowerCase(),
                 displayName: (mvUser.displayName || prev.displayName || "").trim(),
-                role: prev.role === "creator" ? "creator" : "member",
+                // role must stay as server left it (rules enforce role unchanged)
                 status: "checkout_started",
-                lastRenewal: prev.lastRenewal || null,
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             };
-            if (!prev.createdAt) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            if (!prev.createdAt && prev.role !== "creator") {
+                data.role = "member";
+                data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            }
             await ref.set(data, { merge: true });
-            // Mirror to legacy creators collection for roster tools
-            await mvDb.collection("creators").doc(mvUser.uid).set({
-                uid: data.uid,
-                email: data.email,
-                displayName: data.displayName,
-                status: "checkout_started",
-                lastRenewal: data.lastRenewal,
-                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-            }, { merge: true });
             myAccount = Object.assign({}, prev, data);
             myCreatorProfile = myAccount;
+            updateCreatorSubUI();
         }
 
         /**
-         * Flip account to Creator after Square purchase (auto return or backup button).
+         * Ask Cloud Function to verify payment with Square.
+         * Never trusts ?creator_sub=success or a client button alone.
          */
-        async function activateCreatorFromPurchase(source) {
-            if (!mvUser || !mvDb) {
+        async function verifyCreatorPaymentWithServer(opts) {
+            opts = opts || {};
+            if (!mvUser) {
                 pendingCreatorActivate = true;
                 openAuthModal("signin");
-                showToast("Sign in to finish activating Creator status");
+                showToast("Sign in so we can verify your Square payment");
                 return;
             }
             const btn = document.getElementById("creatorConfirmBtn");
             if (btn) btn.disabled = true;
+            const statusLine = document.getElementById("creatorStatusLine");
+            const setLine = (t) => { if (statusLine) statusLine.textContent = t; };
+
             try {
                 await loadAccountStatus();
-                const lastRenewal = todayISODate();
-                const prev = myAccount || {};
-                const wasCreator = prev.role === "creator" && prev.status === "active";
-                const data = {
-                    uid: mvUser.uid,
-                    email: mvUser.email || prev.email || "",
-                    displayName: (mvUser.displayName || prev.displayName || "").trim(),
-                    role: "creator",
-                    status: "active",
-                    lastRenewal: lastRenewal,
-                    lastPurchaseSource: source || "purchase",
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                };
-                if (!prev.createdAt) data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                await mvDb.collection("accounts").doc(mvUser.uid).set(data, { merge: true });
-                await mvDb.collection("creators").doc(mvUser.uid).set({
-                    uid: data.uid,
-                    email: data.email,
-                    displayName: data.displayName,
-                    status: "active",
-                    lastRenewal: lastRenewal,
-                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-                }, { merge: true });
-                myAccount = Object.assign({}, prev, data);
-                myCreatorProfile = myAccount;
-                try { sessionStorage.removeItem(MV_CHECKOUT_PENDING_KEY); } catch (e) {}
-                clearCreatorReturnParams();
-
-                const roster = await fetchAllCreators();
-                const rosterTxt = formatCreatorsTxt(roster);
-                try {
-                    await notifyOwnerCreatorChange({
-                        email: data.email,
-                        displayName: data.displayName,
-                        lastRenewal: lastRenewal,
-                        isRenewal: wasCreator,
-                        uid: mvUser.uid,
-                        rosterTxt: rosterTxt
-                    });
-                } catch (mailErr) {
-                    console.warn("Owner email failed", mailErr);
+                if (isCreatorAccount()) {
+                    try { sessionStorage.removeItem(MV_CHECKOUT_PENDING_KEY); } catch (e) {}
+                    clearCreatorReturnParams();
+                    applyAccountAbilities();
+                    showToast("Creator status is active");
+                    return;
                 }
 
-                applyAccountAbilities();
-                showToast(wasCreator
-                    ? "Creator subscription renewed — abilities active"
-                    : "Payment recorded — your account is now Creator");
-            } catch (e) {
-                console.error(e);
-                showToast("Could not update account status. Check connection and try again.");
+                if (!mvFunctions) {
+                    setLine("Payment verification server is not deployed yet. Owner: deploy Cloud Functions (see SQUARE_SETUP.md).");
+                    showToast("Verification server offline — Creator cannot be granted from the browser alone");
+                    return;
+                }
+
+                const callable = mvFunctions.httpsCallable("confirmCreatorPayment");
+                const attempts = opts.poll ? 8 : 1;
+                let last = null;
+                for (let i = 0; i < attempts; i++) {
+                    setLine("Checking Square for your payment" + (attempts > 1 ? " (" + (i + 1) + "/" + attempts + ")…" : "…"));
+                    try {
+                        const res = await callable({});
+                        last = res && res.data;
+                        if (last && last.ok && last.role === "creator") {
+                            await loadAccountStatus();
+                            try { sessionStorage.removeItem(MV_CHECKOUT_PENDING_KEY); } catch (e) {}
+                            clearCreatorReturnParams();
+                            applyAccountAbilities();
+                            // Notify owner (email) — status already set by server
+                            try {
+                                const roster = await fetchAllCreators();
+                                await notifyOwnerCreatorChange({
+                                    email: mvUser.email || "",
+                                    displayName: (myAccount && myAccount.displayName) || "",
+                                    lastRenewal: (myAccount && myAccount.lastRenewal) || todayISODate(),
+                                    isRenewal: false,
+                                    uid: mvUser.uid,
+                                    rosterTxt: formatCreatorsTxt(roster)
+                                });
+                            } catch (mailErr) { console.warn(mailErr); }
+                            showToast("Payment verified with Square — Creator unlocked");
+                            return;
+                        }
+                    } catch (e) {
+                        console.warn("confirmCreatorPayment", e);
+                        last = { ok: false, reason: "callable_error", message: (e && e.message) || String(e) };
+                    }
+                    if (i < attempts - 1) await new Promise(r => setTimeout(r, 2500));
+                }
+
+                const hint = (last && last.hint) || (last && last.reason) || "not found";
+                setLine("Square has not confirmed a $12 Creator payment for this account yet. " + hint);
+                showToast("No verified payment yet — pay with the same email as your login");
+                updateCreatorSubUI();
             } finally {
                 if (btn) btn.disabled = false;
             }
         }
 
         async function confirmCreatorSubscription() {
-            await activateCreatorFromPurchase("manual_confirm");
+            await verifyCreatorPaymentWithServer({ poll: true });
         }
 
         async function fetchAllCreators() {
@@ -2554,21 +2570,19 @@
                     confirmCreatorSubscription();
                 });
             }
-            // If user returns from Square with success query (or had checkout pending), handle on load
-            if (isCreatorReturnSuccess()) {
+            // Return from Square: verify with server (never grant from the URL alone)
+            if (isCreatorReturnSuccess() || sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1") {
                 if (mvUser) {
-                    activateCreatorFromPurchase("square_return");
-                } else {
+                    verifyCreatorPaymentWithServer({ poll: true });
+                } else if (isCreatorReturnSuccess()) {
                     pendingCreatorActivate = true;
-                    showToast("Sign in to finish applying your Creator subscription");
+                    showToast("Sign in to verify your Square payment");
                     openAuthModal("signin");
                 }
             }
-            // When they come back to this tab after paying (no redirect param)
             document.addEventListener("visibilitychange", () => {
                 if (document.visibilityState !== "visible") return;
-                if (!mvUser) return;
-                if (isCreatorAccount()) return;
+                if (!mvUser || isCreatorAccount()) return;
                 try {
                     if (sessionStorage.getItem(MV_CHECKOUT_PENDING_KEY) === "1") {
                         updateCreatorSubUI();
